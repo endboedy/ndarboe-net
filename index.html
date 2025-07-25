@@ -65,71 +65,86 @@
   <h2>📝 Daily Job Input</h2>
 
   <form id="inputForm">
-    <label>Tanggal: <input type="date" id="tanggal" required></label>
-    <label>Shift:
-      <select id="shift">
-        <option>DS</option>
-        <option>NS</option>
-      </select>
-    </label>
-    <label>PIT: <input type="text" id="pit" required></label>
-    <label>Aktivitas: <input type="text" id="aktivitas" required></label>
-    <label>Unit: <input type="text" id="unit" required></label>
-    <label>Operator: <input type="text" id="operator"></label>
-    <label>Jam Kerja: <input type="number" id="jamKerja" step="0.1"></label>
-    <label>Remark: <input type="text" id="remark"></label>
-    <button type="submit">Tambah</button>
-  </form>
+  <label>Activity: <input type="text" id="activity" required></label>
+  <label>Equip: <input type="text" id="equip" required></label>
+  <label>Model: <input type="text" id="model" required></label>
+  <label>Downtime*: <input type="text" id="downtime" required></label>
+  <label>Comp Code: <input type="text" id="compCode" required></label>
+  <label>Status: <input type="text" id="status" required></label>
+  <label>Status Gb: <input type="text" id="statusGb" required></label>
+  <label>Resp: <input type="text" id="resp" required></label>
+  <label>Remaks: <input type="text" id="remaks" required></label>
+  <label>Est RFU: <input type="text" id="estRfu" required></label>
+  <label>Aging: <input type="text" id="aging" required></label>
+  <button type="submit">Tambah</button>
+</form>
 
-  <table id="jobTable" class="display">
-    <thead>
-      <tr>
-        <th>Tanggal</th>
-        <th>Shift</th>
-        <th>PIT</th>
-        <th>Aktivitas</th>
-        <th>Unit</th>
-        <th>Operator</th>
-        <th>Jam Kerja</th>
-        <th>Remark</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<table id="jobTable" class="display">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Activity</th>
+      <th>Equip</th>
+      <th>Model</th>
+      <th>Downtime *</th>
+      <th>Comp Code</th>
+      <th>Status</th>
+      <th>Status Gb</th>
+      <th>Resp</th>
+      <th>Remaks</th>
+      <th>Est RFU</th>
+      <th>Aging</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script>
-    let table;
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+  let table;
 
-    $(document).ready(function() {
-      table = $('#jobTable').DataTable();
+  $(document).ready(function() {
+    table = $('#jobTable').DataTable();
 
-      $('#inputForm').on('submit', function(e) {
-        e.preventDefault();
+    $('#inputForm').on('submit', function(e) {
+      e.preventDefault();
 
-        const rowData = [
-          $('#tanggal').val(),
-          $('#shift').val(),
-          $('#pit').val(),
-          $('#aktivitas').val(),
-          $('#unit').val(),
-          $('#operator').val(),
-          $('#jamKerja').val(),
-          $('#remark').val(),
-          '<button class="delete-btn">Hapus</button>'
-        ];
+      const rowData = [
+        table.rows().count() + 1,
+        $('#activity').val(),
+        $('#equip').val(),
+        $('#model').val(),
+        $('#downtime').val(),
+        $('#compCode').val(),
+        $('#status').val(),
+        $('#statusGb').val(),
+        $('#resp').val(),
+        $('#remaks').val(),
+        $('#estRfu').val(),
+        $('#aging').val(),
+        '<button class="delete-btn">Hapus</button>'
+      ];
 
-        table.row.add(rowData).draw();
-        this.reset();
-      });
-
-      $('#jobTable tbody').on('click', '.delete-btn', function() {
-        table.row($(this).parents('tr')).remove().draw();
-      });
+      table.row.add(rowData).draw();
+      this.reset();
     });
-  </script>
+
+    $('#jobTable tbody').on('click', '.delete-btn', function() {
+      table.row($(this).parents('tr')).remove().draw();
+      renumberRows();
+    });
+
+    function renumberRows() {
+      table.rows().every(function(index) {
+        this.data()[0] = index + 1;
+        this.invalidate();
+      });
+      table.draw();
+    }
+  });
+</script>
 
 </body>
 </html>

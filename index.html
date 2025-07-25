@@ -2,48 +2,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Equipment Downtime Tracker</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Daily Job Input</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>🚜 Equipment Downtime Tracker</h2>
+    <h2>📝 Daily Job Input</h2>
 
-  <form id="entryForm">
-    <input type="text" placeholder="Activity" id="activity" required />
-    <input type="text" placeholder="No" id="no" required />
-    <input type="text" placeholder="Equip" id="equip" required />
-    <input type="text" placeholder="Model" id="model" required />
-    <input type="datetime-local" id="downtime" required />
-    <input type="datetime-local" id="uptime" required />
-    <input type="text" placeholder="Comp Code" id="compCode" />
-    <input type="text" placeholder="Status" id="status" />
-    <input type="text" placeholder="Gb" id="gb" />
-    <input type="text" placeholder="Resp" id="resp" />
-    <input type="text" placeholder="Remarks" id="remarks" />
-    <input type="text" placeholder="Est" id="est" />
-    <input type="number" placeholder="Aging" id="aging" />
-    <input type="number" placeholder="Est Aging" id="estAging" />
-    <input type="text" placeholder="Tyre" id="tyre" />
+    <form id="jobForm">
+        <label>Date: <input type="date" id="date" required></label>
+        <label>Equipment: <input type="text" id="equipment" required></label>
+        <label>Model: <input type="text" id="model" required></label>
+        <label>Site: <input type="text" id="site" required></label>
+        <label>Job: <input type="text" id="job" required></label>
+        <label>Remarks: <input type="text" id="remarks"></label>
+        <button type="submit">Add Job</button>
+    </form>
 
-    <button type="submit">Save</button>
-    <button type="button" onclick="clearForm()">Clear</button>
-  </form>
+    <table id="jobTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Equipment</th>
+                <th>Model</th>
+                <th>Site</th>
+                <th>Job</th>
+                <th>Remarks</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-  <hr>
+    <script>
+        document.getElementById("jobForm").addEventListener("submit", function(event) {
+            event.preventDefault();
 
-  <table id="dataTable">
-    <thead>
-      <tr>
-        <th>Activity</th><th>No</th><th>Equip</th><th>Model</th>
-        <th>Downtime</th><th>Uptime</th><th>Comp Code</th>
-        <th>Status</th><th>Gb</th><th>Resp</th><th>Remarks</th>
-        <th>Est</th><th>Aging</th><th>Est Aging</th><th>Tyre</th><th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+            const date = document.getElementById("date").value;
+            const equipment = document.getElementById("equipment").value;
+            const model = document.getElementById("model").value;
+            const site = document.getElementById("site").value;
+            const job = document.getElementById("job").value;
+            const remarks = document.getElementById("remarks").value;
 
-  <script src="script.js"></script>
+            const table = document.getElementById("jobTable").getElementsByTagName("tbody")[0];
+            const newRow = table.insertRow();
+
+            const cellDate = newRow.insertCell(0);
+            const cellEquipment = newRow.insertCell(1);
+            const cellModel = newRow.insertCell(2);
+            const cellSite = newRow.insertCell(3);
+            const cellJob = newRow.insertCell(4);
+            const cellRemarks = newRow.insertCell(5);
+
+            cellDate.textContent = date;
+            cellEquipment.textContent = equipment;
+            cellModel.textContent = model;
+            cellSite.textContent = site;
+            cellJob.textContent = job;
+            cellRemarks.textContent = remarks;
+
+            document.getElementById("jobForm").reset();
+        });
+    </script>
 </body>
 </html>

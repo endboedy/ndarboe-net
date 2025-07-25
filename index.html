@@ -42,13 +42,10 @@
         <th>Model</th>
         <th>Downtime *</th>
         <th>Comp Code</th>
-        <th>Status</th>
-        <th>Status Gb</th>
         <th>Resp</th>
         <th>Remaks</th>
         <th>Est RFU</th>
         <th>Aging</th>
-        <th>Aksi</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -84,14 +81,6 @@
               <div class="form-group col-md-4">
                 <label>Comp Code</label>
                 <input type="text" class="form-control" name="CompCode">
-              </div>
-              <div class="form-group col-md-4">
-                <label>Status</label>
-                <input type="text" class="form-control" name="Status">
-              </div>
-              <div class="form-group col-md-4">
-                <label>Status Gb</label>
-                <input type="text" class="form-control" name="StatusGb">
               </div>
               <div class="form-group col-md-4">
                 <label>Resp</label>
@@ -149,8 +138,6 @@
           dataObj.Model,
           dataObj.Downtime,
           dataObj.CompCode,
-          dataObj.Status,
-          dataObj.StatusGb,
           dataObj.Resp,
           dataObj.Remaks.replace(/\n/g, "<br>"),
           dataObj.EstRFU,

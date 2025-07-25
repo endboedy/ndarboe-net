@@ -2,157 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📋 Equipment Maintenance</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+  <title>Equipment Maintenance</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <style>
     body {
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
-    .dataTables_wrapper .dataTables_filter {
-      float: right;
-      text-align: right;
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2::before {
+      content: '📋';
+      margin-right: 10px;
+    }
+    #addForm {
+      display: none;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    #addForm input, #addForm textarea {
+      margin: 5px;
+      padding: 5px;
+      width: 200px;
     }
     table.dataTable td {
       white-space: nowrap;
     }
-    th, td {
-      font-size: 14px;
+    .deleteBtn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
     }
-    .modal input, .modal textarea {
-      font-size: 14px;
-    }
-    .modal-title {
-      font-weight: bold;
+    .addBtn {
+      margin-bottom: 10px;
+      padding: 8px 15px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <h4><img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="24"> Equipment Maintenance</h4>
+<h2>Equipment Maintenance</h2>
 
-  <button class="btn btn-success mb-2" id="addBtn">➕ Add</button>
+<button class="addBtn" onclick="toggleForm()">➕ Add</button>
 
-  <table id="equipmentTable" class="display table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Activity</th>
-        <th>Equip</th>
-        <th>Model</th>
-        <th>Downtime *</th>
-        <th>Comp Code</th>
-        <th>Resp</th>
-        <th>Remaks</th>
-        <th>Est RFU</th>
-        <th>Aging</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<div id="addForm">
+  <form id="maintenanceForm">
+    <input type="text" name="activity" placeholder="Activity" required>
+    <input type="text" name="equip" placeholder="Equip" required>
+    <input type="text" name="model" placeholder="Model">
+    <input type="date" name="downtime" required>
+    <input type="text" name="compcode" placeholder="Comp Code">
+    <input type="text" name="status" placeholder="Status">
+    <input type="text" name="statusgb" placeholder="Status Gb">
+    <input type="text" name="resp" placeholder="Resp">
+    <textarea name="remarks" placeholder="Remarks"></textarea>
+    <input type="date" name="estrfu">
+    <button type="submit">Add Data</button>
+  </form>
+</div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <form id="inputForm">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addModalLabel">Add Equipment Maintenance</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="form-row">
-              <div class="form-group col-md-4">
-                <label>Activity</label>
-                <input type="text" class="form-control" name="Activity" required>
-              </div>
-              <div class="form-group col-md-4">
-                <label>Equip</label>
-                <input type="text" class="form-control" name="Equip" required>
-              </div>
-              <div class="form-group col-md-4">
-                <label>Model</label>
-                <input type="text" class="form-control" name="Model" required>
-              </div>
-              <div class="form-group col-md-4">
-                <label>Downtime *</label>
-                <input type="date" class="form-control" name="Downtime" required>
-              </div>
-              <div class="form-group col-md-4">
-                <label>Comp Code</label>
-                <input type="text" class="form-control" name="CompCode">
-              </div>
-              <div class="form-group col-md-4">
-                <label>Resp</label>
-                <input type="text" class="form-control" name="Resp">
-              </div>
-              <div class="form-group col-md-4">
-                <label>Est RFU</label>
-                <input type="date" class="form-control" name="EstRFU">
-              </div>
-              <div class="form-group col-md-8">
-                <label>Remaks</label>
-                <textarea class="form-control" name="Remaks" rows="2"></textarea>
-              </div>
-              <div class="form-group col-md-4">
-                <label>Aging</label>
-                <input type="number" class="form-control" name="Aging">
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+<table id="equipmentTable" class="display">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Activity</th>
+      <th>Equip</th>
+      <th>Model</th>
+      <th>Downtime</th>
+      <th>Comp Code</th>
+      <th>Status</th>
+      <th>Status Gb</th>
+      <th>Resp</th>
+      <th>Remarks</th>
+      <th>Est RFU</th>
+      <th>Aging</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <!-- JS Section -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-  <script>
-    let table;
-    let no = 1;
+<script>
+  let table;
 
-    $(document).ready(function () {
-      table = $('#equipmentTable').DataTable();
+  function toggleForm() {
+    const form = document.getElementById("addForm");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
 
-      $('#addBtn').click(function () {
-        $('#inputForm')[0].reset();
-        $('#addModal').modal('show');
-      });
+  function calculateAging(downtime) {
+    const now = new Date();
+    const dt = new Date(downtime);
+    const diffTime = Math.abs(now - dt);
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
 
-      $('#inputForm').submit(function (e) {
-        e.preventDefault();
-        const formData = $(this).serializeArray();
-        const dataObj = {};
-        formData.forEach(item => dataObj[item.name] = item.value);
-        
-        table.row.add([
-          no++,
-          dataObj.Activity,
-          dataObj.Equip,
-          dataObj.Model,
-          dataObj.Downtime,
-          dataObj.CompCode,
-          dataObj.Resp,
-          dataObj.Remaks.replace(/\n/g, "<br>"),
-          dataObj.EstRFU,
-          dataObj.Aging,
-          '<button class="btn btn-danger btn-sm deleteBtn">Hapus</button>'
-        ]).draw(false);
+  function addRow(data) {
+    const aging = calculateAging(data.downtime);
+    table.row.add([
+      table.rows().count() + 1,
+      data.activity,
+      data.equip,
+      data.model,
+      data.downtime,
+      data.compcode,
+      data.status,
+      data.statusgb,
+      data.resp,
+      data.remarks,
+      data.estrfu,
+      aging,
+      `<button class="deleteBtn">Hapus</button>`
+    ]).draw();
+  }
 
-        $('#addModal').modal('hide');
-      });
+  $(document).ready(function () {
+    table = $('#equipmentTable').DataTable();
 
-      $('#equipmentTable tbody').on('click', '.deleteBtn', function () {
-        table.row($(this).parents('tr')).remove().draw();
-      });
+    $('#maintenanceForm').on('submit', function (e) {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(this).entries());
+      addRow(formData);
+      this.reset();
+      toggleForm();
     });
-  </script>
+
+    $('#equipmentTable tbody').on('click', '.deleteBtn', function () {
+      table.row($(this).parents('tr')).remove().draw();
+    });
+  });
+</script>
 
 </body>
 </html>

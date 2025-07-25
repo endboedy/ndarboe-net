@@ -1,87 +1,82 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Equipment Maintenance</title>
+  <meta charset="UTF-8">
+  <title>Activity Table</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <style>
-    table.dataTable td, table.dataTable th {
-      white-space: nowrap;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: center;
+      word-wrap: break-word;
     }
     input, textarea {
       width: 100%;
-    }
-    .form-row {
+      padding: 6px;
       margin-bottom: 10px;
     }
     .form-container {
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 1400px;
+      max-width: 800px;
+      margin: auto;
     }
-    .form-container h3 {
-      margin-top: 0;
+    .action-btn {
+      padding: 4px 10px;
+      margin: 0 2px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>📋 Equipment Maintenance</h2>
-
-  <!-- Form Input -->
   <div class="form-container">
-    <h3>➕ Add New Entry</h3>
-    <div class="form-row">
-      <label>Activity: <input type="text" id="activity" /></label>
-      <label>Equip: <input type="text" id="equip" /></label>
-      <label>Model: <input type="text" id="model" /></label>
-      <label>Downtime (yyyy-mm-dd): <input type="date" id="downtime" /></label>
-    </div>
-    <div class="form-row">
-      <label>Comp Code: <input type="text" id="compCode" /></label>
-      <label>Resp: <input type="text" id="resp" /></label>
-    </div>
-    <div class="form-row">
-      <label>Remaks: <textarea id="remaks" rows="2"></textarea></label>
-      <label>Est RFU (yyyy-mm-dd): <input type="date" id="estRfu" /></label>
-    </div>
+    <h2>Add Activity</h2>
+    <input type="text" id="activity" placeholder="Activity">
+    <input type="text" id="equip" placeholder="Equip">
+    <input type="text" id="model" placeholder="Model">
+    <input type="datetime-local" id="downtime" placeholder="Downtime">
+    <input type="text" id="compCode" placeholder="Comp Code">
+    <input type="text" id="resp" placeholder="Resp">
+    <textarea id="remaks" placeholder="Remaks"></textarea>
+    <input type="datetime-local" id="estRfu" placeholder="Est RFU">
     <button onclick="addRow()">Add</button>
   </div>
 
-  <!-- Table -->
-  <table id="maintenanceTable" class="display nowrap" style="width:100%">
+  <table id="activityTable">
     <thead>
       <tr>
-        <th>No</th>
-        <th>Activity</th>
-        <th>Equip</th>
-        <th>Model</th>
-        <th>Downtime *</th>
-        <th>Comp Code</th>
-        <th>Status</th>
-        <th>Status Gb</th>
-        <th>Resp</th>
-        <th>Remaks</th>
-        <th>Est RFU</th>
-        <th>Aging</th>
-        </tr>
+        <th style="width: 5%;">No</th>
+        <th style="width: 10%;">Activity</th>
+        <th style="width: 10%;">Equip</th>
+        <th style="width: 10%;">Model</th>
+        <th style="width: 13%;">Downtime</th>
+        <th style="width: 10%;">Comp Code</th>
+        <th style="width: 10%;">Resp</th>
+        <th style="width: 12%;">Remaks</th>
+        <th style="width: 13%;">Est RFU</th>
+        <th style="width: 7%;">Aging (H)</th>
+        <th style="width: 10%;">Action</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
-    let table;
-
-    function calculateAging(downtimeStr) {
-      if (!downtimeStr) return '';
+    function calculateAging(downtime) {
       const now = new Date();
-      const downtime = new Date(downtimeStr);
-      const diff = Math.floor((now - downtime) / (1000 * 60 * 60 * 24));
-      return diff >= 0 ? diff : 0;
+      const dt = new Date(downtime);
+      const diff = now - dt;
+      return (diff / (1000 * 60 * 60)).toFixed(1); // in hours
     }
 
     function addRow() {
@@ -91,49 +86,63 @@
       const downtime = $('#downtime').val();
       const compCode = $('#compCode').val();
       const resp = $('#resp').val();
-      const remaks = $('#remaks').val().replace(/\n/g, '<br>');
+      const remaks = $('#remaks').val().replace(/
+/g, '<br>');
       const estRfu = $('#estRfu').val();
       const aging = calculateAging(downtime);
 
-      table.row.add([
-        '', activity, equip, model, downtime, compCode, status,
-        statusGb, resp, remaks, estRfu, aging,
-        `<button onclick="editRow(this)">✏️</button> <button onclick="deleteRow(this)">🗑️</button>`
-      ]).draw(false);
+      if (!activity || !equip || !downtime) {
+        alert("Please fill required fields!");
+        return;
+      }
 
-      // Clear inputs
+      const index = $('#activityTable tbody tr').length + 1;
+      const row = `
+        <tr>
+          <td>${index}</td>
+          <td>${activity}</td>
+          <td>${equip}</td>
+          <td>${model}</td>
+          <td>${downtime}</td>
+          <td>${compCode}</td>
+          <td>${resp}</td>
+          <td>${remaks}</td>
+          <td>${estRfu}</td>
+          <td>${aging}</td>
+          <td>
+            <button class="action-btn" onclick="editRow(this)">Edit</button>
+            <button class="action-btn" onclick="deleteRow(this)">Delete</button>
+          </td>
+        </tr>`;
+      $('#activityTable tbody').append(row);
       $('input, textarea').val('');
     }
 
     function deleteRow(btn) {
-      const row = $(btn).closest('tr');
-      table.row(row).remove().draw();
+      $(btn).closest('tr').remove();
+      renumberRows();
     }
 
     function editRow(btn) {
       const row = $(btn).closest('tr');
-      const data = table.row(row).data();
-      const values = prompt("Edit data (pisahkan dengan tanda '|'):\n" +
-        "Activity|Equip|Model|Downtime|CompCode|Status|StatusGb|Resp|Remaks|EstRFU", 
-        data.slice(1, 11).join('|'));
-      if (values) {
-        const arr = values.split('|');
-        const aging = calculateAging(arr[3]);
-        table.row(row).data([
-          data[0], ...arr, aging,
-          `<button onclick="editRow(this)">✏️</button> <button onclick="deleteRow(this)">🗑️</button>`
-        ]).draw(false);
-      }
+      const cells = row.children('td');
+      $('#activity').val(cells.eq(1).text());
+      $('#equip').val(cells.eq(2).text());
+      $('#model').val(cells.eq(3).text());
+      $('#downtime').val(cells.eq(4).text());
+      $('#compCode').val(cells.eq(5).text());
+      $('#resp').val(cells.eq(6).text());
+      $('#remaks').val(cells.eq(7).html().replace(/<br>/g, '\n'));
+      $('#estRfu').val(cells.eq(8).text());
+      row.remove();
+      renumberRows();
     }
 
-    $(document).ready(function () {
-      table = $('#maintenanceTable').DataTable({
-        responsive: true,
-        columnDefs: [{
-          targets: 0,
-          orderable: false,
-          searchable: false,
-          render: function (data, type, row, meta) {
-            return meta.row + 1;
-          }
-        }]
+    function renumberRows() {
+      $('#activityTable tbody tr').each(function(index) {
+        $(this).children('td').eq(0).text(index + 1);
+      });
+    }
+  </script>
+</body>
+</html>

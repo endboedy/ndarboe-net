@@ -1,105 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Equipment Maintenance</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        h2 {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-        }
-        h2::before {
-            content: "📋";
-            margin-right: 10px;
-        }
-        table.dataTable th,
-        table.dataTable td {
-            white-space: nowrap;
-            text-align: left;
-        }
-        td, th {
-            font-size: 13px;
-        }
-        .dataTables_wrapper .dataTables_filter input {
-            width: 150px;
-        }
-        .hapus-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .hapus-btn:hover {
-            background-color: #c0392b;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>📋 Equipment Maintenance</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+    .dataTables_wrapper .dataTables_filter {
+      float: right;
+      text-align: right;
+    }
+    table.dataTable td {
+      white-space: nowrap;
+    }
+    th, td {
+      font-size: 14px;
+    }
+    .modal input, .modal textarea {
+      font-size: 14px;
+    }
+    .modal-title {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Equipment Maintenance</h2>
+  <h4><img src="https://cdn-icons-png.flaticon.com/512/942/942748.png" width="24"> Equipment Maintenance</h4>
 
-<table id="equipmentTable" class="display" style="width:100%">
+  <button class="btn btn-success mb-2" id="addBtn">➕ Add</button>
+
+  <table id="equipmentTable" class="display table table-bordered table-striped">
     <thead>
-        <tr>
-            <th style="width: 30px;">No</th>
-            <th style="width: 100px;">Activity</th>
-            <th style="width: 80px;">Equip</th>
-            <th style="width: 60px;">Model</th>
-            <th style="width: 100px;">Downtime *</th>
-            <th style="width: 150px;">Comp Code</th>
-            <th style="width: 60px;">Status</th>
-            <th style="width: 80px;">Status Gb</th>
-            <th style="width: 60px;">Resp</th>
-            <th style="width: 250px;">Remaks</th>
-            <th style="width: 100px;">Est RFU</th>
-            <th style="width: 60px;">Aging</th>
-            <th style="width: 50px;">Aksi</th>
-        </tr>
+      <tr>
+        <th>No</th>
+        <th>Activity</th>
+        <th>Equip</th>
+        <th>Model</th>
+        <th>Downtime *</th>
+        <th>Comp Code</th>
+        <th>Status</th>
+        <th>Status Gb</th>
+        <th>Resp</th>
+        <th>Remaks</th>
+        <th>Est RFU</th>
+        <th>Aging</th>
+        <th>Aksi</th>
+      </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>Hauling</td>
-            <td>WT6006</td>
-            <td>773</td>
-            <td>15-Jul-2025</td>
-            <td>1000-Engine</td>
-            <td>IP</td>
-            <td>LTR</td>
-            <td>TU</td>
-            <td>
-                BD W/S Transmission<br>
-                Cant Shifting - WS<br>
-                New setting<br>
-                Konfigurasi machine speed limit MP > TU<br>
-                Continue: Drive EG<br>
-                (Compressor) Broken - Inspect cam shaft E/G
-            </td>
-            <td>31-Jul-2025</td>
-            <td>40</td>
-            <td><button class="hapus-btn">Hapus</button></td>
-        </tr>
-        <!-- Tambah baris lain di sini -->
-    </tbody>
-</table>
+    <tbody></tbody>
+  </table>
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
+  <!-- Modal -->
+  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form id="inputForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Add Equipment Maintenance</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label>Activity</label>
+                <input type="text" class="form-control" name="Activity" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label>Equip</label>
+                <input type="text" class="form-control" name="Equip" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label>Model</label>
+                <input type="text" class="form-control" name="Model" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label>Downtime *</label>
+                <input type="date" class="form-control" name="Downtime" required>
+              </div>
+              <div class="form-group col-md-4">
+                <label>Comp Code</label>
+                <input type="text" class="form-control" name="CompCode">
+              </div>
+              <div class="form-group col-md-4">
+                <label>Status</label>
+                <input type="text" class="form-control" name="Status">
+              </div>
+              <div class="form-group col-md-4">
+                <label>Status Gb</label>
+                <input type="text" class="form-control" name="StatusGb">
+              </div>
+              <div class="form-group col-md-4">
+                <label>Resp</label>
+                <input type="text" class="form-control" name="Resp">
+              </div>
+              <div class="form-group col-md-4">
+                <label>Est RFU</label>
+                <input type="date" class="form-control" name="EstRFU">
+              </div>
+              <div class="form-group col-md-8">
+                <label>Remaks</label>
+                <textarea class="form-control" name="Remaks" rows="2"></textarea>
+              </div>
+              <div class="form-group col-md-4">
+                <label>Aging</label>
+                <input type="number" class="form-control" name="Aging">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Section -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let table;
+    let no = 1;
+
     $(document).ready(function () {
-        $('#equipmentTable').DataTable({
-            scrollX: true
-        });
+      table = $('#equipmentTable').DataTable();
+
+      $('#addBtn').click(function () {
+        $('#inputForm')[0].reset();
+        $('#addModal').modal('show');
+      });
+
+      $('#inputForm').submit(function (e) {
+        e.preventDefault();
+        const formData = $(this).serializeArray();
+        const dataObj = {};
+        formData.forEach(item => dataObj[item.name] = item.value);
+        
+        table.row.add([
+          no++,
+          dataObj.Activity,
+          dataObj.Equip,
+          dataObj.Model,
+          dataObj.Downtime,
+          dataObj.CompCode,
+          dataObj.Status,
+          dataObj.StatusGb,
+          dataObj.Resp,
+          dataObj.Remaks.replace(/\n/g, "<br>"),
+          dataObj.EstRFU,
+          dataObj.Aging,
+          '<button class="btn btn-danger btn-sm deleteBtn">Hapus</button>'
+        ]).draw(false);
+
+        $('#addModal').modal('hide');
+      });
+
+      $('#equipmentTable tbody').on('click', '.deleteBtn', function () {
+        table.row($(this).parents('tr')).remove().draw();
+      });
     });
-</script>
+  </script>
 
 </body>
 </html>

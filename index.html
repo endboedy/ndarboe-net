@@ -1,104 +1,135 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daily Job Input</title>
+  <title>📝 Daily Job Input</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      font-size: 12px;
-      margin: 20px;
+      font-size: 13px;
+      padding: 20px;
+      background: #f9f9f9;
     }
-    table {
-      width: 100%;
-    }
-    td {
-      word-wrap: break-word;
-      white-space: normal;
-      max-width: 200px;
-    }
-    input, select {
-      font-size: 12px;
-      padding: 4px;
+    h2 {
+      color: #333;
     }
     #inputForm {
       margin-bottom: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: inline-block;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    input, select {
+      font-size: 13px;
+      padding: 5px;
+      margin-left: 5px;
+    }
+    button[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+    table.dataTable tbody td {
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background-color: #b02a37;
     }
   </style>
 </head>
 <body>
 
-<h2>📝 Daily Job Input</h2>
+  <h2>📝 Daily Job Input</h2>
 
-<form id="inputForm">
-  <label>Tanggal: <input type="date" id="tanggal" required></label>
-  <label>Shift: 
-    <select id="shift">
-      <option>DS</option>
-      <option>NS</option>
-    </select>
-  </label>
-  <label>PIT: <input type="text" id="pit" required></label>
-  <label>Aktivitas: <input type="text" id="aktivitas" required></label>
-  <label>Unit: <input type="text" id="unit" required></label>
-  <label>Operator: <input type="text" id="operator"></label>
-  <label>Jam Kerja: <input type="number" id="jamKerja" step="0.1"></label>
-  <label>Remark: <input type="text" id="remark"></label>
-  <button type="submit">Tambah</button>
-</form>
+  <form id="inputForm">
+    <label>Tanggal: <input type="date" id="tanggal" required></label>
+    <label>Shift:
+      <select id="shift">
+        <option>DS</option>
+        <option>NS</option>
+      </select>
+    </label>
+    <label>PIT: <input type="text" id="pit" required></label>
+    <label>Aktivitas: <input type="text" id="aktivitas" required></label>
+    <label>Unit: <input type="text" id="unit" required></label>
+    <label>Operator: <input type="text" id="operator"></label>
+    <label>Jam Kerja: <input type="number" id="jamKerja" step="0.1"></label>
+    <label>Remark: <input type="text" id="remark"></label>
+    <button type="submit">Tambah</button>
+  </form>
 
-<table id="jobTable" class="display">
-  <thead>
-    <tr>
-      <th>Tanggal</th>
-      <th>Shift</th>
-      <th>PIT</th>
-      <th>Aktivitas</th>
-      <th>Unit</th>
-      <th>Operator</th>
-      <th>Jam Kerja</th>
-      <th>Remark</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <table id="jobTable" class="display">
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Shift</th>
+        <th>PIT</th>
+        <th>Aktivitas</th>
+        <th>Unit</th>
+        <th>Operator</th>
+        <th>Jam Kerja</th>
+        <th>Remark</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
-  let table;
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    let table;
 
-  $(document).ready(function() {
-    table = $('#jobTable').DataTable();
+    $(document).ready(function() {
+      table = $('#jobTable').DataTable();
 
-    $('#inputForm').on('submit', function(e) {
-      e.preventDefault();
+      $('#inputForm').on('submit', function(e) {
+        e.preventDefault();
 
-      const rowData = [
-        $('#tanggal').val(),
-        $('#shift').val(),
-        $('#pit').val(),
-        $('#aktivitas').val(),
-        $('#unit').val(),
-        $('#operator').val(),
-        $('#jamKerja').val(),
-        $('#remark').val(),
-        '<button class="delete-btn">Hapus</button>'
-      ];
+        const rowData = [
+          $('#tanggal').val(),
+          $('#shift').val(),
+          $('#pit').val(),
+          $('#aktivitas').val(),
+          $('#unit').val(),
+          $('#operator').val(),
+          $('#jamKerja').val(),
+          $('#remark').val(),
+          '<button class="delete-btn">Hapus</button>'
+        ];
 
-      table.row.add(rowData).draw();
-      this.reset();
+        table.row.add(rowData).draw();
+        this.reset();
+      });
+
+      $('#jobTable tbody').on('click', '.delete-btn', function() {
+        table.row($(this).parents('tr')).remove().draw();
+      });
     });
-
-    $('#jobTable tbody').on('click', '.delete-btn', function() {
-      table.row($(this).parents('tr')).remove().draw();
-    });
-  });
-</script>
+  </script>
 
 </body>
 </html>

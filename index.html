@@ -1,148 +1,240 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Activity Table</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>Activity Downtime Tracker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      margin: 20px;
+      font-size: 13px;
     }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+      flex: 1 1 150px;
+    }
+
+    input, textarea, select {
+      padding: 5px;
+      font-size: 13px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 60px;
+    }
+
+    #addBtn {
+      height: 40px;
+      padding: 0 20px;
+      background-color: #2d89ef;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
       table-layout: fixed;
     }
+
     th, td {
-      border: 1px solid #999;
-      padding: 8px;
-      text-align: center;
-      word-wrap: break-word;
-    }
-    input, textarea {
-      width: 100%;
       padding: 6px;
-      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+      word-wrap: break-word;
+      font-size: 12px;
     }
-    .form-container {
-      max-width: 800px;
-      margin: auto;
-    }
-    .action-btn {
-      padding: 4px 10px;
-      margin: 0 2px;
+
+    /* Width control per column */
+    th:nth-child(1), td:nth-child(1)   { width: 40px; }    /* No */
+    th:nth-child(2), td:nth-child(2)   { width: 100px; }   /* Activity */
+    th:nth-child(3), td:nth-child(3)   { width: 80px; }    /* Equip */
+    th:nth-child(4), td:nth-child(4)   { width: 80px; }    /* Model */
+    th:nth-child(5), td:nth-child(5)   { width: 130px; }   /* Downtime */
+    th:nth-child(6), td:nth-child(6)   { width: 100px; }   /* Comp Code */
+    th:nth-child(7), td:nth-child(7)   { width: 80px; }    /* Resp */
+    th:nth-child(8), td:nth-child(8)   { width: 250px; }   /* Remaks */
+    th:nth-child(9), td:nth-child(9)   { width: 130px; }   /* Est. RFU */
+    th:nth-child(10), td:nth-child(10){ width: 80px; }     /* Aging */
+    th:nth-child(11), td:nth-child(11){ width: 90px; }     /* Actions */
+
+    button.action {
+      margin-right: 5px;
+      padding: 3px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: none;
       cursor: pointer;
     }
+
+    .edit-btn { background-color: #ffc107; color: black; }
+    .delete-btn { background-color: #e74c3c; color: white; }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Add Activity</h2>
-    <input type="text" id="activity" placeholder="Activity">
-    <input type="text" id="equip" placeholder="Equip">
-    <input type="text" id="model" placeholder="Model">
-    <input type="datetime-local" id="downtime" placeholder="Downtime">
-    <input type="text" id="compCode" placeholder="Comp Code">
-    <input type="text" id="resp" placeholder="Resp">
-    <textarea id="remaks" placeholder="Remaks"></textarea>
-    <input type="datetime-local" id="estRfu" placeholder="Est RFU">
-    <button onclick="addRow()">Add</button>
-  </div>
 
-  <table id="activityTable">
+  <h2>🔧 Activity Downtime Tracker</h2>
+
+  <form id="dataForm">
+    <label>Activity
+      <input type="text" id="activity" required />
+    </label>
+    <label>Equip
+      <input type="text" id="equip" required />
+    </label>
+    <label>Model
+      <input type="text" id="model" required />
+    </label>
+    <label>Downtime
+      <input type="datetime-local" id="downtime" required />
+    </label>
+    <label>Comp Code
+      <input type="text" id="compCode" />
+    </label>
+    <label>Resp
+      <input type="text" id="resp" />
+    </label>
+    <label style="flex: 1 1 100%;">
+      Remaks
+      <textarea id="remaks"></textarea>
+    </label>
+    <label>Est. RFU
+      <input type="datetime-local" id="estRfu" />
+    </label>
+    <button type="submit" id="addBtn">Add</button>
+  </form>
+
+  <table id="data-table">
     <thead>
       <tr>
-        <th style="width: 5%;">No</th>
-        <th style="width: 10%;">Activity</th>
-        <th style="width: 10%;">Equip</th>
-        <th style="width: 10%;">Model</th>
-        <th style="width: 13%;">Downtime</th>
-        <th style="width: 10%;">Comp Code</th>
-        <th style="width: 10%;">Resp</th>
-        <th style="width: 12%;">Remaks</th>
-        <th style="width: 13%;">Est RFU</th>
-        <th style="width: 7%;">Aging (H)</th>
-        <th style="width: 10%;">Action</th>
+        <th>No</th>
+        <th>Activity</th>
+        <th>Equip</th>
+        <th>Model</th>
+        <th>Downtime</th>
+        <th>Comp Code</th>
+        <th>Resp</th>
+        <th>Remaks</th>
+        <th>Est. RFU</th>
+        <th>Aging</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
+    const form = document.getElementById("dataForm");
+    const tableBody = document.querySelector("#data-table tbody");
+    let editIndex = null;
+
     function calculateAging(downtime) {
       const now = new Date();
       const dt = new Date(downtime);
-      const diff = now - dt;
-      return (diff / (1000 * 60 * 60)).toFixed(1); // in hours
+      const diff = Math.floor((now - dt) / (1000 * 60 * 60 * 24));
+      return `${diff} d`;
     }
 
-    function addRow() {
-      const activity = $('#activity').val();
-      const equip = $('#equip').val();
-      const model = $('#model').val();
-      const downtime = $('#downtime').val();
-      const compCode = $('#compCode').val();
-      const resp = $('#resp').val();
-      const remaks = $('#remaks').val().replace(/
-/g, '<br>');
-      const estRfu = $('#estRfu').val();
-      const aging = calculateAging(downtime);
-
-      if (!activity || !equip || !downtime) {
-        alert("Please fill required fields!");
-        return;
-      }
-
-      const index = $('#activityTable tbody tr').length + 1;
-      const row = `
-        <tr>
-          <td>${index}</td>
-          <td>${activity}</td>
-          <td>${equip}</td>
-          <td>${model}</td>
-          <td>${downtime}</td>
-          <td>${compCode}</td>
-          <td>${resp}</td>
-          <td>${remaks}</td>
-          <td>${estRfu}</td>
-          <td>${aging}</td>
+    function renderTable() {
+      const data = JSON.parse(localStorage.getItem("downtimeData") || "[]");
+      tableBody.innerHTML = "";
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.activity}</td>
+          <td>${item.equip}</td>
+          <td>${item.model}</td>
+          <td>${item.downtime}</td>
+          <td>${item.compCode}</td>
+          <td>${item.resp}</td>
+          <td>${item.remaks}</td>
+          <td>${item.estRfu}</td>
+          <td>${calculateAging(item.downtime)}</td>
           <td>
-            <button class="action-btn" onclick="editRow(this)">Edit</button>
-            <button class="action-btn" onclick="deleteRow(this)">Delete</button>
+            <button class="action edit-btn" onclick="editRow(${index})">Edit</button>
+            <button class="action delete-btn" onclick="deleteRow(${index})">Delete</button>
           </td>
-        </tr>`;
-      $('#activityTable tbody').append(row);
-      $('input, textarea').val('');
-    }
-
-    function deleteRow(btn) {
-      $(btn).closest('tr').remove();
-      renumberRows();
-    }
-
-    function editRow(btn) {
-      const row = $(btn).closest('tr');
-      const cells = row.children('td');
-      $('#activity').val(cells.eq(1).text());
-      $('#equip').val(cells.eq(2).text());
-      $('#model').val(cells.eq(3).text());
-      $('#downtime').val(cells.eq(4).text());
-      $('#compCode').val(cells.eq(5).text());
-      $('#resp').val(cells.eq(6).text());
-      $('#remaks').val(cells.eq(7).html().replace(/<br>/g, '\n'));
-      $('#estRfu').val(cells.eq(8).text());
-      row.remove();
-      renumberRows();
-    }
-
-    function renumberRows() {
-      $('#activityTable tbody tr').each(function(index) {
-        $(this).children('td').eq(0).text(index + 1);
+        `;
+        tableBody.appendChild(row);
       });
     }
+
+    function resetForm() {
+      form.reset();
+      editIndex = null;
+      document.getElementById("addBtn").textContent = "Add";
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const item = {
+        activity: document.getElementById("activity").value,
+        equip: document.getElementById("equip").value,
+        model: document.getElementById("model").value,
+        downtime: document.getElementById("downtime").value,
+        compCode: document.getElementById("compCode").value,
+        resp: document.getElementById("resp").value,
+        remaks: document.getElementById("remaks").value.replace(/\n/g, "<br>"),
+        estRfu: document.getElementById("estRfu").value,
+      };
+      let data = JSON.parse(localStorage.getItem("downtimeData") || "[]");
+      if (editIndex === null) {
+        data.push(item);
+      } else {
+        data[editIndex] = item;
+      }
+      localStorage.setItem("downtimeData", JSON.stringify(data));
+      renderTable();
+      resetForm();
+    });
+
+    function editRow(index) {
+      const data = JSON.parse(localStorage.getItem("downtimeData") || "[]");
+      const item = data[index];
+      document.getElementById("activity").value = item.activity;
+      document.getElementById("equip").value = item.equip;
+      document.getElementById("model").value = item.model;
+      document.getElementById("downtime").value = item.downtime;
+      document.getElementById("compCode").value = item.compCode;
+      document.getElementById("resp").value = item.resp;
+      document.getElementById("remaks").value = item.remaks.replace(/<br>/g, "\n");
+      document.getElementById("estRfu").value = item.estRfu;
+      editIndex = index;
+      document.getElementById("addBtn").textContent = "Update";
+    }
+
+    function deleteRow(index) {
+      let data = JSON.parse(localStorage.getItem("downtimeData") || "[]");
+      data.splice(index, 1);
+      localStorage.setItem("downtimeData", JSON.stringify(data));
+      renderTable();
+    }
+
+    window.onload = renderTable;
   </script>
 </body>
 </html>

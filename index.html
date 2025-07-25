@@ -1,150 +1,99 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📝 Daily Job Input</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <title>Maintenance Table</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
   <style>
     body {
       font-family: Arial, sans-serif;
-      font-size: 13px;
       padding: 20px;
-      background: #f9f9f9;
-    }
-    h2 {
-      color: #333;
-    }
-    #inputForm {
-      margin-bottom: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    label {
-      display: inline-block;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    input, select {
-      font-size: 13px;
-      padding: 5px;
-      margin-left: 5px;
-    }
-    button[type="submit"] {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    button[type="submit"]:hover {
-      background-color: #0056b3;
     }
     table.dataTable tbody td {
-      word-wrap: break-word;
-      white-space: normal;
+      vertical-align: top;
+      white-space: pre-line;
     }
-    .delete-btn {
+    .btn-hapus {
       background-color: #dc3545;
       color: white;
       border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 5px 10px;
+      border-radius: 5px;
       cursor: pointer;
-    }
-    .delete-btn:hover {
-      background-color: #b02a37;
     }
   </style>
 </head>
 <body>
 
-  <h2>📝 Daily Job Input</h2>
+  <h2>📋 Equipment Maintenance</h2>
+  <table id="maintenanceTable" class="display" style="width:100%">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Activity</th>
+        <th>Equip</th>
+        <th>Model</th>
+        <th>Downtime *</th>
+        <th>Comp Code</th>
+        <th>Status</th>
+        <th>Status Gb</th>
+        <th>Resp</th>
+        <th>Remaks</th>
+        <th>Est RFU</th>
+        <th>Aging</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Hauling</td>
+        <td>WT6006</td>
+        <td>773</td>
+        <td>15-Jul-2025</td>
+        <td>1000-Engine</td>
+        <td>IP</td>
+        <td>LTR</td>
+        <td>TU</td>
+        <td>
+BD W/S Transmission  
+Cant Shifting - WS  
+New setting  
+Configurasi machine  
+speed limit MP &gt; TU  
+Continue: Drive EG  
+(Compressor) Broken: -  
+Inspect cam shaft E/G  
+Check TM Suspensi  
+RR drop part bearing  
+dilemani hijau Part  
+Kanibal: - ECM TM to  
+WT6005 4700781490  
+Job Done: Followup  
+4700778954 followup  
+issue - Order sealkit -  
+Reseal Hyd motor &  
+Coupling suction &gt;  
+WT6005  
+(490041868) Ready  
+on site Slack adjuster  
+CN to CO4356  
+(4700777301)
+        </td>
+        <td>31-Jul-2025</td>
+        <td>40</td>
+        <td><button class="btn-hapus">Hapus</button></td>
+      </tr>
+    </tbody>
+  </table>
 
-  <form id="inputForm">
-  <label>Activity: <input type="text" id="activity" required></label>
-  <label>Equip: <input type="text" id="equip" required></label>
-  <label>Model: <input type="text" id="model" required></label>
-  <label>Downtime*: <input type="text" id="downtime" required></label>
-  <label>Comp Code: <input type="text" id="compCode" required></label>
-  <label>Status: <input type="text" id="status" required></label>
-  <label>Status Gb: <input type="text" id="statusGb" required></label>
-  <label>Resp: <input type="text" id="resp" required></label>
-  <label>Remaks: <input type="text" id="remaks" required></label>
-  <label>Est RFU: <input type="text" id="estRfu" required></label>
-  <label>Aging: <input type="text" id="aging" required></label>
-  <button type="submit">Tambah</button>
-</form>
-
-<table id="jobTable" class="display">
-  <thead>
-    <tr>
-      <th>No</th>
-      <th>Activity</th>
-      <th>Equip</th>
-      <th>Model</th>
-      <th>Downtime *</th>
-      <th>Comp Code</th>
-      <th>Status</th>
-      <th>Status Gb</th>
-      <th>Resp</th>
-      <th>Remaks</th>
-      <th>Est RFU</th>
-      <th>Aging</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
-  let table;
-
-  $(document).ready(function() {
-    table = $('#jobTable').DataTable();
-
-    $('#inputForm').on('submit', function(e) {
-      e.preventDefault();
-
-      const rowData = [
-        table.rows().count() + 1,
-        $('#activity').val(),
-        $('#equip').val(),
-        $('#model').val(),
-        $('#downtime').val(),
-        $('#compCode').val(),
-        $('#status').val(),
-        $('#statusGb').val(),
-        $('#resp').val(),
-        $('#remaks').val(),
-        $('#estRfu').val(),
-        $('#aging').val(),
-        '<button class="delete-btn">Hapus</button>'
-      ];
-
-      table.row.add(rowData).draw();
-      this.reset();
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#maintenanceTable').DataTable();
     });
-
-    $('#jobTable tbody').on('click', '.delete-btn', function() {
-      table.row($(this).parents('tr')).remove().draw();
-      renumberRows();
-    });
-
-    function renumberRows() {
-      table.rows().every(function(index) {
-        this.data()[0] = index + 1;
-        this.invalidate();
-      });
-      table.draw();
-    }
-  });
-</script>
-
+  </script>
 </body>
 </html>

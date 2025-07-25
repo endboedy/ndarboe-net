@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Equipment Downtime Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>🚜 Equipment Downtime Tracker</h2>
+
+  <form id="entryForm">
+    <input type="text" placeholder="Activity" id="activity" required />
+    <input type="text" placeholder="No" id="no" required />
+    <input type="text" placeholder="Equip" id="equip" required />
+    <input type="text" placeholder="Model" id="model" required />
+    <input type="datetime-local" id="downtime" required />
+    <input type="datetime-local" id="uptime" required />
+    <input type="text" placeholder="Comp Code" id="compCode" />
+    <input type="text" placeholder="Status" id="status" />
+    <input type="text" placeholder="Gb" id="gb" />
+    <input type="text" placeholder="Resp" id="resp" />
+    <input type="text" placeholder="Remarks" id="remarks" />
+    <input type="text" placeholder="Est" id="est" />
+    <input type="number" placeholder="Aging" id="aging" />
+    <input type="number" placeholder="Est Aging" id="estAging" />
+    <input type="text" placeholder="Tyre" id="tyre" />
+
+    <button type="submit">Save</button>
+    <button type="button" onclick="clearForm()">Clear</button>
+  </form>
+
+  <hr>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Activity</th><th>No</th><th>Equip</th><th>Model</th>
+        <th>Downtime</th><th>Uptime</th><th>Comp Code</th>
+        <th>Status</th><th>Gb</th><th>Resp</th><th>Remarks</th>
+        <th>Est</th><th>Aging</th><th>Est Aging</th><th>Tyre</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>

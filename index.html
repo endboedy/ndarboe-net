@@ -1,142 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>Equipment Maintenance</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    h2 {
-      display: flex;
-      align-items: center;
-    }
-    h2::before {
-      content: '📋';
-      margin-right: 10px;
-    }
-    #addForm {
-      display: none;
-      margin-bottom: 20px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-    }
-    #addForm input, #addForm textarea {
-      margin: 5px;
-      padding: 5px;
-      width: 200px;
-    }
-    table.dataTable td {
+    table.dataTable td, table.dataTable th {
       white-space: nowrap;
     }
-    .deleteBtn {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
+    input, textarea {
+      width: 100%;
     }
-    .addBtn {
+    .form-row {
       margin-bottom: 10px;
-      padding: 8px 15px;
-      background-color: #2ecc71;
-      color: white;
-      border: none;
-      cursor: pointer;
+    }
+    .form-container {
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 1400px;
+    }
+    .form-container h3 {
+      margin-top: 0;
     }
   </style>
 </head>
 <body>
+  <h2>📋 Equipment Maintenance</h2>
 
-<h2>Equipment Maintenance</h2>
+  <!-- Form Input -->
+  <div class="form-container">
+    <h3>➕ Add New Entry</h3>
+    <div class="form-row">
+      <label>Activity: <input type="text" id="activity" /></label>
+      <label>Equip: <input type="text" id="equip" /></label>
+      <label>Model: <input type="text" id="model" /></label>
+      <label>Downtime (yyyy-mm-dd): <input type="date" id="downtime" /></label>
+    </div>
+    <div class="form-row">
+      <label>Comp Code: <input type="text" id="compCode" /></label>
+      <label>Resp: <input type="text" id="resp" /></label>
+    </div>
+    <div class="form-row">
+      <label>Remaks: <textarea id="remaks" rows="2"></textarea></label>
+      <label>Est RFU (yyyy-mm-dd): <input type="date" id="estRfu" /></label>
+    </div>
+    <button onclick="addRow()">Add</button>
+  </div>
 
-<button class="addBtn" onclick="toggleForm()">➕ Add</button>
+  <!-- Table -->
+  <table id="maintenanceTable" class="display nowrap" style="width:100%">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Activity</th>
+        <th>Equip</th>
+        <th>Model</th>
+        <th>Downtime *</th>
+        <th>Comp Code</th>
+        <th>Status</th>
+        <th>Status Gb</th>
+        <th>Resp</th>
+        <th>Remaks</th>
+        <th>Est RFU</th>
+        <th>Aging</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<div id="addForm">
-  <form id="maintenanceForm">
-    <input type="text" name="activity" placeholder="Activity" required>
-    <input type="text" name="equip" placeholder="Equip" required>
-    <input type="text" name="model" placeholder="Model">
-    <input type="date" name="downtime" required>
-    <input type="text" name="compcode" placeholder="Comp Code">
-    <input type="text" name="resp" placeholder="Resp">
-    <textarea name="remarks" placeholder="Remarks"></textarea>
-    <input type="date" name="estrfu">
-    <button type="submit">Add Data</button>
-  </form>
-</div>
+  <script>
+    let table;
 
-<table id="equipmentTable" class="display">
-  <thead>
-    <tr>
-      <th>No</th>
-      <th>Activity</th>
-      <th>Equip</th>
-      <th>Model</th>
-      <th>Downtime</th>
-      <th>Comp Code</th>
-      <th>Resp</th>
-      <th>Remarks</th>
-      <th>Est RFU</th>
-      <th>Aging</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    function calculateAging(downtimeStr) {
+      if (!downtimeStr) return '';
+      const now = new Date();
+      const downtime = new Date(downtimeStr);
+      const diff = Math.floor((now - downtime) / (1000 * 60 * 60 * 24));
+      return diff >= 0 ? diff : 0;
+    }
 
-<script>
-  let table;
+    function addRow() {
+      const activity = $('#activity').val();
+      const equip = $('#equip').val();
+      const model = $('#model').val();
+      const downtime = $('#downtime').val();
+      const compCode = $('#compCode').val();
+      const resp = $('#resp').val();
+      const remaks = $('#remaks').val().replace(/\n/g, '<br>');
+      const estRfu = $('#estRfu').val();
+      const aging = calculateAging(downtime);
 
-  function toggleForm() {
-    const form = document.getElementById("addForm");
-    form.style.display = form.style.display === "none" ? "block" : "none";
-  }
+      table.row.add([
+        '', activity, equip, model, downtime, compCode, status,
+        statusGb, resp, remaks, estRfu, aging,
+        `<button onclick="editRow(this)">✏️</button> <button onclick="deleteRow(this)">🗑️</button>`
+      ]).draw(false);
 
-  function calculateAging(downtime) {
-    const now = new Date();
-    const dt = new Date(downtime);
-    const diffTime = Math.abs(now - dt);
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  }
+      // Clear inputs
+      $('input, textarea').val('');
+    }
 
-  function addRow(data) {
-    const aging = calculateAging(data.downtime);
-    table.row.add([
-      table.rows().count() + 1,
-      data.activity,
-      data.equip,
-      data.model,
-      data.downtime,
-      data.compcode,
-      data.resp,
-      data.remarks,
-      data.estrfu,
-      aging,
-      `<button class="deleteBtn">Hapus</button>`
-    ]).draw();
-  }
+    function deleteRow(btn) {
+      const row = $(btn).closest('tr');
+      table.row(row).remove().draw();
+    }
 
-  $(document).ready(function () {
-    table = $('#equipmentTable').DataTable();
+    function editRow(btn) {
+      const row = $(btn).closest('tr');
+      const data = table.row(row).data();
+      const values = prompt("Edit data (pisahkan dengan tanda '|'):\n" +
+        "Activity|Equip|Model|Downtime|CompCode|Status|StatusGb|Resp|Remaks|EstRFU", 
+        data.slice(1, 11).join('|'));
+      if (values) {
+        const arr = values.split('|');
+        const aging = calculateAging(arr[3]);
+        table.row(row).data([
+          data[0], ...arr, aging,
+          `<button onclick="editRow(this)">✏️</button> <button onclick="deleteRow(this)">🗑️</button>`
+        ]).draw(false);
+      }
+    }
 
-    $('#maintenanceForm').on('submit', function (e) {
-      e.preventDefault();
-      const formData = Object.fromEntries(new FormData(this).entries());
-      addRow(formData);
-      this.reset();
-      toggleForm();
-    });
-
-    $('#equipmentTable tbody').on('click', '.deleteBtn', function () {
-      table.row($(this).parents('tr')).remove().draw();
-    });
-  });
-</script>
-
-</body>
-</html>
+    $(document).ready(function () {
+      table = $('#maintenanceTable').DataTable({
+        responsive: true,
+        columnDefs: [{
+          targets: 0,
+          orderable: false,
+          searchable: false,
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          }
+        }]

@@ -1,0 +1,50 @@
+[
+  {
+    "activity": "HAULING",
+    "equipment": "C04395",
+    "model": "777D",
+    "downtime": "2025-07-20T17:38:00",
+    "comp_code": "3030 - TRANSMISSI",
+    "resp": "CK",
+    "remarks": "Continue Progress; WP Transmisi by Rocom, WO: 4800006254 PO: Waiting",
+    "est_rfu": "2025-07-29T17:38:00",
+    "aging": 7,
+    "pit": "SITARUM"
+  },
+  {
+    "activity": "HAULING",
+    "equipment": "C04090",
+    "model": "777D",
+    "downtime": "2025-07-20T07:39:00",
+    "comp_code": "1100 - CYLINDER HEAD",
+    "resp": "CK",
+    "remarks": "Continue Progress; Replace Cyl Head and Replace Shaft Pulley",
+    "est_rfu": "2025-08-07T08:06:00",
+    "aging": 8,
+    "pit": "TABUHAN"
+  },
+  {
+    "activity": "HAULING",
+    "equipment": "C04313",
+    "model": "777D",
+    "downtime": "2025-07-21T07:27:00",
+    "comp_code": "1378 - ENGINE OIL COOLER",
+    "resp": "CK",
+    "remarks": "Continue Progress; W/Tire need Install Tyre pos3, 4, 5",
+    "est_rfu": "2025-07-26T18:00:00",
+    "aging": 7,
+    "pit": "SITARUM"
+  },
+  {
+    "activity": "HAULING",
+    "equipment": "C04424",
+    "model": "777D",
+    "downtime": "2025-07-23T07:10:00",
+    "comp_code": "3030 - TRANSMISSI",
+    "resp": "CP",
+    "remarks": "Continue Progress; Retorque tire",
+    "est_rfu": "2025-07-26T10:00:00",
+    "aging": 5,
+    "pit": "TABUHAN"
+  }
+]

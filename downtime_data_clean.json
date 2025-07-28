@@ -1,0 +1,38 @@
+[
+  {
+    "activity": "HAULING",
+    "equipment": "C04424",
+    "model": "777D",
+    "downtime": "2025-07-23T10:00:00",
+    "comp_code": "3030 - TRANSMISSI",
+    "resp": "CP",
+    "remarks": "Retorque tire",
+    "est_rfu": "2025-07-30T10:00:00",
+    "aging": 7,
+    "pit": "SITARUM"
+  },
+  {
+    "activity": "HAULING",
+    "equipment": "C04425",
+    "model": "777D",
+    "downtime": "2025-07-24T11:00:00",
+    "comp_code": "4040 - ENGINE",
+    "resp": "ME",
+    "remarks": "Oil leak repair",
+    "est_rfu": "2025-07-31T11:00:00",
+    "aging": 7,
+    "pit": "TABUHAN"
+  },
+  {
+    "activity": "HAULING",
+    "equipment": "C04426",
+    "model": "777D",
+    "downtime": "2025-07-25T09:30:00",
+    "comp_code": "5050 - ELECTRICAL",
+    "resp": "EL",
+    "remarks": "Battery replacement",
+    "est_rfu": "2025-08-01T09:30:00",
+    "aging": 7,
+    "pit": "SITARUM"
+  }
+]

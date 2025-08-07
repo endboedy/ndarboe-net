@@ -1,12 +1,31 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Monthly Plan</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Monthly Plan</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js
+  https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js
+  https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js
+  https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
+      authDomain: "monthly-plan-2baf5.firebaseapp.com",
+      projectId: "monthly-plan-2baf5",
+      storageBucket: "monthly-plan-2baf5.appspot.com",
+      messagingSenderId: "42911040784",
+      appId: "1:42911040784:web:5b54401d854b933b84d195",
+      measurementId: "G-LVY6V58JS0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const analytics = firebase.analytics();
+  </script>
 </head>
 <body>
+
     <div class="sidebar">
         <h2>Monthly Plan</h2>
         <ul>
@@ -44,3 +63,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

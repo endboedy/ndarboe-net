@@ -99,31 +99,12 @@ button:hover {
   background-color: #16a085;
 }
 
-/* Table styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
-}
-
-th, td {
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #ecf0f1;
-  font-weight: bold;
-}
-
-tfoot td {
-  font-weight: bold;
+/* Status box */
+#uploadStatus {
+  margin-top: 20px;
+  padding: 10px;
   background-color: #f9f9f9;
+  border-left: 4px solid #1abc9c;
 }
 
 /* Responsive */

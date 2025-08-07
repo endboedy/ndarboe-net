@@ -68,14 +68,14 @@
             background-color: #f4f4f4;
         }
     </style>
-    https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js
-    https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js
+    https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+    https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
             authDomain: "monthly-plan-2baf5.firebaseapp.com",
             projectId: "monthly-plan-2baf5",
-            storageBucket: "monthly-plan-2baf5.firebasestorage.app",
+            storageBucket: "monthly-plan-2baf5.appspot.com",
             messagingSenderId: "42911040784",
             appId: "1:42911040784:web:5b54401d854b933b84d195",
             measurementId: "G-LVY6V58JS0"
@@ -160,7 +160,7 @@
 
         function uploadFiles() {
             const files = {
-                iwds document.getElementById('iwdsFile').files[0],
+                iwds: document.getElementById('iwdsFile').files[0],
                 swot: document.getElementById('swotFile').files[0],
                 planning: document.getElementById('planningFile').files[0],
                 detail1: document.getElementById('detail1File').files[0],

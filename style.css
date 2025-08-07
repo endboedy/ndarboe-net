@@ -1,37 +1,124 @@
 
+/* Reset and base styles */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-}
-.wrapper {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     height: 100vh;
+    background-color: #f9f9f9;
 }
+
+/* Sidebar styles */
 .sidebar {
     width: 220px;
     background-color: #2c3e50;
     color: white;
     padding: 20px;
+    flex-shrink: 0;
 }
+
 .sidebar h2 {
-    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 20px;
 }
+
 .sidebar ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
-.sidebar ul li {
-    padding: 10px;
+
+.sidebar li {
+    margin: 15px 0;
     cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s;
 }
-.sidebar ul li:hover {
-    background-color: #34495e;
+
+.sidebar li:hover {
+    color: #1abc9c;
 }
-.main-content {
+
+/* Content area */
+.content {
     flex-grow: 1;
     padding: 20px;
-    background-color: #ecf0f1;
+    overflow-y: auto;
+    background-color: #ffffff;
 }
+
+/* Section visibility */
 .section {
-    margin-bottom: 20px;
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+/* Form styles */
+form label {
+    display: block;
+    margin: 10px 0;
+    font-weight: 500;
+}
+
+input[type="file"],
+input[type="text"],
+select {
+    margin-left: 10px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Button styles */
+button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #1abc9c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #16a085;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #ecf0f1;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .content {
+        padding: 10px;
+    }
 }

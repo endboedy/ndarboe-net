@@ -32,21 +32,43 @@ function uploadFiles() {
         detail2: document.getElementById('detail2File').files[0]
     };
 
+    // Hapus status sebelumnya jika ada
+    const oldStatus = document.getElementById('uploadStatus');
+    if (oldStatus) oldStatus.remove();
+
+    // Buat elemen status baru
+    const statusBox = document.createElement('div');
+    statusBox.id = 'uploadStatus';
+    statusBox.style.marginTop = '15px';
+    statusBox.innerHTML = '<strong>Status Upload:</strong><br>';
+    document.querySelector('.upload-form').appendChild(statusBox);
+
     for (const [key, file] of Object.entries(files)) {
         if (file) {
             const storageRef = firebase.storage().ref(`${key}/${file.name}`);
             storageRef.put(file)
                 .then(() => {
-                    console.log(`${key} uploaded successfully.`);
+                    const msg = document.createElement('p');
+                    msg.textContent = `${key.toUpperCase()} uploaded successfully.`;
+                    msg.style.color = 'green';
+                    statusBox.appendChild(msg);
                 })
                 .catch(error => {
-                    console.error(`Error uploading ${key}:`, error);
+                    const msg = document.createElement('p');
+                    msg.textContent = `Error uploading ${key.toUpperCase()}: ${error.message}`;
+                    msg.style.color = 'red';
+                    statusBox.appendChild(msg);
                 });
+        } else {
+            const msg = document.createElement('p');
+            msg.textContent = `${key.toUpperCase()} file not selected.`;
+            msg.style.color = 'orange';
+            statusBox.appendChild(msg);
         }
     }
 }
 
-// Fungsi untuk download file (placeholder)
+// Fungsi placeholder untuk download
 function downloadMonthlyPlan() {
     alert("Download functionality will be implemented here.");
 }

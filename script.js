@@ -3,8 +3,10 @@
 function showSection(id) {
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => {
-        section.style.display = section.id === id ? 'block' : 'none';
+        section.classList.remove('active');
     });
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
 }
 
 // Event listener untuk menu sidebar
@@ -28,6 +30,7 @@ function uploadFiles() {
         iwds: document.getElementById('iwdsFile').files[0],
         swot: document.getElementById('swotFile').files[0],
         planning: document.getElementById('planningFile').files[0],
+        budget: document.getElementById('budgetFile').files[0],
         detail1: document.getElementById('detail1File').files[0],
         detail2: document.getElementById('detail2File').files[0]
     };
@@ -39,7 +42,6 @@ function uploadFiles() {
     // Buat elemen status baru
     const statusBox = document.createElement('div');
     statusBox.id = 'uploadStatus';
-    statusBox.style.marginTop = '15px';
     statusBox.innerHTML = '<strong>Status Upload:</strong><br>';
     document.querySelector('.upload-form').appendChild(statusBox);
 

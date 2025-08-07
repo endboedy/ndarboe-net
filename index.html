@@ -9,33 +9,36 @@
 </head>
 <body>
   <div class="container">
+    <!-- Sidebar -->
     <aside class="sidebar">
       <h2>MONTHLY PLAN</h2>
       <ul>
-        <li>Upload Data</li>
-        <li>Monthly Plan</li>
-        <li>Cost RM</li>
+        <li data-target="upload">Upload Data</li>
+        <li data-target="plan">Monthly Plan</li>
+        <li data-target="cost">Cost RM</li>
+        <li data-target="download">Download Excel</li>
       </ul>
     </aside>
 
+    <!-- Main Content -->
     <main class="content">
-      <!-- Upload Section -->
-      <section class="section active">
-        <h3>Upload Data</h3>
-        <form>
-          <label>IWDS: <input type="file" /></label>
-          <label>S3/WIP: <input type="file" /></label>
+      <!-- Upload Data -->
+      <section id="upload" class="section active">
+        <h3Upload Data</h3>
+        <form class="upload-form">
+          <label>IW39: <input type="file" /></label>
+          <label>SUM57: <input type="file" /></label>
           <label>Planning: <input type="file" /></label>
           <label>Budget: <input type="file" /></label>
-          <label>Detail 1: <input type="file" /></label>
-          <label>Detail 2: <input type="file" /></label>
+          <label>Data1: <input type="file" /></label>
+          <label>Data2: <input type="file" /></label>
           <button type="submit">Upload</button>
         </form>
       </section>
 
-      <!-- Form Input Section -->
-      <section class="section">
-        <h3>Input Data</h3>
+      <!-- Monthly Plan -->
+      <section id="plan" class="section">
+        <h3>Monthly Plan</h3>
         <form>
           <label>Room: <input type="text" /></label>
           <label>Order Type: <input type="text" /></label>
@@ -47,7 +50,7 @@
           <label>Section: <input type="text" /></label>
           <label>Status Part: <input type="text" /></label>
           <label>Ageing: <input type="text" /></label>
-          <label>Monthly: 
+          <label>Monthly:
             <select>
               <option>Yes</option>
               <option>No</option>
@@ -60,9 +63,9 @@
         </form>
       </section>
 
-      <!-- Table Section -->
-      <section class="section">
-        <h3>Budget Table</h3>
+      <!-- Cost RM -->
+      <section id="cost" class="section">
+        <h3>Cost RM</h3>
         <table>
           <thead>
             <tr>
@@ -103,33 +106,6 @@
               <td>$62</td>
               <td>$47</td>
             </tr>
-            <tr>
-              <td>PDR</td>
-              <td>Include</td>
-              <td>$33</td>
-              <td>$22</td>
-              <td>$11</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>Backlog</td>
-              <td>Exclude</td>
-              <td>$93</td>
-              <td>$132</td>
-              <td>($39)</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>Backlog</td>
-              <td>Exclude</td>
-              <td>($93)</td>
-              <td>($132)</td>
-              <td>($39)</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -138,7 +114,32 @@
           </tfoot>
         </table>
       </section>
+
+      <!-- Download Excel -->
+      <section id="download" class="section">
+        <h3>Download Excel</h3>
+        <p>Silakan klik tombol di bawah untuk mengunduh data:</p>
+        <button>Download Excel</button>
+      </section>
     </main>
   </div>
+
+  <script>
+    // Menu switching logic
+    const menuItems = document.querySelectorAll(".sidebar li");
+    const sections = document.querySelectorAll(".section");
+
+    menuItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const target = item.getAttribute("data-target");
+
+        sections.forEach(section => {
+          section.classList.remove("active");
+        });
+
+        document.getElementById(target).classList.add("active");
+      });
+    });
+  </script>
 </body>
 </html>

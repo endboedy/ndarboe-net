@@ -3,197 +3,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monthly Plan</title>
   <link rel="stylesheet" href="style.css" />
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA90ANLq0dJAsUNDTdAEWusInevatefc",
-      authDomain: "monthly-plan-2bafs.firebaseapp.com",
-      projectId: "monthly-plan-2bafs",
-      storageBucket: "monthly-plan-2bafs.appspot.com",
-      messagingSenderId: "42911048784",
-      appId: "1:42911048784:web:55b4418bd5493b3d8419f5",
-      measurementId: "G-LY6VJ6S8JB"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #2c3e50;
-      color: white;
-      padding: 20px;
-    }
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    .sidebar li {
-      margin: 15px 0;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .sidebar li:hover {
-      text-decoration: underline;
-    }
-    .content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-    }
-    form label {
-      display: block;
-      margin: 10px 0;
-    }
-    input[type="file"],
-    input[type="text"],
-    select {
-      margin-left: 10px;
-    }
-    button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      background-color: #1abc9c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #16a085;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    table,
-    th,
-    td {
-      border: 1px solid #ccc;
-    }
-    th,
-    td {
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-  </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>MONTHLY PLAN</h2>
-    <ul>
-      <li onclick="showSection('upload')">📁 Upload Data</li>
-      <li onclick="showSection('monthly')">📊 Monthly Plan</li>
-      <li onclick="showSection('cost')">💰 Cost RM</li>
-    </ul>
-  </div>
-  <div class="content">
-    <section id="upload" class="section active">
-      <h2>Upload Data</h2>
-      <form onsubmit="uploadFiles(); return false;">
-        <label>IWDS: <input type="file" id="iwdsFile" /></label>
-        <label>SM/RT: <input type="file" id="swotFile" /></label>
-        <label>Planning: <input type="file" id="planningFile" /></label>
-        <label>Detail 1: <input type="file" id="detail1File" /></label>
-        <label>Detail 2: <input type="file" id="detail2File" /></label>
-        <button type="submit">Upload</button>
-      </form>
-    </section>
-    <section id="monthly" class="section">
-      <h2>Monthly Plan</h2>
-      <form>
-        <label>Room: <input type="text" /></label>
-        <label>Order Type: <input type="text" /></label>
-        <label>Order: <input type="text" /></label>
-        <label>DescriptorID: <input type="text" /></label>
-        <label>Created On: <input type="text" /></label>
-        <label>User Status: <input type="text" /></label>
-        <label>MAT: <input type="text" /></label>
-        <label>CPH: <input type="text" /></label>
-        <label>Section: <input type="text" /></label>
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th>Status Par/Aging</th><th>Month</th><th>Cost</th><th>Remain</th>
-            <th>Include</th><th>Exclude</th><th>Planning</th><th>Status AMT</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Active</td><td>Aug</td><td>1000</td><td>200</td><td>Yes</td><td>No</td><td>Plan A</td><td>Confirmed</td></tr>
-        </tbody>
-      </table>
-    </section>
-    <section id="cost" class="section">
-      <h2>Cost RM</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th><th>Aug</th><th>GMF</th><th>FEB-MAR</th>
-            <th>Include</th><th>Exclude</th><th>Aug-22</th><th>Aug-21</th>
-            <th>Track Type 14450</th><th>Oil Type 373391</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>PDRI</td><td>533,336</td><td>212,177</td><td>62,627</td><td>Yes</td><td>No</td><td>100</td><td>90</td><td>Type A</td><td>Oil X</td></tr>
-          <tr><td>FDM</td><td>429,878</td><td>582,122</td><td>(84)</td><td>Yes</td><td>No</td><td>110</td><td>95</td><td>Type B</td><td>Oil Y</td></tr>
-          <tr><td>Backlog</td><td>(242,104)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        </tbody>
-      </table>
-    </section>
-  </div>
-  <script>
-    function showSection(id) {
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(section => {
-        section.classList.remove('active');
-        if (section.id === id) {
-          section.classList.add('active');
-        }
-      });
-    }
+  <div class="container">
+    <aside class="sidebar">
+      <h2>MONTHLY PLAN</h2>
+      <ul>
+        <li>Upload Data</li>
+        <li>Monthly Plan</li>
+        <li>Cost RM</li>
+      </ul>
+    </aside>
 
-    function uploadFiles() {
-      const files = {
-        iwds: document.getElementById('iwdsFile').files[0],
-        swot: document.getElementById('swotFile').files[0],
-        planning: document.getElementById('planningFile').files[0],
-        detail1: document.getElementById('detail1File').files[0],
-        detail2: document.getElementById('detail2File').files[0]
-      };
+    <main class="content">
+      <!-- Upload Section -->
+      <section class="section active">
+        <h3>Upload Data</h3>
+        <form>
+          <label>IWDS: <input type="file" /></label>
+          <label>S3/WIP: <input type="file" /></label>
+          <label>Planning: <input type="file" /></label>
+          <label>Budget: <input type="file" /></label>
+          <label>Detail 1: <input type="file" /></label>
+          <label>Detail 2: <input type="file" /></label>
+          <button type="submit">Upload</button>
+        </form>
+      </section>
 
-      for (const [key, file] of Object.entries(files)) {
-        if (file) {
-          const storageRef = firebase.storage().ref(key + '/' + file.name);
- console.log(key + " uploaded successfully.");
-          }).catch(error => {
-            console.error("Error uploading " + key + ": ", error);
-          });
-        }
-      }
-    }
-  </script>
+      <!-- Form Input Section -->
+      <section class="section">
+        <h3>Input Data</h3>
+        <form>
+          <label>Room: <input type="text" /></label>
+          <label>Order Type: <input type="text" /></label>
+          <label>Description: <input type="text" /></label>
+          <label>Created On: <input type="date" /></label>
+          <label>User Status: <input type="text" /></label>
+          <label>MAT: <input type="text" /></label>
+          <label>CPH: <input type="text" /></label>
+          <label>Section: <input type="text" /></label>
+          <label>Status Part: <input type="text" /></label>
+          <label>Ageing: <input type="text" /></label>
+          <label>Monthly: 
+            <select>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </label>
+          <label>Cost: <input type="text" /></label>
+          <label>Reman: <input type="text" /></label>
+          <label>Include: <input type="checkbox" /></label>
+          <label>Exclude: <input type="checkbox" /></label>
+        </form>
+      </section>
+
+      <!-- Table Section -->
+      <section class="section">
+        <h3>Budget Table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Room Name/ID</th>
+              <th>Include</th>
+              <th>Exclude</th>
+              <th>Budget</th>
+              <th>Track Type 1</th>
+              <th>Track Type 2</th>
+              <th>Diff Type 1</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FUB 4B18-20</td>
+              <td>Exclude</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>PDR</td>
+              <td>Include</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>FUB</td>
+              <td>Include</td>
+              <td>$33,328</td>
+              <td>$14,570</td>
+              <td>$19</td>
+              <td>$62</td>
+              <td>$47</td>
+            </tr>
+            <tr>
+              <td>PDR</td>
+              <td>Include</td>
+              <td>$33</td>
+              <td>$22</td>
+              <td>$11</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Backlog</td>
+              <td>Exclude</td>
+              <td>$93</td>
+              <td>$132</td>
+              <td>($39)</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Backlog</td>
+              <td>Exclude</td>
+              <td>($93)</td>
+              <td>($132)</td>
+              <td>($39)</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="7">Totals: Exclude | Variance: ($24)</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+    </main>
+  </div>
 </body>
 </html>

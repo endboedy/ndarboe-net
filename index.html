@@ -22,16 +22,14 @@
 
     <!-- Main Content -->
     <main class="content">
-      <!-- Upload Data -->
-      <section id="upload" class="section active">
-        <h3Upload Data</h3>
-        <form class="upload-form">
-          <label>IW39: <input type="file" /></label>
-          <label>SUM57: <input type="file" /></label>
-          <label>Planning: <input type="file" /></label>
-          <label>Budget: <input type="file" /></label>
-          <label>Data1: <input type="file" /></label>
-          <label>Data2: <input type="file" /></label>
+           <section id="upload" class="section active">
+        <h3>Upload Data</h3>
+        <form class="upload-form" onsubmit="event.preventDefault(); uploadFiles();">
+          <label>IW39: <input type="file" id="iwdsFile" /></label>
+          <label>SUM57: <input type="file" id="swotFile" /></label>
+          <label>Planning: <input type="file" id="planningFile" /></label>
+          <label>Detail 1: <input type="file" id="detail1File" /></label>
+          <label>Detail 2: <input type="file" id="detail2File" /></label>
           <button type="submit">Upload</button>
         </form>
       </section>
@@ -119,27 +117,29 @@
       <section id="download" class="section">
         <h3>Download Excel</h3>
         <p>Silakan klik tombol di bawah untuk mengunduh data:</p>
-        <button>Download Excel</button>
+        <button onclick="downloadMonthlyPlan()">Download Excel</button>
       </section>
     </main>
   </div>
 
+  <!-- Firebase SDK -->
+  <ttps://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+  <script src="static.com/firebasejs/9.6.1/firebase-storage-compat.js
+
+  <!-- Firebase Config -->
   <script>
-    // Menu switching logic
-    const menuItems = document.querySelectorAll(".sidebar li");
-    const sections = document.querySelectorAll(".section");
-
-    menuItems.forEach(item => {
-      item.addEventListener("click", () => {
-        const target = item.getAttribute("data-target");
-
-        sections.forEach(section => {
-          section.classList.remove("active");
-        });
-
-        document.getElementById(target).classList.add("active");
-      });
-    });
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
   </script>
+
+  <!-- Script -->
+  <script src="script.js"></script>
 </body>
 </html>

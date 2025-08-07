@@ -5,6 +5,55 @@
     <meta charset="UTF-8">
     <title>Monthly Plan</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+    </style>
+    https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js
+    https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
+            authDomain: "monthly-plan-2baf5.firebaseapp.com",
+            projectId: "monthly-plan-2baf5",
+            storageBucket: "monthly-plan-2baf5.firebasestorage.app",
+            messagingSenderId: "42911040784",
+            appId: "1:42911040784:web:5b54401d854b933b84d195",
+            measurementId: "G-LVY6V58JS0"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </head>
 <body>
     <div class="sidebar">
@@ -17,30 +66,65 @@
         </ul>
     </div>
     <div class="content">
-        <section id="upload" class="section">
+        <section id="upload" class="section active">
             <h2>Upload Data</h2>
-            <form>
-                <label>IWDS: <input type="file"></label><br>
-                <label>S/WOT: <input type="file"></label><br>
-                <label>Planning: <input type="file"></label><br>
-                <label>Detail 1: <input type="file"></label><br>
-                <label>Detail 2: <input type="file"></label><br>
+            <form onsubmit="uploadFiles(); return false;">
+                <label>IWDS: <input type="file" id="iwdsFile"></label><br>
+                <label>S/WOT: <input type="file" id="swotFile"></label><br>
+                <label>Planning: <input type="file" id="planningFile"></label><br>
+                <label>Detail 1: <input type="file" id="detail1File"></label><br>
+                <label>Detail 2: <input type="file" id="detail2File"></label><br>
                 <button type="submit">Upload</button>
             </form>
         </section>
-        <section id="monthly" class="section" style="display:none;">
+        <section id="monthly" class="section">
             <h2>Monthly Plan</h2>
             <p>[Preview of merged data will appear here]</p>
         </section>
-        <section id="cost" class="section" style="display:none;">
+        <section id="cost" class="section">
             <h2>Cost RM</h2>
             <p>[Cost analysis will appear here]</p>
         </section>
-        <section id="download" class="section" style="display:none;">
+        <section id="download" class="section">
             <h2>Download Excel</h2>
-            <button>Download Monthly Plan</button>
+            <button onclick="downloadMonthlyPlan()">Download Monthly Plan</button>
         </section>
     </div>
-    <script src="script.js"></script>
+    <script>
+        function showSection(id) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === id) {
+                    section.classList.add('active');
+                }
+            });
+        }
+
+        function uploadFiles() {
+            const files = {
+                iwds: document.getElementById('iwdsFile').files[0],
+                swot: document.getElementById('swotFile').files[0],
+                planning: document.getElementById('planningFile').files[0],
+                detail1: document.getElementById('detail1File').files[0],
+                detail2: document.getElementById('detail2File').files[0]
+            };
+
+            for (const [key, file] of Object.entries(files)) {
+                if (file) {
+                    const storageRef = firebase.storage().ref(key + '/' + file.name);
+                    storageRef.put(file).then(() => {
+                        console.log(key + " uploaded successfully.");
+                    }).catch(error => {
+                        console.error("Error uploading " + key + ": ", error);
+                    });
+                }
+            }
+        }
+
+        function downloadMonthlyPlan() {
+            alert("Download functionality will be implemented here.");
+        }
+    </script>
 </body>
 </html>

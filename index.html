@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Plan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Monthly Plan</h2>
+        <ul>
+            <li onclick="showSection('upload')">📁 Upload Data</li>
+            <li onclick="showSection('monthly')">📊 Monthly Plan</li>
+            <li onclick="showSection('cost')">💰 Cost RM</li>
+            <li onclick="showSection('download')">📥 Download Excel</li>
+        </ul>
+    </div>
+    <div class="content">
+        <section id="upload" class="section">
+            <h2>Upload Data</h2>
+            <form>
+                <label>IWDS: <input type="file"></label><br>
+                <label>S/WOT: <input type="file"></label><br>
+                <label>Planning: <input type="file"></label><br>
+                <label>Detail 1: <input type="file"></label><br>
+                <label>Detail 2: <input type="file"></label><br>
+                <button type="submit">Upload</button>
+            </form>
+        </section>
+        <section id="monthly" class="section" style="display:none;">
+            <h2>Monthly Plan</h2>
+            <p>[Preview of merged data will appear here]</p>
+        </section>
+        <section id="cost" class="section" style="display:none;">
+            <h2>Cost RM</h2>
+            <p>[Cost analysis will appear here]</p>
+        </section>
+        <section id="download" class="section" style="display:none;">
+            <h2>Download Excel</h2>
+            <button>Download Monthly Plan</button>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

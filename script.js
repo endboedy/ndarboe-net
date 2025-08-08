@@ -1,7 +1,3 @@
-// Pastikan Firebase sudah diinisialisasi sebelum fungsi ini dijalankan
-// Contoh inisialisasi Firebase (taruh di HTML sebelum script.js):
-// const firebaseConfig = { ... };
-// firebase.initializeApp(firebaseConfig);
 
 // Fungsi untuk menampilkan section sesuai menu yang diklik
 function showSection(id) {
@@ -28,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Fungsi untuk upload file ke Firebase Storage
 function uploadFiles() {
-  if (typeof firebase === 'undefined') {
-    console.error("Firebase belum di-load. Pastikan script Firebase dimasukkan di HTML.");
+  if (typeof firebase === 'undefined' || !firebase.storage) {
+    console.error("Firebase belum di-load atau storage belum tersedia.");
     alert("Firebase belum di-load. Periksa konfigurasi di HTML.");
     return;
   }
@@ -45,7 +41,7 @@ function uploadFiles() {
 
   const statusBox = document.getElementById('uploadStatus');
   if (!statusBox) {
-    console.error("Element with ID 'uploadStatus' not found.");
+    console.error("Element dengan ID 'uploadStatus' tidak ditemukan.");
     return;
   }
 
@@ -100,7 +96,7 @@ function readExcel(file) {
 function renderTable(data) {
   const tableBody = document.querySelector('#planTableBody');
   if (!tableBody) {
-    console.warn("Element with ID 'planTableBody' not found.");
+    console.warn("Element dengan ID 'planTableBody' tidak ditemukan.");
     return;
   }
 

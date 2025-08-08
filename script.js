@@ -27,15 +27,20 @@ document.addEventListener("DOMContentLoaded", () => {
 // Fungsi untuk upload file ke Firebase Storage
 function uploadFiles() {
   const files = {
-    iwds: document.getElementById('iwdsFile').files[0],
-    swot: document.getElementById('swotFile').files[0],
-    planning: document.getElementById('planningFile').files[0],
-    budget: document.getElementById('budgetFile').files[0],
-    detail1: document.getElementById('detail1File').files[0],
-    detail2: document.getElementById('detail2File').files[0]
+    iwds: document.getElementById('iwdsFile')?.files[0],
+    swot: document.getElementById('swotFile')?.files[0],
+    planning: document.getElementById('planningFile')?.files[0],
+    budget: document.getElementById('budgetFile')?.files[0],
+    detail1: document.getElementById('detail1File')?.files[0],
+    detail2: document.getElementById('detail2File')?.files[0]
   };
 
   const statusBox = document.getElementById('uploadStatus');
+  if (!statusBox) {
+    console.error("Element with ID 'uploadStatus' not found.");
+    return;
+  }
+
   statusBox.innerHTML = '<strong>Status Upload:</strong><br>';
 
   for (const [key, file] of Object.entries(files)) {
@@ -87,7 +92,10 @@ function readExcel(file) {
 // Fungsi untuk menampilkan data ke tabel HTML
 function renderTable(data) {
   const tableBody = document.querySelector('#planTableBody');
-  if (!tableBody) return;
+  if (!tableBody) {
+    console.warn("Element with ID 'planTableBody' not found.");
+    return;
+  }
 
   tableBody.innerHTML = '';
 

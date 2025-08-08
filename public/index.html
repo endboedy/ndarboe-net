@@ -16,6 +16,7 @@
 
   <style>
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
       background-color: #e6f0fa;
     }
@@ -152,7 +153,11 @@
       measurementId: "G-LVY6V58JS0"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (typeof firebase !== 'undefined') {
+      firebase.initializeApp(firebaseConfig);
+    } else {
+      console.error("Firebase SDK belum dimuat.");
+    }
   </script>
 
   <!-- Script Utama -->

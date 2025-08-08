@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monthly Plan</title>
   <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
+
+  <!-- Firebase SDK -->
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+  <script src="https://www.gstatic.com/firebasebase-storage-compat.js
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></scriptclass="container">
     <!-- Sidebar -->
     <aside class="sidebar">
       <h2>MONTHLY PLAN</h2>
@@ -34,6 +36,7 @@
           <label>Detail 2: <input type="file" id="detail2File" /></label>
           <button type="submit">Upload</button>
         </form>
+        <p id="uploadStatus"></p>
       </section>
 
       <!-- Monthly Plan -->
@@ -57,10 +60,6 @@
     </main>
   </div>
 
-  <!-- Firebase SDK -->
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
-
   <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
@@ -72,7 +71,10 @@
       appId: "1:42911040784:web:b554401d854b933b84d195",
       measurementId: "G-LY6V58J580"
     };
+
     firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+    const database = firebase.database();
   </script>
 
   <!-- Script -->

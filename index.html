@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Monthly Plan</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Monthly Plan - Endar Budi Prasetyo</title>
 
   <!-- SheetJS untuk baca file Excel -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-  <!-- Firebase SDK (Compat version agar bisa pakai sintaks lama seperti firebase.initializeApp) -->
+  <!-- Firebase SDK (Compat version) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
@@ -26,27 +25,59 @@
       font-size: 20px;
       text-align: center;
     }
-    .container { display: flex; height: calc(100vh - 50px); }
+    .container {
+      display: flex;
+      height: calc(100vh - 50px);
+    }
     .sidebar {
       background-color: #204d74;
       color: white;
       padding: 20px;
       width: 200px;
     }
-    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
     .sidebar li {
       margin: 10px 0;
       cursor: pointer;
       font-size: 11px;
     }
-    .sidebar li:hover { text-decoration: underline; }
-    .content { flex: 1; padding: 20px; overflow-y: auto; background-color: #ffffff; }
-    .section { display: none; text-align: left; }
-    .section.active { display: block; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #999; padding: 6px; text-align: left; }
-    th { background-color: #204d74; color: white; }
-    label { display: block; margin: 10px 0; }
+    .sidebar li:hover {
+      text-decoration: underline;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #ffffff;
+    }
+    .section {
+      display: none;
+      text-align: left;
+    }
+    .section.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background-color: #204d74;
+      color: white;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -119,12 +150,31 @@
       measurementId: "G-LVY6V58JS0"
     };
 
-    // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
+    if (typeof firebase !== 'undefined') {
+      firebase.initializeApp(firebaseConfig);
+      const storage = firebase.storage();
+    } else {
+      console.error("Firebase SDK belum dimuat.");
+    }
   </script>
 
   <!-- Script Utama -->
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
+
+  <!-- Navigasi antar menu -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const menuItems = document.querySelectorAll(".sidebar li");
+      menuItems.forEach(item => {
+        item.addEventListener("click", () => {
+          const targetId = item.getAttribute("data-target");
+          document.querySelectorAll(".section").forEach(section => {
+            section.classList.remove("active");
+          });
+          document.getElementById(targetId).classList.add("active");
+        });
+      });
+    });
+  </script>
 </body>
 </html>

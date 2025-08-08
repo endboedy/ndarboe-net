@@ -50,8 +50,21 @@ function uploadFiles() {
   for (const [key, file] of Object.entries(files)) {
     if (file) {
       const storageRef = firebase.storage().ref(`${key}/${file.name}`);
-      storageRef.put(file)
-        .then(() => {
+      const uploadTask = storageRef.put(file);
+
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`${key} upload progress: ${progress.toFixed(2)}%`);
+        },
+        error => {
+          const msg = document.createElement('p');
+          msg.textContent = `Error uploading ${key.toUpperCase()}: ${error.message}`;
+          msg.style.color = 'red';
+          statusBox.appendChild(msg);
+        },
+        () => {
           const msg = document.createElement('p');
           msg.textContent = `${key.toUpperCase()} uploaded successfully.`;
           msg.style.color = 'green';
@@ -60,13 +73,8 @@ function uploadFiles() {
           if (key === 'planning') {
             readExcel(file);
           }
-        })
-        .catch(error => {
-          const msg = document.createElement('p');
-          msg.textContent = `Error uploading ${key.toUpperCase()}: ${error.message}`;
-          msg.style.color = 'red';
-          statusBox.appendChild(msg);
-        });
+        }
+      );
     } else {
       const msg = document.createElement('p');
       msg.textContent = `${key.toUpperCase()} file not selected.`;

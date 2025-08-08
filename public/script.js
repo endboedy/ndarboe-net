@@ -1,5 +1,4 @@
 
-// Fungsi untuk menampilkan section sesuai menu yang diklik
 function showSection(id) {
   const sections = document.querySelectorAll('.section');
   sections.forEach(section => section.classList.remove('active'));
@@ -16,11 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Tampilkan default section saat pertama kali load
   showSection("upload");
 });
 
-// Fungsi utama untuk upload dan baca file Excel
 function uploadFiles() {
   const fileKeys = ["IW39", "SUM57", "Planning", "Budget", "Data1", "Data2"];
   const statusBox = document.getElementById("uploadStatus");
@@ -54,7 +51,7 @@ function uploadFiles() {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array" });
 
-      const sheetName = key; // Sheet name disamakan dengan nama file
+      const sheetName = key;
       const sheet = workbook.Sheets[sheetName];
       if (!sheet) {
         const msg = document.createElement("p");
@@ -72,15 +69,12 @@ function uploadFiles() {
       msg.style.color = "green";
       statusBox.appendChild(msg);
 
-      // Simpan metadata ke Firebase Realtime Database
       saveMetadataToFirebase(key, jsonData, file.name);
 
-      // Tampilkan metadata preview
       const meta = document.createElement("p");
       meta.innerHTML = `<strong>${key}</strong>: ${jsonData.length} rows, ${jsonData[0]?.length || 0} columns`;
       metadataBox.appendChild(meta);
 
-      // Tampilkan Planning ke tabel sebagai contoh
       if (key === "Planning") {
         renderTable(jsonData);
       }
@@ -89,7 +83,6 @@ function uploadFiles() {
   });
 }
 
-// Simpan metadata ke Firebase Realtime Database
 function saveMetadataToFirebase(fileKey, jsonData, fileName) {
   if (typeof firebase === "undefined" || !firebase.database) {
     console.error("Firebase Realtime Database belum tersedia.");
@@ -113,7 +106,6 @@ function saveMetadataToFirebase(fileKey, jsonData, fileName) {
     });
 }
 
-// Tampilkan data ke tabel HTML
 function renderTable(data) {
   const tableBody = document.querySelector("#planTableBody");
   if (!tableBody) return;
@@ -130,8 +122,6 @@ function renderTable(data) {
   });
 }
 
-// Placeholder untuk download
 function downloadMonthlyPlan() {
   alert("Download functionality will be implemented here.");
 }
-s

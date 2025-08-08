@@ -1,4 +1,3 @@
-
 // Fungsi untuk menampilkan section sesuai menu yang diklik
 function showSection(id) {
   const sections = document.querySelectorAll('.section');

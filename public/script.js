@@ -134,3 +134,4 @@ function renderTable(data) {
 function downloadMonthlyPlan() {
   alert("Download functionality will be implemented here.");
 }
+s

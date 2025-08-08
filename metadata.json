@@ -1,7 +1,7 @@
 [
   {
     "fileName": "IW39.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "IW39",
     "columns": [
       "Room",
       "Order Type",
@@ -15,7 +15,7 @@
   },
   {
     "fileName": "SUM57.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "SUM57",
     "columns": [
       "Room",
       "User Status",
@@ -26,7 +26,7 @@
   },
   {
     "fileName": "Planning.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "Planning",
     "columns": [
       "Room",
       "Description",
@@ -37,7 +37,7 @@
   },
   {
     "fileName": "Budget.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "Budget",
     "columns": [
       "Repair and Maintenance",
       "Jan-25",
@@ -57,7 +57,7 @@
   },
   {
     "fileName": "Data1.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "Data1",
     "columns": [
       "Room",
       "PIT",
@@ -66,7 +66,7 @@
   },
   {
     "fileName": "Data2.xlsx",
-    "sheetName": "Sheet1",
+    "sheetName": "Data2",
     "columns": [
       "MaintActivityType",
       "CPH"

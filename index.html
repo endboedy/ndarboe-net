@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="style.css" />
 
   <!-- SheetJS untuk baca file Excel -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx
+  https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
+
   <!-- Firebase SDK -->
   https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
   https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
@@ -16,8 +17,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      height: 100vh;
+           height: 100vh;
       display: flex;
       flex-direction: column;
     }
@@ -25,7 +25,7 @@
       background-color: #204d74;
       color: white;
       padding: 15px 20px;
-     -align: center;
+      text-align: center;
       font-size: 24px;
       font-weight: bold;
     }
@@ -110,12 +110,6 @@
       <!-- Monthly Plan Section -->
       <section id="plan" class="section">
         <h3>Monthly Plan</h3>
-        <div>
-          <label>Room: <input type="text" /></label>
-          <label>CPH: <input type="text" /></label>
-          <label>MAT: <input type="text" /></label>
-          <label>Section: <input type="text" /></label>
-        </div>
         <table>
           <thead>
             <tr>
@@ -131,30 +125,14 @@
 
       <!-- Cost Section -->
       <section id="cost" class="section">
-        <h3>Monthly Plan</h3>
-        <label>Month: <input type="text" value="Aug" /></label>
-        <table>
-          <thead>
-            <tr>
-              <th>Include</th><th>Exclude</th><th>Budget</th><th>Wheel Type</th>
-              <th>Track Type</th><th>DT Type</th><th>SE Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>GET-BBB</td><td>388,530</td><td>338,701</td><td>335,279</td><td>14,509</td><td>373,931</td><td>-</td></tr>
-            <tr><td>FLUID</td><td>392,425</td><td>392,425</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-            <tr><td>PCR</td><td>1,840,011</td><td>937,268</td><td>180,374</td><td>1,252,772</td><td>506,002</td><td>62,637</td></tr>
-            <tr><td colspan="7"><strong>Total: 5,707,405 | 4,093,442 | 3,851,320</strong></td></tr>
-            <tr><td colspan="7"><strong>Varian: <span style="color:red;">(242,104)</span></strong></td></tr>
-          </tbody>
-        </table>
+        <h3>Cost RM</h3>
+        <p>Isi data cost di sini...</p>
       </section>
 
       <!-- Download Section -->
       <section id="download" class="section">
         <h3>Download Excel</h3>
-        <p>Silakan klik tombol di bawah untuk mengunduh data:</p>
-        <button onclick="downloadMonthlyPlan()">Download Excel</button>
+        <button onclick="downloadMonthlyPlan()">Download</button>
       </section>
     </main>
   </div>
@@ -170,8 +148,6 @@
       appId: "1:42911040784:web:5b54401d854b933b84d195",
       measurementId: "G-LVY6V58JS0"
     };
-
-    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
   </script>
 

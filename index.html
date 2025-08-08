@@ -5,57 +5,146 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monthly Plan</title>
-  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Firebase SDK -->
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background-color: #204d74;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      display: flex;
+      flex: 1;
+      width: 100%;
+    }
+    .sidebar {
+      background-color: #204d74;
+      color: white;
+      padding: 20px;
+      width: 200px;
+      min-height: 100%;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      margin: 10px 0;
+      cursor: pointer;
+    }
+    .sidebar li:hover {
+      text-decoration: underline;
+    }
+    .content {
+      flex: 1;
+      background: #e6f0fa;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background-color: #204d74;
+      color: white;
+    }
+  </style>
 </head>
 <body>
+  <header>MONTHLY PLAN</header>
   <div class="container">
-    <!-- Sidebar -->
     <aside class="sidebar">
-      <h2>MONTHLY PLAN</h2>
       <ul>
-        <li data-target="upload">Upload Data</li>
-        <li data-target="plan">Monthly Plan</li>
-        <li data-target="cost">Cost RM</li>
-        <li data-target="download">Download Excel</li>
+        <li data-target="upload">📂 Upload Data</li>
+        <li data-target="plan">📊 Monthly Plan</li>
+        <li data-target="cost">💰 Cost RM</li>
+        <li data-target="download">📥 Download Excel</li>
       </ul>
     </aside>
 
-    <!-- Main Content -->
     <main class="content">
-      <!-- Upload Data -->
       <section id="upload" class="section active">
         <h3>Upload Data</h3>
-        <form class="upload-form" onsubmit="event.preventDefault(); uploadFiles();">
-          <label>IW39: <input type="file" id="iwdsFile" /></label>
-          <label>SUM57: <input type="file" id="swotFile" /></label>
-          <label>Planning: <input type="file" id="planningFile" /></label>
-          <label>Budget: <input type="file" id="budgetFile" /></label>
-          <label>Detail 1: <input type="file" id="detail1File" /></label>
-          <label>Detail 2: <input type="file" id="detail2File" /></label>
+        <form onsubmit="event.preventDefault(); uploadFiles();">
+          <label>IW39: <input type="file" id="iwdsFile" /></label><br />
+          <label>SUM57: <input type="file" id="swotFile" /></label><br />
+          <label>Planning: <input type="file" id="planningFile" /></label><br />
+          <label>Budget: <input type="file" id="budgetFile" /></label><br />
+          <label>Data 1: <input type="file" id="detail1File" /></label><br />
+          <label>Data 2: <input type="file" id="detail2File" /></label><br />
           <button type="submit">Upload</button>
         </form>
-        <p id="uploadStatus"></p>
       </section>
 
-      <!-- Monthly Plan -->
       <section id="plan" class="section">
         <h3>Monthly Plan</h3>
-        <p>Konten akan ditampilkan di sini setelah proses lookup dan perhitungan dari file Excel.</p>
+        <div>
+          <label>Room: <input type="text" /></label>
+          <label>CPH: <input type="text" /></label>
+          <label>MAT: <input type="text" /></label>
+          <label>Section: <input type="text" /></label>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Room</th><th>Order Type</th><th>Order</th><th>Description</th><th>Created On</th>
+              <th>User Status</th><th>MAT</th><th>CPH</th><th>Section</th><th>Status Part</th>
+              <th>Aging</th><th>Month</th><th>Cost</th><th>Reman</th><th>Include</th>
+              <th>Exclude</th><th>Planning</th><th>Status AMT</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </section>
 
-      <!-- Cost RM -->
       <section id="cost" class="section">
-        <h3>Cost RM</h3>
-        <p>Data biaya akan ditampilkan di sini.</p>
+        <h3>Monthly Plan</h3>
+        <label>Month: <input type="text" value="Aug" /></label>
+        <table>
+          <thead>
+            <tr>
+              <th>Include</th><th>Exclude</th><th>Budget</th><th>Wheel Type</th>
+              <th>Track Type</th><th>DT Type</th><th>SE Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>GET-BBB</td><td>388,530</td><td>338,701</td><td>335,279</td><td>14,509</td><td>373,931</td><td>-</td></tr>
+            <tr><td>FLUID</td><td>392,425</td><td>392,425</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+            <tr><td>PCR</td><td>1,840,011</td><td>937,268</td><td>180,374</td><td>1,252,772</td><td>506,002</td><td>62,637</td></tr>
+            <tr><td colspan="7"><strong>Total: 5,707,405 | 4,093,442 | 3,851,320</strong></td></tr>
+            <tr><td colspan="7"><strong>Varian: <span style="color:red;">(242,104)</span></strong></td></tr>
+          </tbody>
+        </table>
       </section>
 
-      <!-- Download Excel -->
       <section id="download" class="section">
         <h3>Download Excel</h3>
         <p>Silakan klik tombol di bawah untuk mengunduh data:</p>
@@ -64,7 +153,8 @@
     </main>
   </div>
 
-  <!-- Firebase Config -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
@@ -72,16 +162,23 @@
       projectId: "monthly-plan-2baf5",
       storageBucket: "monthly-plan-2baf5.appspot.com",
       messagingSenderId: "42911040784",
-      appId: "1:42911040784:web:b554401d854b933b84d195",
-      measurementId: "G-LY6V58J580"
+      appId: "1:42911040784:web:5b54401d854b933b84d195",
+      measurementId: "G-LVY6V58JS0"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
-    const database = firebase.database();
   </script>
-
-  <!-- Script -->
+  <script>
+    const menuItems = document.querySelectorAll('.sidebar li');
+    const sections = document.querySelectorAll('.section');
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.getAttribute('data-target');
+        sections.forEach(sec => {
+          sec.classList.toggle('active', sec.id === target);
+        });
+      });
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

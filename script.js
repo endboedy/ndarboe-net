@@ -1,10 +1,12 @@
+// Pastikan Firebase sudah diinisialisasi sebelum fungsi ini dijalankan
+// Contoh inisialisasi Firebase (taruh di HTML sebelum script.js):
+// const firebaseConfig = { ... };
+// firebase.initializeApp(firebaseConfig);
 
 // Fungsi untuk menampilkan section sesuai menu yang diklik
 function showSection(id) {
   const sections = document.querySelectorAll('.section');
-  sections.forEach(section => {
-    section.classList.remove('active');
-  });
+  sections.forEach(section => section.classList.remove('active'));
   const target = document.getElementById(id);
   if (target) target.classList.add('active');
 }
@@ -26,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Fungsi untuk upload file ke Firebase Storage
 function uploadFiles() {
+  if (typeof firebase === 'undefined') {
+    console.error("Firebase belum di-load. Pastikan script Firebase dimasukkan di HTML.");
+    alert("Firebase belum di-load. Periksa konfigurasi di HTML.");
+    return;
+  }
+
   const files = {
     iwds: document.getElementById('iwdsFile')?.files[0],
     swot: document.getElementById('swotFile')?.files[0],
@@ -53,7 +61,6 @@ function uploadFiles() {
           msg.style.color = 'green';
           statusBox.appendChild(msg);
 
-          // Jika file Planning diupload, baca isinya
           if (key === 'planning') {
             readExcel(file);
           }

@@ -95,7 +95,6 @@
     </aside>
 
     <main class="content">
-      <!-- Upload Section -->
       <section id="upload" class="section active">
         <h3>Upload Data</h3>
         <form onsubmit="event.preventDefault(); uploadFiles();">
@@ -111,7 +110,6 @@
         <div id="metadataPreview" style="margin-top: 20px;"></div>
       </section>
 
-      <!-- Monthly Plan Section -->
       <section id="plan" class="section">
         <h3>Monthly Plan</h3>
         <table>
@@ -127,13 +125,11 @@
         </table>
       </section>
 
-      <!-- Cost Section -->
       <section id="cost" class="section">
         <h3>Cost RM</h3>
         <p>Isi data cost di sini...</p>
       </section>
 
-      <!-- Download Section -->
       <section id="download" class="section">
         <h3>Download Excel</h3>
         <button onclick="downloadMonthlyPlan()">Download</button>
@@ -143,21 +139,21 @@
 
   <!-- Firebase Config -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
-      authDomain: "monthly-plan-2baf5.firebaseapp.com",
-      projectId: "monthly-plan-2baf5",
-      storageBucket: "monthly-plan-2baf5.appspot.com",
-      messagingSenderId: "42911040784",
-      appId: "1:42911040784:web:5b54401d854b933b84d195",
-      measurementId: "G-LVY6V58JS0"
-    };
-
-    if (typeof firebase !== 'undefined') {
-      firebase.initializeApp(firebaseConfig);
-    } else {
-      console.error("Firebase SDK belum dimuat.");
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof firebase !== 'undefined') {
+        firebase.initializeApp({
+          apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
+          authDomain: "monthly-plan-2baf5.firebaseapp.com",
+          projectId: "monthly-plan-2baf5",
+          storageBucket: "monthly-plan-2baf5.appspot.com",
+          messagingSenderId: "42911040784",
+          appId: "1:42911040784:web:5b54401d854b933b84d195",
+          measurementId: "G-LVY6V58JS0"
+        });
+      } else {
+        console.error("Firebase SDK belum dimuat.");
+      }
+    });
   </script>
 
   <!-- Script Utama -->

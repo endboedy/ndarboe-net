@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css" />
 
   <!-- SheetJS untuk baca file Excel -->
-  <ttps://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
+  https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
 
   <!-- Firebase SDK (compat version) -->
   https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
@@ -17,63 +17,82 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    background-color: #204d74;
-      color: white;
-      padding: 15px 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
+      margin: 0;
+      background-color: #e6f0fa;
     }
+
+    header {
+      background-color: #204d74;
+      color: white;
+      padding: 10px 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
     .container {
       display: flex;
-      flex: 1;
-      width: 100%;
+      height: calc(100vh - 50px);
     }
+
     .sidebar {
       background-color: #204d74;
       color: white;
       padding: 20px;
       width: 200px;
     }
+
     .sidebar ul {
       list-style: none;
       padding: 0;
     }
+
     .sidebar li {
       margin: 10px 0;
       cursor: pointer;
+      font-size: 14px;
+      font-weight: normal;
     }
+
     .sidebar li:hover {
       text-decoration: underline;
     }
+
     .content {
       flex: 1;
-      background: #e6f0fa;
       padding: 20px;
       overflow-y: auto;
+      background-color: #ffffff;
     }
+
     .section {
       display: none;
+      text-align: left;
     }
+
     .section.active {
       display: block;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
+
     th, td {
       border: 1px solid #999;
       padding: 6px;
       text-align: left;
     }
+
     th {
       background-color: #204d74;
       color: white;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -94,12 +113,12 @@
       <section id="upload" class="section active">
         <h3>Upload Data</h3>
         <form onsubmit="event.preventDefault(); uploadFiles();">
-          <label>IW39: <input type="file" id="iwdsFile" /></label><br />
-          <label>SUM57: <input type="file" id="swotFile" /></label><br />
-          <label>Planning: <input type="file" id="planningFile" /></label><br />
-          <label>Budget: <input type="file" id="budgetFile" /></label><br />
-          <label>Data 1: <input type="file" id="detail1File" /></label><br />
-          <label>Data 2: <input type="file" id="detail2File" /></label><br />
+          <label>IW39 File: <input type="file" id="iwdsFile" /></label>
+          <label>SUM57 File: <input type="file" id="swotFile" /></label>
+          <label>Planning File: <input type="file" id="planningFile" /></label>
+          <label>Budget File: <input type="file" id="budgetFile" /></label>
+          <label>Data 1 File: <input type="file" id="detail1File" /></label>
+          <label>Data 2 File: <input type="file" id="detail2File" /></label>
           <button type="submit">Upload</button>
         </form>
         <div id="uploadStatus" style="margin-top: 10px;"></div>

@@ -11,7 +11,7 @@
 
   <!-- Firebase SDK (Compat version) -->
   https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
+  <script src="https://www.gstatic.com/firebasejs/9.6.1rage-compat.js
   https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js
 
   <style>
@@ -153,11 +153,7 @@
       measurementId: "G-LVY6V58JS0"
     };
 
-    if (typeof firebase !== 'undefined') {
-      firebase.initializeApp(firebaseConfig);
-    } else {
-      console.error("Firebase SDK belum dimuat.");
-    }
+    firebase.initializeApp(firebaseConfig);
   </script>
 
   <!-- Script Utama -->

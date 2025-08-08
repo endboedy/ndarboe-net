@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,12 @@
   <title>Monthly Plan - Endar Budi Prasetyo</title>
 
   <!-- SheetJS untuk baca file Excel -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
 
   <!-- Firebase SDK (Compat version) -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js
 
   <style>
     body {
@@ -97,15 +99,16 @@
       <section id="upload" class="section active">
         <h3>Upload Data</h3>
         <form onsubmit="event.preventDefault(); uploadFiles();">
-          <label>IW39 File: <input type="file" id="iwdsFile" /></label>
-          <label>SUM57 File: <input type="file" id="swotFile" /></label>
-          <label>Planning File: <input type="file" id="planningFile" /></label>
-          <label>Budget File: <input type="file" id="budgetFile" /></label>
-          <label>Data 1 File: <input type="file" id="detail1File" /></label>
-          <label>Data 2 File: <input type="file" id="detail2File" /></label>
+          <label>IW39 File: <input type="file" id="IW39" /></label>
+          <label>SUM57 File: <input type="file" id="SUM57" /></label>
+          <label>Planning File: <input type="file" id="Planning" /></label>
+          <label>Budget File: <input type="file" id="Budget" /></label>
+          <label>Data1 File: <input type="file" id="Data1" /></label>
+          <label>Data2 File: <input type="file" id="Data2" /></label>
           <button type="submit">Upload</button>
         </form>
         <div id="uploadStatus" style="margin-top: 10px;"></div>
+        <div id="metadataPreview" style="margin-top: 20px;"></div>
       </section>
 
       <!-- Monthly Plan Section -->
@@ -152,7 +155,6 @@
 
     if (typeof firebase !== 'undefined') {
       firebase.initializeApp(firebaseConfig);
-      const storage = firebase.storage();
     } else {
       console.error("Firebase SDK belum dimuat.");
     }
@@ -160,21 +162,5 @@
 
   <!-- Script Utama -->
   <script src="script.js" defer></script>
-
-  <!-- Navigasi antar menu -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const menuItems = document.querySelectorAll(".sidebar li");
-      menuItems.forEach(item => {
-        item.addEventListener("click", () => {
-          const targetId = item.getAttribute("data-target");
-          document.querySelectorAll(".section").forEach(section => {
-            section.classList.remove("active");
-          });
-          document.getElementById(targetId).classList.add("active");
-        });
-      });
-    });
-  </script>
 </body>
 </html>

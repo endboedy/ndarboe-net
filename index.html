@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +31,6 @@
       color: white;
       padding: 20px;
       width: 200px;
-     -height: 100%;
-    }
-    .sidebar h2 {
-      font-size: 18px;
-      margin-bottom: 20px;
     }
     .sidebar ul {
       list-style: none;
@@ -90,6 +84,7 @@
     </aside>
 
     <main class="content">
+      <!-- Upload Section -->
       <section id="upload" class="section active">
         <h3>Upload Data</h3>
         <form onsubmit="event.preventDefault(); uploadFiles();">
@@ -101,10 +96,10 @@
           <label>Data 2: <input type="file" id="detail2File" /></label><br />
           <button type="submit">Upload</button>
         </form>
-        <!-- ✅ Tambahan untuk status upload -->
         <div id="uploadStatus" style="margin-top: 10px;"></div>
       </section>
 
+      <!-- Monthly Plan Section -->
       <section id="plan" class="section">
         <h3>Monthly Plan</h3>
         <div>
@@ -122,11 +117,11 @@
               <th>Exclude</th><th>Planning</th><th>Status AMT</th>
             </tr>
           </thead>
-          <tbody id="planTableBody">
-          </tbody>
+          <tbody id="planTableBody"></tbody>
         </table>
       </section>
 
+      <!-- Cost Section -->
       <section id="cost" class="section">
         <h3>Monthly Plan</h3>
         <label>Month: <input type="text" value="Aug" /></label>
@@ -147,6 +142,7 @@
         </table>
       </section>
 
+      <!-- Download Section -->
       <section id="download" class="section">
         <h3>Download Excel</h3>
         <p>Silakan klik tombol di bawah untuk mengunduh data:</p>
@@ -155,8 +151,11 @@
     </main>
   </div>
 
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  <script src="https://www.gstatic.com/firebasebase-storage-compat.js
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
@@ -169,18 +168,27 @@
     };
     firebase.initializeApp(firebaseConfig);
   </script>
+
+  <!-- Menu Sidebar Handler -->
   <script>
-    const menuItems = document.querySelectorAll('.sidebar li');
-    const sections = document.querySelectorAll('.section');
-    menuItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const target = item.getAttribute('data-target');
-        sections.forEach(sec => {
-          sec.classList.toggle('active', sec.id === target);
+    document.addEventListener("DOMContentLoaded", () => {
+      const menuItems = document.querySelectorAll('.sidebar li');
+      const sections = document.querySelectorAll('.section');
+      menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const target = item.getAttribute('data-target');
+          sections.forEach(sec => {
+            sec.classList.toggle('active', sec.id === target);
+          });
         });
       });
     });
   </script>
+
+  <!-- SheetJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Main Script -->
   <script src="script.js"></script>
 </body>
 </html>

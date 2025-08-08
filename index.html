@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monthly Plan</title>
   <link rel="stylesheet" href="style.css" />
+  https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -152,10 +154,8 @@
   </div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-
-  <!-- Firebase Config -->
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
@@ -168,25 +168,6 @@
     };
     firebase.initializeApp(firebaseConfig);
   </script>
-
-  <!-- Menu Sidebar Handler -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const menuItems = document.querySelectorAll('.sidebar li');
-      const sections = document.querySelectorAll('.section');
-      menuItems.forEach(item => {
-        item.addEventListener('click', () => {
-          const target = item.getAttribute('data-target');
-          sections.forEach(sec => {
-            sec.classList.toggle('active', sec.id === target);
-          });
-        });
-      });
-    });
-  </script>
-
-  <!-- SheetJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <!-- Main Script -->
   <script src="script.js"></script>

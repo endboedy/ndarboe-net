@@ -10,9 +10,9 @@
   <!-- SheetJS untuk baca file Excel -->
   https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js
 
-  <!-- Firebase SDK (compat version) -->
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
-  https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
+<!-- Firebase SDK -->
+https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js
+https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js
 
   <style>
     body {
@@ -154,23 +154,25 @@
     </main>
   </div>
 
-  <!-- Firebase Config -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
-      authDomain: "monthly-plan-2baf5.firebaseapp.com",
-      projectId: "monthly-plan-2baf5",
-      storageBucket: "monthly-plan-2baf5.appspot.com",
-      messagingSenderId: "42911040784",
-      appId: "1:42911040784:web:5b54401d854b933b84d195",
-      measurementId: "G-LVY6V58JS0"
-    };
+  
+<!-- Firebase Config -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9OAiNLQd8jcSJAhQTbVAEWus1nevatfc",
+    authDomain: "monthly-plan-2baf5.firebaseapp.com",
+    projectId: "monthly-plan-2baf5",
+    storageBucket: "monthly-plan-2baf5.appspot.com",
+    messagingSenderId: "42911040784",
+    appId: "1:42911040784:web:5b54401d854b933b84d195",
+    measurementId: "G-LVY6V58JS0"
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
-  </script>
+  firebase.initializeApp(firebaseConfig);
+  const storage = firebase.storage();
+</script>
 
-  <!-- Script Utama -->
-  <script src="script.js"></script>
+<!-- Script Utama -->
+<script src="script.js"></script>
+
 </body>
 </html>

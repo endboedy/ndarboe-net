@@ -22,21 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
   showSection("upload");
 });
 
-// Fungsi untuk upload file ke Firebase Storage
+// Fungsi untuk upload dan baca file Excel
 function uploadFiles() {
-  if (typeof firebase === 'undefined' || !firebase.storage) {
-    console.error("Firebase belum di-load atau storage belum tersedia.");
-    alert("Firebase belum di-load. Periksa konfigurasi di HTML.");
-    return;
-  }
-
   const files = {
-    iwds: document.getElementById('iwdsFile')?.files[0],
-    swot: document.getElementById('swotFile')?.files[0],
+    iw39: document.getElementById('iw39File')?.files[0],
+    sum57: document.getElementById('sum57File')?.files[0],
     planning: document.getElementById('planningFile')?.files[0],
     budget: document.getElementById('budgetFile')?.files[0],
-    detail1: document.getElementById('detail1File')?.files[0],
-    detail2: document.getElementById('detail2File')?.files[0]
+    data1: document.getElementById('data1File')?.files[0],
+    data2: document.getElementById('data2File')?.files[0]
   };
 
   const statusBox = document.getElementById('uploadStatus');
@@ -48,62 +42,47 @@ function uploadFiles() {
   statusBox.innerHTML = '<strong>Status Upload:</strong><br>';
 
   for (const [key, file] of Object.entries(files)) {
-    if (file) {
-      const storageRef = firebase.storage().ref(`${key}/${file.name}`);
-      const uploadTask = storageRef.put(file);
-
-      uploadTask.on(
-        'state_changed',
-        snapshot => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`${key} upload progress: ${progress.toFixed(2)}%`);
-        },
-        error => {
-          const msg = document.createElement('p');
-          msg.textContent = `Error uploading ${key.toUpperCase()}: ${error.message}`;
-          msg.style.color = 'red';
-          statusBox.appendChild(msg);
-        },
-        () => {
-          const msg = document.createElement('p');
-          msg.textContent = `${key.toUpperCase()} uploaded successfully.`;
-          msg.style.color = 'green';
-          statusBox.appendChild(msg);
-
-          // Baca file Planning setelah upload
-          if (key === 'planning') {
-            readExcel(file);
-          }
-        }
-      );
-    } else {
+    if (!file) {
       const msg = document.createElement('p');
       msg.textContent = `${key.toUpperCase()} file not selected.`;
       msg.style.color = 'orange';
       statusBox.appendChild(msg);
+      continue;
     }
+
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+      const msg = document.createElement('p');
+      msg.textContent = `${key.toUpperCase()} file format not supported.`;
+      msg.style.color = 'red';
+      statusBox.appendChild(msg);
+      continue;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "", header: 1 });
+
+      console.log(`✅ ${key.toUpperCase()} loaded`, jsonData);
+
+      const msg = document.createElement('p');
+      msg.textContent = `${key.toUpperCase()} file loaded successfully.`;
+      msg.style.color = 'green';
+      statusBox.appendChild(msg);
+
+      // Simpan ke variabel global kalau perlu
+      window[`data_${key}`] = jsonData;
+
+      // Tampilkan Planning ke tabel sebagai contoh
+      if (key === 'planning') {
+        renderTable(jsonData);
+      }
+    };
+    reader.readAsArrayBuffer(file);
   }
-}
-
-// Fungsi untuk membaca file Excel menggunakan SheetJS
-function readExcel(file) {
-  if (typeof XLSX === 'undefined') {
-    alert("SheetJS belum dimuat. Pastikan script XLSX.js sudah ditambahkan.");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: 'array' });
-
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-    renderTable(jsonData);
-  };
-  reader.readAsArrayBuffer(file);
 }
 
 // Fungsi untuk menampilkan data ke tabel HTML

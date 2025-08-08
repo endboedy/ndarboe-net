@@ -1,3 +1,4 @@
+
 // Fungsi untuk menampilkan section sesuai menu yang diklik
 function showSection(id) {
   const sections = document.querySelectorAll('.section');
@@ -69,6 +70,7 @@ function uploadFiles() {
           msg.style.color = 'green';
           statusBox.appendChild(msg);
 
+          // Baca file Planning setelah upload
           if (key === 'planning') {
             readExcel(file);
           }
@@ -85,6 +87,11 @@ function uploadFiles() {
 
 // Fungsi untuk membaca file Excel menggunakan SheetJS
 function readExcel(file) {
+  if (typeof XLSX === 'undefined') {
+    alert("SheetJS belum dimuat. Pastikan script XLSX.js sudah ditambahkan.");
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);

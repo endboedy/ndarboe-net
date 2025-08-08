@@ -1,3 +1,4 @@
+
 {
   "hosting": {
     "public": "public",
@@ -6,5 +7,16 @@
       "**/.*",
       "**/node_modules/**"
     ]
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "emulators": {
+    "hosting": {
+      "port": 5000
+    },
+    "database": {
+      "port": 9000
+    }
   }
 }

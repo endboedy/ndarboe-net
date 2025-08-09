@@ -1,0 +1,9 @@
+
+[
+  {
+    "origin": ["https://monthly-plan-2baf5.web.app"],
+    "method": ["GET", "POST", "PUT"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]

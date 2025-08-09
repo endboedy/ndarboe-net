@@ -1,9 +1,14 @@
-
 [
   {
     "origin": ["https://monthly-plan-2baf5.web.app"],
-    "method": ["GET", "POST", "PUT"],
+    "method": ["GET", "POST", "PUT", "HEAD", "OPTIONS"],
     "maxAgeSeconds": 3600,
-    "responseHeader": ["Content-Type", "Authorization"]
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "x-goog-meta-*",
+      "x-goog-acl",
+      "x-goog-resumable"
+    ]
   }
 ]

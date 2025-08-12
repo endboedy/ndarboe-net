@@ -1,7 +1,4 @@
 
-// Monthly Plan BMB - script.js
-// Requires SheetJS (xlsx.full.min.js) to be loaded in HTML
-
 const excelFiles = {
     IW39: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/IW39.xlsx',
     SUM57: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/SUM57.xlsx',
@@ -13,25 +10,28 @@ const excelFiles = {
 let dataSources = {};
 
 async function loadExcelFile(url) {
-    const res = await fetch(url);
-    const ab = await res.arrayBuffer();
-    const wb = XLSX.read(ab, { type: 'array' });
-    const sheet = wb.Sheets[wb.SheetNames[0]];
-    return XLSX.utils.sheet_to_json(sheet);
+    try {
+        const res = await fetch(url);
+        const ab = await res.arrayBuffer();
+        const wb = XLSX.read(ab, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
+        console.log(`Loaded ${url}`, json.slice(0, 3)); // tampilkan 3 baris pertama
+        return json;
+    } catch (err) {
+        console.error(`Gagal load ${url}`, err);
+        return [];
+    }
 }
 
 async function loadAllDataSources() {
     for (const [key, url] of Object.entries(excelFiles)) {
         dataSources[key] = await loadExcelFile(url);
     }
+    console.log('Semua data berhasil dimuat:', dataSources);
 }
 
 function lookupOrderData(order) {
-    if (!dataSources.IW39 || !dataSources.SUM57 || !dataSources.Planning || !dataSources.Data1 || !dataSources.Data2) {
-        console.warn('Data belum siap, pastikan loadAllDataSources() sudah selesai.');
-        return null;
-    }
-
     const iw39 = dataSources.IW39.find(row => row.Order?.toString().trim() === order.trim());
     const sum57 = dataSources.SUM57.find(row => row.Order?.toString().trim() === order.trim());
     const planning = dataSources.Planning.find(row => row.Order?.toString().trim() === order.trim());
@@ -49,7 +49,7 @@ function lookupOrderData(order) {
     const cost = totalPlan && totalActual ? (totalPlan - totalActual) / 16500 : '-';
     const costValue = cost < 0 ? '-' : parseFloat(cost.toFixed(2));
 
-    return {
+    const result = {
         Order: order,
         Room: iw39?.Room || '',
         'Order Type': iw39?.OrderType || '',
@@ -69,6 +69,9 @@ function lookupOrderData(order) {
         Include: '',
         Exclude: ''
     };
+
+    console.log('Hasil lookup:', result);
+    return result;
 }
 
 function updateIncludeExclude(row) {
@@ -137,40 +140,3 @@ function renderTable(data) {
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);
-    container.appendChild(table);
-}
-
-let tableData = [];
-
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadAllDataSources();
-    document.getElementById('orderForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const input = document.getElementById('orderInput').value;
-        const orders = input.split(',').map(o => o.trim()).filter(o => o);
-        orders.forEach(order => {
-            const row = lookupOrderData(order);
-            if (row) {
-                updateIncludeExclude(row);
-                tableData.push(row);
-            }
-        });
-        renderTable(tableData);
-        document.getElementById('orderInput').value = '';
-    });
-
-    document.getElementById('saveBtn').addEventListener('click', () => {
-        const blob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'data.json';
-        a.click();
-    });
-
-    document.getElementById('loadBtn').addEventListener('click', async () => {
-        const res = await fetch('https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/data.json');
-        const json = await res.json();
-        tableData = json;
-        renderTable(tableData);
-    });
-});

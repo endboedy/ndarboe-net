@@ -27,13 +27,22 @@ async function loadAllDataSources() {
 }
 
 function lookupOrderData(order) {
-    const iw39 = dataSources.IW39.find(row => row.Order == order);
-    const sum57 = dataSources.SUM57.find(row => row.Order == order);
-    const planning = dataSources.Planning.find(row => row.Order == order);
-    const mat = iw39?.MAT || '';
-    const room = iw39?.Room || '';
-    const data2 = mat.startsWith('JR') ? { CPH: 'JR' } : dataSources.Data2.find(row => row.MAT == mat);
-    const data1 = dataSources.Data1.find(row => row.Room == room);
+    if (!dataSources.IW39 || !dataSources.SUM57 || !dataSources.Planning || !dataSources.Data1 || !dataSources.Data2) {
+        console.warn('Data belum siap, pastikan loadAllDataSources() sudah selesai.');
+        return null;
+    }
+
+    const iw39 = dataSources.IW39.find(row => row.Order?.toString().trim() === order.trim());
+    const sum57 = dataSources.SUM57.find(row => row.Order?.toString().trim() === order.trim());
+    const planning = dataSources.Planning.find(row => row.Order?.toString().trim() === order.trim());
+
+    const mat = iw39?.MAT?.toString().trim() || '';
+    const room = iw39?.Room?.toString().trim() || '';
+
+    const data2 = mat.startsWith('JR') ? { CPH: 'JR' } :
+        dataSources.Data2.find(row => row.MAT?.toString().trim().toUpperCase() === mat.toUpperCase());
+
+    const data1 = dataSources.Data1.find(row => row.Room?.toString().trim().toUpperCase() === room.toUpperCase());
 
     const totalPlan = parseFloat(iw39?.TotalPlan || 0);
     const totalActual = parseFloat(iw39?.TotalActual || 0);
@@ -141,8 +150,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const orders = input.split(',').map(o => o.trim()).filter(o => o);
         orders.forEach(order => {
             const row = lookupOrderData(order);
-            updateIncludeExclude(row);
-            tableData.push(row);
+            if (row) {
+                updateIncludeExclude(row);
+                tableData.push(row);
+            }
         });
         renderTable(tableData);
         document.getElementById('orderInput').value = '';

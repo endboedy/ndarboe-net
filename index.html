@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Plan BMB</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 300;
+            font-size: 24px;
+        }
+        nav {
+            background-color: #34495e;
+            display: flex;
+            padding: 10px;
+        }
+        nav button {
+            background-color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: 300;
+        }
+        .container {
+            padding: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        input, select {
+            padding: 5px;
+            margin-right: 10px;
+            font-weight: 300;
+        }
+        button.action {
+            padding: 5px 10px;
+            margin-right: 10px;
+            font-weight: 300;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-weight: 300;
+        }
+        th {
+            background-color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <header>Monthly Plan BMB</header>
+    <nav>
+        <button onclick="showMenu('lembarKerja')">Lembar Kerja</button>
+        <button onclick="showMenu('costRM')">Cost RM</button>
+    </nav>
+    <div class="container">
+        <div id="lembarKerja">
+            <h2>Lembar Kerja</h2>
+            <form id="orderForm" onsubmit="addOrder(event)">
+                <label>Order(s): <input type="text" id="orderInput" placeholder="Enter multiple orders separated by comma" title="You can enter multiple orders separated by comma" required></label>
+                <button type="submit" class="action">Add Order</button>
+                <button type="button" id="saveData" class="action">Save</button>
+                <button type="button" id="loadData" class="action">Load</button>
+            </form>
+            <div style="margin-top:10px;">
+                <label>Filter Room: <input type="text" id="filterRoom"></label>
+                <label>Filter Order: <input type="text" id="filterOrder"></label>
+                <label>Filter MAT: <input type="text" id="filterMAT"></label>
+                <label>Filter CPH: <input type="text" id="filterCPH"></label>
+                <label>Filter Section: <input type="text" id="filterSection"></label>
+                <button onclick="applyFilters()" class="action">Filter</button>
+                <button onclick="resetFilters()" class="action">Reset</button>
+            </div>
+            <table id="outputTable">
+                <thead>
+                    <tr>
+                        <th>Room</th><th>Order Type</th><th>Order</th><th>Description</th><th>Created On</th>
+                        <th>User Status</th><th>MAT</th><th>CPH</th><th>Section</th><th>Status Part</th>
+                        <th>Aging</th><th>Month</th><th>Cost</th><th>Reman</th><th>Include</th>
+                        <th>Exclude</th><th>Planning</th><th>Status AMT</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div id="costRM" class="hidden">
+            <h2>Cost RM</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+    <script>
+        function showMenu(menu) {
+            document.getElementById('lembarKerja').style.display = menu === 'lembarKerja' ? 'block' : 'none';
+            document.getElementById('costRM').style.display = menu === 'costRM' ? 'block' : 'none';
+        }
+
+        function addOrder(event) {
+            event.preventDefault();
+            const input = document.getElementById('orderInput').value;
+            const orders = input.split(',').map(o => o.trim()).filter(o => o);
+            const tbody = document.getElementById('tableBody');
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                for (let i = 0; i < 18; i++) {
+                    const td = document.createElement('td');
+                    if (i === 2) td.textContent = order; // Order column
+                    else if (i === 11) { // Month dropdown
+                        const select = document.createElement('select');
+                        ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].forEach(m => {
+                            const opt = document.createElement('option');
+                            opt.value = m;
+                            opt.textContent = m;
+                            select.appendChild(opt);
+                        });
+                        td.appendChild(select);
+                    } else if (i === 13) { // Reman input
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        td.appendChild(input);
+                    } else {
+                        td.textContent = '-';
+                    }
+                    row.appendChild(td);
+                }
+                const actionTd = document.createElement('td');
+                const editBtn = document.createElement('button');
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = () => alert('Edit clicked for order: ' + order);
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => row.remove();
+                actionTd.appendChild(editBtn);
+                actionTd.appendChild(deleteBtn);
+                row.appendChild(actionTd);
+                tbody.appendChild(row);
+            });
+            document.getElementById('orderInput').value = '';
+        }
+
+        function applyFilters() {
+            const room = document.getElementById('filterRoom').value.toLowerCase();
+            const order = document.getElementById('filterOrder').value.toLowerCase();
+            const mat = document.getElementById('filterMAT').value.toLowerCase();
+            const cph = document.getElementById('filterCPH').value.toLowerCase();
+            const section = document.getElementById('filterSection').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const match = cells[0].textContent.toLowerCase().includes(room) &&
+                              cells[2].textContent.toLowerCase().includes(order) &&
+                              cells[6].textContent.toLowerCase().includes(mat) &&
+                              cells[7].textContent.toLowerCase().includes(cph) &&
+                              cells[8].textContent.toLowerCase().includes(section);
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('filterRoom').value = '';
+            document.getElementById('filterOrder').value = '';
+            document.getElementById('filterMAT').value = '';
+            document.getElementById('filterCPH').value = '';
+            document.getElementById('filterSection').value = '';
+            document.querySelectorAll('#tableBody tr').forEach(row => row.style.display = '');
+        }
+
+        document.getElementById('saveData').addEventListener('click', () => {
+            const table = document.getElementById('tableBody').innerHTML;
+            localStorage.setItem('savedTable', table);
+            alert('Data saved successfully!');
+        });
+
+        document.getElementById('loadData').addEventListener('click', () => {
+            const saved = localStorage.getItem('savedTable');
+            if (saved) {
+                document.getElementById('tableBody').innerHTML = saved;
+                alert('Data loaded successfully!');
+            } else {
+                alert('No saved data found.');
+            }
+        });
+    </script>
+</body>
+</html>

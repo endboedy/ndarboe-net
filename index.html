@@ -2,173 +2,102 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monthly Plan BMB</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 20px;
+      background-color: #f4f4f4;
     }
-    header {
-      background-color: #003366;
-      color: white;
-      padding: 15px 20px;
-      font-size: 20px;
-    }
-    .content {
-      padding: 20px;
-    }
-    .filters input {
-      margin-right: 10px;
-      padding: 5px;
-    }
-    .buttons {
-      margin: 10px 0;
-    }
-    .buttons button {
-      margin-right: 10px;
-      padding: 8px 16px;
+    h1 {
+      text-align: center;
+      color: #333;
     }
     table {
-      border-collapse: collapse;
       width: 100%;
-      margin-top: 10px;
+      border-collapse: collapse;
+      background-color: #fff;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 6px;
+      padding: 8px;
       text-align: left;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: #eaeaea;
+    }
+    .action-buttons button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .edit-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-  <header>Monthly Plan BMB</header>
+  <h1>Monthly Plan BMB</h1>
 
-  <div class="content">
-    <div class="filters">
-      <input type="text" placeholder="Filter Room" id="filterRoom">
-      <input type="text" placeholder="Filter Order" id="filterOrder">
-      <input type="text" placeholder="Filter MAT" id="filterMAT">
-      <input type="text" placeholder="Filter CPH" id="filterCPH">
-      <input type="text" placeholder="Filter Section" id="filterSection">
-    </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Room</th>
+        <th>Order Type</th>
+        <th>Order</th>
+        <th>Description</th>
+        <th>Created On</th>
+        <th>User Status</th>
+        <th>MAT</th>
+        <th>CPH</th>
+        <th>Section</th>
+        <th>Status Part</th>
+        <th>Aging</th>
+        <th>Month</th>
+        <th>Cost</th>
+        <th>Reman</th>
+        <th>Include</th>
+        <th>Exclude</th>
+        <th>Planning Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CO4395</td>
+        <td>PM37</td>
+        <td>4700750754</td>
+        <td>JR Repair Service Brake Caliper CO4395</td>
+        <td>07 Mar 2025</td>
+        <td>RELE</td>
+        <td>C22</td>
+        <td>External Job</td>
+        <td>Wheel Type</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>1075.76</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>30 Sep 2025</td>
+        <td class="action-buttons">
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <div class="buttons">
-      <button onclick="applyFilters()">Filter</button>
-      <button onclick="resetFilters()">Reset</button>
-      <button onclick="saveJSON()">Save JSON</button>
-      <button onclick="loadJSON()">Load JSON</button>
-    </div>
-
-    <div id="tableContainer"></div>
-  </div>
-
-  <script>
-    let tableData = [
-      {
-        Room: "CO4395",
-        "Order Type": "PM37",
-        Order: "4707570754",
-        Description: "JR Repair Service Brake Caliper CO4395",
-        "Created On": "07 Mar 2025",
-        "User Status": "RELE",
-        MAT: "C22",
-        CPH: "External Job",
-        Section: "Wheel Type",
-        "Status Part": "",
-        Aging: "",
-        Month: "",
-        Cost: "1075.76",
-        Reman: "",
-        Include: "1075.76",
-        Exclude: "1075.76",
-        Planning: "30 Sep 2025",
-        "Status AMT": "YTS"
-      }
-    ];
-
-    function renderTable(data) {
-      const container = document.getElementById("tableContainer");
-      container.innerHTML = "";
-      const table = document.createElement("table");
-
-      const headers = Object.keys(data[0] || {}).concat(["Action"]);
-      const thead = document.createElement("thead");
-      const trHead = document.createElement("tr");
-      headers.forEach(h => {
-        const th = document.createElement("th");
-        th.textContent = h;
-        trHead.appendChild(th);
-      });
-      thead.appendChild(trHead);
-      table.appendChild(thead);
-
-      const tbody = document.createElement("tbody");
-      data.forEach((row, index) => {
-        const tr = document.createElement("tr");
-        headers.forEach(h => {
-          const td = document.createElement("td");
-          if (h === "Month") {
-            const select = document.createElement("select");
-            ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].forEach(m => {
-              const opt = document.createElement("option");
-              opt.value = m;
-              opt.textContent = m;
-              select.appendChild(opt);
-            });
-            select.value = row.Month || "";
-            select.onchange = e => {
-              row.Month = e.target.value;
-            };
-            td.appendChild(select);
-          } else if (h === "Reman") {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = row.Reman || "";
-            input.oninput = e => {
-              row.Reman = e.target.value;
-              updateCostFields(row);
-              renderTable(data);
-            };
-            td.appendChild(input);
-          } else if (h === "Action") {
-            const editBtn = document.createElement("button");
-            editBtn.textContent = "Edit";
-            editBtn.onclick = () => alert(`Edit Order ${row.Order}`);
-
-            const deleteBtn = document.createElement("button");
-            deleteBtn.textContent = "Delete";
-            deleteBtn.onclick = () => {
-              data.splice(index, 1);
-              renderTable(data);
-            };
-
-            td.appendChild(editBtn);
-            td.appendChild(deleteBtn);
-          } else {
-            td.textContent = row[h];
-          }
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-      });
-
-      table.appendChild(tbody);
-      container.appendChild(table);
-    }
-
-    function updateCostFields(row) {
-      const plan = parseFloat(row.Cost) || 0;
-      const reman = parseFloat(row.Reman) || 0;
-      const cost = (plan - reman) / 16500;
-      row.Include = cost >= 0 ? cost.toFixed(2) : "-";
-      row.Exclude = cost < 0 ? cost.toFixed(2) : "-";
-    }
-
-    function applyFilters() {
-      const room = document
+</body>
+</html>

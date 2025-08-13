@@ -1,11 +1,12 @@
 
 const IW39_URL = 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/IW39.xlsx';
+const SHEET_NAME = 'IW39';
 
-async function loadExcel(url) {
+async function loadExcel(url, sheetName) {
     const res = await fetch(url);
     const ab = await res.arrayBuffer();
     const wb = XLSX.read(ab, { type: 'array' });
-    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const sheet = wb.Sheets[sheetName];
     return XLSX.utils.sheet_to_json(sheet);
 }
 
@@ -70,6 +71,7 @@ function renderTable(data) {
                     row.Reman = e.target.value;
                     row.Include = calculateInclude(row.Reman, row.Cost);
                     row.Exclude = calculateExclude(row['Order Type'], row.Include);
+                    renderTable(tableData); // refresh table to show updated values
                 };
                 td.appendChild(input);
             } else if (h === 'Action') {
@@ -91,7 +93,9 @@ function renderTable(data) {
 let tableData = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const rawData = await loadExcel(IW39_URL);
+    const rawData = await loadExcel(IW39_URL, SHEET_NAME);
+    console.log("Raw data:", rawData); // debug
+
     tableData = rawData.map(row => {
         const cost = calculateCost(row['Total sum (plan)'], row['Total sum (actual)']);
         const include = calculateInclude('', cost);

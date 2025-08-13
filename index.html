@@ -16,20 +16,6 @@
       padding: 15px 20px;
       font-size: 20px;
     }
-    .tabs {
-      display: flex;
-      background-color: #eee;
-      border-bottom: 1px solid #ccc;
-    }
-    .tab {
-      padding: 10px 20px;
-      cursor: pointer;
-      border-right: 1px solid #ccc;
-    }
-    .tab.active {
-      background-color: #ddd;
-      font-weight: bold;
-    }
     .content {
       padding: 20px;
     }
@@ -57,81 +43,132 @@
     th {
       background-color: #f2f2f2;
     }
-    #lembarKerjaContent, #costRMContent {
-      display: none;
-    }
   </style>
 </head>
 <body>
+
   <header>Monthly Plan BMB</header>
 
-  <div class="tabs">
-    <div class="tab active" onclick="showTab('lembarKerja')">Lembar Kerja</div>
-    <div class="tab" onclick="showTab('costRM')">Cost RM</div>
-  </div>
-
   <div class="content">
-    <!-- Menu Lembar Kerja -->
-    <div id="lembarKerjaContent">
-      <div class="filters">
-        <input type="text" placeholder="Filter Room" id="filterRoom">
-        <input type="text" placeholder="Filter Order" id="filterOrder">
-        <input type="text" placeholder="Filter MAT" id="filterMAT">
-        <input type="text" placeholder="Filter CPH" id="filterCPH">
-        <input type="text" placeholder="Filter Section" id="filterSection">
-        <input type="text" placeholder="Filter Month" id="filterMonth">
-      </div>
-
-      <div class="buttons">
-        <button onclick="applyFilters()">Filter</button>
-        <button onclick="resetFilters()">Reset</button>
-        <button onclick="refreshData()">Refresh</button>
-        <button onclick="saveJSON()">Save JSON</button>
-        <button onclick="loadJSON()">Load JSON</button>
-      </div>
-
-      <div id="tableContainer"></div>
+    <div class="filters">
+      <input type="text" placeholder="Filter Room" id="filterRoom">
+      <input type="text" placeholder="Filter Order" id="filterOrder">
+      <input type="text" placeholder="Filter MAT" id="filterMAT">
+      <input type="text" placeholder="Filter CPH" id="filterCPH">
+      <input type="text" placeholder="Filter Section" id="filterSection">
     </div>
 
-    <!-- Menu Cost RM -->
-    <div id="costRMContent">
-      <div class="filters">
-        <input type="text" placeholder="Filter Room" id="filterRoomRM">
-        <input type="text" placeholder="Filter Order" id="filterOrderRM">
-        <input type="text" placeholder="Filter MAT" id="filterMATRM">
-        <input type="text" placeholder="Filter CPH" id="filterCPHRM">
-        <input type="text" placeholder="Filter Section" id="filterSectionRM">
-        <input type="text" placeholder="Filter Month" id="filterMonthRM">
-      </div>
-
-      <div class="buttons">
-        <button onclick="applyFiltersRM()">Filter</button>
-        <button onclick="resetFiltersRM()">Reset</button>
-        <button onclick="refreshData()">Refresh</button>
-        <button onclick="saveJSON()">Save JSON</button>
-        <button onclick="loadJSON()">Load JSON</button>
-      </div>
-
-      <div id="costRMTableContainer"></div>
+    <div class="buttons">
+      <button onclick="applyFilters()">Filter</button>
+      <button onclick="resetFilters()">Reset</button>
+      <button onclick="saveJSON()">Save JSON</button>
+      <button onclick="loadJSON()">Load JSON</button>
     </div>
+
+    <div id="tableContainer"></div>
   </div>
 
-  https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
-  <script src="script.js"></script>
   <script>
-    function showTab(tabName) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      document.getElementById('lembarKerjaContent').style.display = 'none';
-      document.getElementById('costRMContent').style.display = 'none';
-
-      if (tabName === 'lembarKerja') {
-        document.querySelector('.tab:nth-child(1)').classList.add('active');
-        document.getElementById('lembarKerjaContent').style.display = 'block';
-      } else {
-        document.querySelector('.tab:nth-child(2)').classList.add('active');
-        document.getElementById('costRMContent').style.display = 'block';
+    let tableData = [
+      {
+        Room: "CO4395",
+        "Order Type": "PM37",
+        Order: "4707570754",
+        Description: "JR Repair Service Brake Caliper CO4395",
+        "Created On": "07 Mar 2025",
+        "User Status": "RELE",
+        MAT: "C22",
+        CPH: "External Job",
+        Section: "Wheel Type",
+        "Status Part": "",
+        Aging: "",
+        Month: "",
+        Cost: "1075.76",
+        Reman: "",
+        Include: "1075.76",
+        Exclude: "1075.76",
+        Planning: "30 Sep 2025",
+        "Status AMT": "YTS"
       }
+    ];
+
+    function renderTable(data) {
+      const container = document.getElementById("tableContainer");
+      container.innerHTML = "";
+      const table = document.createElement("table");
+
+      const headers = Object.keys(data[0] || {}).concat(["Action"]);
+      const thead = document.createElement("thead");
+      const trHead = document.createElement("tr");
+      headers.forEach(h => {
+        const th = document.createElement("th");
+        th.textContent = h;
+        trHead.appendChild(th);
+      });
+      thead.appendChild(trHead);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      data.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        headers.forEach(h => {
+          const td = document.createElement("td");
+          if (h === "Month") {
+            const select = document.createElement("select");
+            ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].forEach(m => {
+              const opt = document.createElement("option");
+              opt.value = m;
+              opt.textContent = m;
+              select.appendChild(opt);
+            });
+            select.value = row.Month || "";
+            select.onchange = e => {
+              row.Month = e.target.value;
+            };
+            td.appendChild(select);
+          } else if (h === "Reman") {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = row.Reman || "";
+            input.oninput = e => {
+              row.Reman = e.target.value;
+              updateCostFields(row);
+              renderTable(data);
+            };
+            td.appendChild(input);
+          } else if (h === "Action") {
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.onclick = () => alert(`Edit Order ${row.Order}`);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = () => {
+              data.splice(index, 1);
+              renderTable(data);
+            };
+
+            td.appendChild(editBtn);
+            td.appendChild(deleteBtn);
+          } else {
+            td.textContent = row[h];
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      container.appendChild(table);
     }
-  </script>
-</body>
-</html>
+
+    function updateCostFields(row) {
+      const plan = parseFloat(row.Cost) || 0;
+      const reman = parseFloat(row.Reman) || 0;
+      const cost = (plan - reman) / 16500;
+      row.Include = cost >= 0 ? cost.toFixed(2) : "-";
+      row.Exclude = cost < 0 ? cost.toFixed(2) : "-";
+    }
+
+    function applyFilters() {
+      const room = document

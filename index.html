@@ -96,7 +96,10 @@
 
         <!-- Konten Cost RM -->
         <div id="costRMContent">
-            <p>Konten Cost RM akan ditampilkan di sini.</p>
+            <h3>Summary Cost RM</h3>
+            <div id="costRMTableContainer">
+                <!-- Tabel Cost RM akan dirender di sini -->
+            </div>
         </div>
     </div>
 
@@ -108,14 +111,3 @@
                 document.getElementById('lembarKerjaContent').style.display = 'block';
                 document.getElementById('costRMContent').style.display = 'none';
             } else {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
-                document.getElementById('lembarKerjaContent').style.display = 'none';
-                document.getElementById('costRMContent').style.display = 'block';
-            }
-        }
-    </script>
-
-    https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
-    <script src="script.js"></script>
-</body>
-</html>

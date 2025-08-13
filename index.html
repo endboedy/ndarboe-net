@@ -2,138 +2,136 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Monthly Plan BMB</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #003366;
-            color: white;
-            padding: 15px 20px;
-            font-size: 20px;
-        }
-        .tabs {
-            display: flex;
-            background-color: #eee;
-            border-bottom: 1px solid #ccc;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-right: 1px solid #ccc;
-        }
-        .tab.active {
-            background-color: #ddd;
-            font-weight: bold;
-        }
-        .content {
-            padding: 20px;
-        }
-        .filters input {
-            margin-right: 10px;
-            padding: 5px;
-        }
-        .buttons {
-            margin: 10px 0;
-        }
-        .buttons button {
-            margin-right: 10px;
-            padding: 8px 16px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 6px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        #lembarKerjaContent, #costRMContent {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Monthly Plan BMB</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 15px 20px;
+      font-size: 20px;
+    }
+    .tabs {
+      display: flex;
+      background-color: #eee;
+      border-bottom: 1px solid #ccc;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-right: 1px solid #ccc;
+    }
+    .tab.active {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+    .content {
+      padding: 20px;
+    }
+    .filters input {
+      margin-right: 10px;
+      padding: 5px;
+    }
+    .buttons {
+      margin: 10px 0;
+    }
+    .buttons button {
+      margin-right: 10px;
+      padding: 8px 16px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    #lembarKerjaContent, #costRMContent {
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <header>Monthly Plan BMB</header>
 
-    <header>Monthly Plan BMB</header>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('lembarKerja')">Lembar Kerja</div>
+    <div class="tab" onclick="showTab('costRM')">Cost RM</div>
+  </div>
 
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('lembarKerja')">Lembar Kerja</div>
-        <div class="tab" onclick="showTab('costRM')">Cost RM</div>
+  <div class="content">
+    <!-- Menu Lembar Kerja -->
+    <div id="lembarKerjaContent">
+      <div class="filters">
+        <input type="text" placeholder="Filter Room" id="filterRoom">
+        <input type="text" placeholder="Filter Order" id="filterOrder">
+        <input type="text" placeholder="Filter MAT" id="filterMAT">
+        <input type="text" placeholder="Filter CPH" id="filterCPH">
+        <input type="text" placeholder="Filter Section" id="filterSection">
+        <input type="text" placeholder="Filter Month" id="filterMonth">
+      </div>
+
+      <div class="buttons">
+        <button onclick="applyFilters()">Filter</button>
+        <button onclick="resetFilters()">Reset</button>
+        <button onclick="refreshData()">Refresh</button>
+        <button onclick="saveJSON()">Save JSON</button>
+        <button onclick="loadJSON()">Load JSON</button>
+      </div>
+
+      <div id="tableContainer"></div>
     </div>
 
-    <div class="content">
-        <!-- Konten Lembar Kerja -->
-        <div id="lembarKerjaContent">
-            <div class="filters">
-                <input type="text" placeholder="Filter Room" id="filterRoom">
-                <input type="text" placeholder="Filter Order" id="filterOrder">
-                <input type="text" placeholder="Filter MAT" id="filterMAT">
-                <input type="text" placeholder="Filter CPH" id="filterCPH">
-                <input type="text" placeholder="Filter Section" id="filterSection">
-                <input type="text" placeholder="Filter Month" id="filterMonth">
-            </div>
+    <!-- Menu Cost RM -->
+    <div id="costRMContent">
+      <div class="filters">
+        <input type="text" placeholder="Filter Room" id="filterRoomRM">
+        <input type="text" placeholder="Filter Order" id="filterOrderRM">
+        <input type="text" placeholder="Filter MAT" id="filterMATRM">
+        <input type="text" placeholder="Filter CPH" id="filterCPHRM">
+        <input type="text" placeholder="Filter Section" id="filterSectionRM">
+        <input type="text" placeholder="Filter Month" id="filterMonthRM">
+      </div>
 
-            <div class="buttons">
-                <button id="filterBtn">Filter</button>
-                <button id="resetBtn">Reset</button>
-                <button id="refreshBtn">Refresh</button>
-                <button id="saveJSONBtn">Save JSON</button>
-                <button id="loadJSONBtn">Load JSON</button>
-            </div>
+      <div class="buttons">
+        <button onclick="applyFiltersRM()">Filter</button>
+        <button onclick="resetFiltersRM()">Reset</button>
+        <button onclick="refreshData()">Refresh</button>
+        <button onclick="saveJSON()">Save JSON</button>
+        <button onclick="loadJSON()">Load JSON</button>
+      </div>
 
-            <div id="tableContainer"></div>
-        </div>
-
-        <!-- Konten Cost RM -->
-        <div id="costRMContent">
-            <div class="filters">
-                <input type="text" placeholder="Filter Room" id="filterRoomRM">
-                <input type="text" placeholder="Filter Order" id="filterOrderRM">
-                <input type="text" placeholder="Filter MAT" id="filterMATRM">
-                <input type="text" placeholder="Filter CPH" id="filterCPHRM">
-                <input type="text" placeholder="Filter Section" id="filterSectionRM">
-                <input type="text" placeholder="Filter Month" id="filterMonthRM">
-            </div>
-
-            <div class="buttons">
-                <button id="filterBtnRM">Filter</button>
-                <button id="resetBtnRM">Reset</button>
-                <button id="refreshBtnRM">Refresh</button>
-                <button id="saveJSONBtnRM">Save JSON</button>
-                <button id="loadJSONBtnRM">Load JSON</button>
-            </div>
-
-            <div id="costRMTableContainer"></div>
-        </div>
+      <div id="costRMTableContainer"></div>
     </div>
+  </div>
 
-    <script>
-        function showTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('lembarKerjaContent').style.display = 'none';
-            document.getElementById('costRMContent').style.display = 'none';
+  https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+  <script src="script.js"></script>
+  <script>
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById('lembarKerjaContent').style.display = 'none';
+      document.getElementById('costRMContent').style.display = 'none';
 
-            if (tabName === 'lembarKerja') {
-                document.querySelector('.tab:nth-child(1)').classList.add('active');
-                document.getElementById('lembarKerjaContent').style.display = 'block';
-            } else {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
-                document.getElementById('costRMContent').style.display = 'block';
-            }
-        }
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18min.js
-    <script src="script.js"></script>
+      if (tabName === 'lembarKerja') {
+        document.querySelector('.tab:nth-child(1)').classList.add('active');
+        document.getElementById('lembarKerjaContent').style.display = 'block';
+      } else {
+        document.querySelector('.tab:nth-child(2)').classList.add('active');
+        document.getElementById('costRMContent').style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>

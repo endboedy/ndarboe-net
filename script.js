@@ -1,93 +1,61 @@
 
-const files = {
-    IW39: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/IW39.xlsx',
-    SUM57: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/SUM57.xlsx',
-    Planning: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/Planning.xlsx',
-    Data1: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/Data1.xlsx',
-    Data2: 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/Data2.xlsx'
-};
-
-async function loadExcel(url, sheetName) {
-    const res = await fetch(url);
-    const ab = await res.arrayBuffer();
-    const wb = XLSX.read(ab, { type: 'array' });
-    const sheet = wb.Sheets[sheetName];
-    return XLSX.utils.sheet_to_json(sheet);
-}
-
-function calculateCost(plan, actual) {
-    const p = parseFloat(plan || 0);
-    const a = parseFloat(actual || 0);
-    const cost = (p - a) / 16500;
-    return cost < 0 ? '-' : parseFloat(cost.toFixed(2));
-}
-
-function calculateInclude(reman, cost) {
-    if (typeof reman === 'string' && reman.toLowerCase().includes('reman')) {
-        return cost !== '-' ? parseFloat((cost * 0.25).toFixed(2)) : '-';
-    }
-    return cost;
-}
-
-function calculateExclude(orderType, include) {
-    return orderType === 'PM38' ? '-' : include;
-}
-
 let tableData = [];
 
-async function mergeData() {
-    const [iw39, sum57, planning, data1, data2] = await Promise.all([
-        loadExcel(files.IW39, 'IW39'),
-        loadExcel(files.SUM57, 'SUM57'),
-        loadExcel(files.Planning, 'Planning'),
-        loadExcel(files.Data1, 'Data1'),
-        loadExcel(files.Data2, 'Data2')
-    ]);
+function applyFilters() {
+    const filters = {
+        Room: document.getElementById('filterRoom').value.toLowerCase(),
+        Order: document.getElementById('filterOrder').value.toLowerCase(),
+        MAT: document.getElementById('filterMAT').value.toLowerCase(),
+        CPH: document.getElementById('filterCPH').value.toLowerCase(),
+        Section: document.getElementById('filterSection').value.toLowerCase(),
+        Month: document.getElementById('filterMonth')?.value?.toLowerCase() || ''
+    };
 
-    const result = iw39.map(row => {
-        const mat = row.MAT || '';
-        const order = row.Order || '';
-        const orderType = row['Order Type'] || '';
-        const cost = calculateCost(row['Total sum (plan)'], row['Total sum (actual)']);
-        const reman = '';
-        const month = '';
-
-        const include = calculateInclude(reman, cost);
-        const exclude = calculateExclude(orderType, include);
-
-        const cph = mat.startsWith('JR') ? 'JR' : (data2.find(d => d.MAT === mat)?.CPH || '');
-        const section = data1.find(d => d.MAT === mat)?.Section || '';
-        const sumRow = sum57.find(d => d.Order === order) || {};
-        const statusPart = sumRow['Part Complete'] || '';
-        const aging = sumRow['Aging'] || '';
-        const planRow = planning.find(d => d.Order === order) || {};
-        const planningDate = planRow['Event Start'] || '';
-        const statusAMT = planRow['Status'] || '';
-
-        return {
-            Room: row.Room || '',
-            'Order Type': orderType,
-            Order: order,
-            Description: row.Description || '',
-            'Created On': row['Created On'] || '',
-            'User Status': row['User Status'] || '',
-            MAT: mat,
-            CPH: cph,
-            Section: section,
-            'Status Part': statusPart,
-            Aging: aging,
-            Month: month,
-            Cost: cost,
-            Reman: reman,
-            Include: include,
-            Exclude: exclude,
-            Planning: planningDate,
-            'Status AMT': statusAMT
-        };
+    const filtered = tableData.filter(row => {
+        return Object.keys(filters).every(key => {
+            return !filters[key] || (row[key] || '').toLowerCase().includes(filters[key]);
+        });
     });
 
-    tableData = result;
+    renderTable(filtered);
+}
+
+function resetFilters() {
+    ['filterRoom', 'filterOrder', 'filterMAT', 'filterCPH', 'filterSection', 'filterMonth'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
     renderTable(tableData);
+}
+
+function refreshData() {
+    mergeData(); // reload dari Excel
+}
+
+function saveJSON() {
+    const blob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'MonthlyPlanData.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = evt => {
+            tableData = JSON.parse(evt.target.result);
+            renderTable(tableData);
+        };
+        reader.readAsText(file);
+    };
+    input.click();
 }
 
 function renderTable(data) {
@@ -95,7 +63,7 @@ function renderTable(data) {
     container.innerHTML = '';
     const table = document.createElement('table');
 
-    const headers = Object.keys(data[0]).concat(['Action']);
+    const headers = Object.keys(data[0] || {}).concat(['Action']);
     const thead = document.createElement('thead');
     const trHead = document.createElement('tr');
     headers.forEach(h => {
@@ -120,7 +88,9 @@ function renderTable(data) {
                     select.appendChild(opt);
                 });
                 select.value = row.Month || '';
-                select.onchange = e => { row.Month = e.target.value; };
+                select.onchange = e => {
+                    row.Month = e.target.value;
+                };
                 td.appendChild(select);
             } else if (h === 'Reman') {
                 const input = document.createElement('input');
@@ -161,4 +131,10 @@ function renderTable(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
     mergeData();
+
+    document.getElementById('filterBtn')?.addEventListener('click', applyFilters);
+    document.getElementById('resetBtn')?.addEventListener('click', resetFilters);
+    document.getElementById('refreshBtn')?.addEventListener('click', refreshData);
+    document.getElementById('saveJSONBtn')?.addEventListener('click', saveJSON);
+    document.getElementById('loadJSONBtn')?.addEventListener('click', loadJSON);
 });

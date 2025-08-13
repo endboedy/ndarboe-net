@@ -1,42 +1,50 @@
 
-const IW39_URL = 'https://raw.githubusercontent.com/endboedy/Monthly-Plan/main/excel/IW39.xlsx';
-const SHEET_NAME = 'IW39';
-
-async function loadExcel(url, sheetName) {
-    const res = await fetch(url);
-    const ab = await res.arrayBuffer();
-    const wb = XLSX.read(ab, { type: 'array' });
-    const sheet = wb.Sheets[sheetName];
-    return XLSX.utils.sheet_to_json(sheet);
-}
-
-function calculateCost(plan, actual) {
-    const p = parseFloat(plan || 0);
-    const a = parseFloat(actual || 0);
-    const cost = (p - a) / 16500;
-    return cost < 0 ? '-' : parseFloat(cost.toFixed(2));
-}
+const dummyData = [
+    {
+        Room: 'RM01',
+        'Order Type': 'PM01',
+        Order: '4700765277',
+        Description: 'Replace filter',
+        'Created On': '2023-08-01',
+        'User Status': 'Open',
+        MAT: 'MAT001',
+        CPH: 'CPH01',
+        Section: 'A',
+        'Status Part': 'Available',
+        Aging: '5',
+        Month: 'Jan',
+        Cost: '120.50',
+        Reman: '',
+        Include: '',
+        Exclude: '',
+        Planning: '',
+        'Status AMT': ''
+    }
+];
 
 function calculateInclude(reman, cost) {
     if (typeof reman === 'string' && reman.toLowerCase().includes('reman')) {
-        return cost !== '-' ? parseFloat((cost * 0.25).toFixed(2)) : '-';
+        const c = parseFloat(cost || 0);
+        return c > 0 ? (c * 0.25).toFixed(2) : '';
     }
     return cost;
 }
 
 function calculateExclude(orderType, include) {
-    return orderType === 'PM38' ? '-' : include;
-}
-
-function validateData(data) {
-    return data.every(row => row.Month && row.Reman);
+    return orderType === 'PM38' ? '' : include;
 }
 
 function renderTable(data) {
     const container = document.getElementById('tableContainer');
     container.innerHTML = '';
     const table = document.createElement('table');
-    const headers = Object.keys(data[0]).concat(['Action']);
+
+    const headers = [
+        'Room', 'Order Type', 'Order', 'Description', 'Created On', 'User Status',
+        'MAT', 'CPH', 'Section', 'Status Part', 'Aging', 'Month', 'Cost', 'Reman',
+        'Include', 'Exclude', 'Planning', 'Status AMT', 'Action'
+    ];
+
     const thead = document.createElement('thead');
     const trHead = document.createElement('tr');
     headers.forEach(h => {
@@ -52,6 +60,7 @@ function renderTable(data) {
         const tr = document.createElement('tr');
         headers.forEach(h => {
             const td = document.createElement('td');
+
             if (h === 'Month') {
                 const select = document.createElement('select');
                 ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].forEach(m => {
@@ -60,7 +69,7 @@ function renderTable(data) {
                     opt.textContent = m;
                     select.appendChild(opt);
                 });
-                select.value = row.Month || '';
+                select.value = row.Month || 'Jan';
                 select.onchange = e => { row.Month = e.target.value; };
                 td.appendChild(select);
             } else if (h === 'Reman') {
@@ -71,62 +80,36 @@ function renderTable(data) {
                     row.Reman = e.target.value;
                     row.Include = calculateInclude(row.Reman, row.Cost);
                     row.Exclude = calculateExclude(row['Order Type'], row.Include);
-                    renderTable(tableData); // refresh table to show updated values
+                    renderTable(dummyData); // refresh table
                 };
                 td.appendChild(input);
             } else if (h === 'Action') {
-                const btn = document.createElement('button');
-                btn.textContent = 'Edit';
-                btn.onclick = () => alert(`Edit Order ${row.Order}`);
-                td.appendChild(btn);
+                const editBtn = document.createElement('button');
+                editBtn.textContent = 'Edit';
+                editBtn.onclick = () => alert(`Edit Order ${row.Order}`);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = () => {
+                    data.splice(index, 1);
+                    renderTable(data);
+                };
+
+                td.appendChild(editBtn);
+                td.appendChild(deleteBtn);
             } else {
-                td.textContent = row[h];
+                td.textContent = row[h] || '';
             }
+
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
     });
+
     table.appendChild(tbody);
     container.appendChild(table);
 }
 
-let tableData = [];
-
-document.addEventListener('DOMContentLoaded', async () => {
-    const rawData = await loadExcel(IW39_URL, SHEET_NAME);
-    console.log("Raw data:", rawData); // debug
-
-    tableData = rawData.map(row => {
-        const cost = calculateCost(row['Total sum (plan)'], row['Total sum (actual)']);
-        const include = calculateInclude('', cost);
-        const exclude = calculateExclude(row['Order Type'], include);
-        return {
-            Room: row.Room || '',
-            'Order Type': row['Order Type'] || '',
-            Order: row.Order || '',
-            Description: row.Description || '',
-            'Created On': row['Created On'] || '',
-            'User Status': row['User Status'] || '',
-            MAT: row.MAT || '',
-            Month: '',
-            Reman: '',
-            Cost: cost,
-            Include: include,
-            Exclude: exclude
-        };
-    });
-
-    renderTable(tableData);
-
-    document.getElementById('saveBtn').addEventListener('click', () => {
-        if (!validateData(tableData)) {
-            alert('Semua baris harus diisi Month dan Reman sebelum menyimpan!');
-            return;
-        }
-        const blob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'data.json';
-        a.click();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    renderTable(dummyData);
 });

@@ -57,7 +57,7 @@
         th {
             background-color: #f2f2f2;
         }
-        #costRMContent {
+        #lembarKerjaContent, #costRMContent {
             display: none;
         }
     </style>
@@ -96,18 +96,44 @@
 
         <!-- Konten Cost RM -->
         <div id="costRMContent">
-            <h3>Summary Cost RM</h3>
-            <div id="costRMTableContainer">
-                <!-- Tabel Cost RM akan dirender di sini -->
+            <div class="filters">
+                <input type="text" placeholder="Filter Room" id="filterRoomRM">
+                <input type="text" placeholder="Filter Order" id="filterOrderRM">
+                <input type="text" placeholder="Filter MAT" id="filterMATRM">
+                <input type="text" placeholder="Filter CPH" id="filterCPHRM">
+                <input type="text" placeholder="Filter Section" id="filterSectionRM">
+                <input type="text" placeholder="Filter Month" id="filterMonthRM">
             </div>
+
+            <div class="buttons">
+                <button id="filterBtnRM">Filter</button>
+                <button id="resetBtnRM">Reset</button>
+                <button id="refreshBtnRM">Refresh</button>
+                <button id="saveJSONBtnRM">Save JSON</button>
+                <button id="loadJSONBtnRM">Load JSON</button>
+            </div>
+
+            <div id="costRMTableContainer"></div>
         </div>
     </div>
 
     <script>
         function showTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('lembarKerjaContent').style.display = 'none';
+            document.getElementById('costRMContent').style.display = 'none';
+
             if (tabName === 'lembarKerja') {
                 document.querySelector('.tab:nth-child(1)').classList.add('active');
                 document.getElementById('lembarKerjaContent').style.display = 'block';
-                document.getElementById('costRMContent').style.display = 'none';
             } else {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('costRMContent').style.display = 'block';
+            }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18min.js
+    <script src="script.js"></script>
+</body>
+</html>

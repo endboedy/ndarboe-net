@@ -1,62 +1,42 @@
+
 body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f4f4f4;
 }
-header {
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px;
-}
-header h1 {
-    margin: 0;
-    font-weight: 300;
-}
-nav {
-    margin-top: 10px;
-}
-nav button {
-    margin-right: 10px;
-    padding: 10px 20px;
-    font-weight: 300;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-nav button:hover {
-    background-color: #2980b9;
-}
-main {
-    padding: 20px;
-}
-.menu-section {
-    margin-top: 20px;
-}
-.hidden {
-    display: none;
-}
-form input {
-    padding: 5px;
-    margin-right: 10px;
-}
-.filters label {
-    margin-right: 10px;
-}
-.actions button {
-    margin-right: 10px;
-    padding: 5px 10px;
+h1 {
+  text-align: center;
+  color: #333;
 }
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-table, th, td {
-    border: 1px solid #ccc;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
 }
 th, td {
-    padding: 8px;
-    text-align: left;
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: #eaeaea;
+}
+select, input[type="text"] {
+  width: 100%;
+  padding: 4px;
+}
+.action-buttons button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.edit-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
 }

@@ -1,33 +1,58 @@
 
-async function loadData() {
-  const response = await fetch("data.json");
-  const data = await response.json();
-  const tbody = document.querySelector("#dataTable tbody");
-  tbody.innerHTML = "";
+async function generateJSON() {
+  const files = ["IW39.xlsx", "SUM57.xlsx", "Planning.xlsx", "Data1.xlsx", "Data2.xlsx"];
+  const data = {};
 
-  data.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.Room}</td><td>${row["Order Type"]}</td><td>${row.Order}</td><td>${row.Description}</td>
-      <td>${row["Created On"]}</td><td>${row["User Status"]}</td><td>${row.MAT}</td><td>${row.CPH}</td>
-      <td>${row.Section}</td><td>${row["Status Part"]}</td><td>${row.Aging}</td>
-      <td>
-        <select>
-          ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-            .map(m => `<option value="${m}" ${m === row.Month ? "selected" : ""}>${m}</option>`).join("")}
-        </select>
-      </td>
-      <td>${row.Cost}</td>
-      <td><input type="text" value="${row.Reman}" placeholder="Reman"></td>
-      <td>${row.Include}</td><td>${row.Exclude}</td>
-      <td>${row.Planning}</td><td>${row["Status AMT"]}</td>
-      <td class="action-buttons">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
+  for (const file of files) {
+    const response = await fetch(`excel/${file}`);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    data[file] = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+  }
+
+  const iw39 = data["IW39.xlsx"];
+  const sum57 = Object.fromEntries(data["SUM57.xlsx"].map(row => [row.Order, row]));
+  const planning = Object.fromEntries(data["Planning.xlsx"].map(row => [row.Order, row]));
+  const sectionMap = Object.fromEntries(data["Data1.xlsx"].map(row => [row.Room, row.Section]));
+  const cphMap = Object.fromEntries(data["Data2.xlsx"].map(row => [row.MAT, row.CPH]));
+
+  const result = iw39.map(row => {
+    const order = row.Order;
+    const mat = row.MAT;
+    const desc = row.Description || "";
+    const plan = row["Total sum (plan)"] || 0;
+    const actual = row["Total sum (actual)"] || 0;
+    const costVal = (plan - actual) / 16500;
+    const cost = costVal < 0 ? "-" : parseFloat(costVal.toFixed(2));
+    const include = cost === "-" ? "-" : cost;
+    const exclude = row["Order Type"] === "PM38" ? "-" : include;
+
+    return {
+      Room: row.Room,
+      "Order Type": row["Order Type"],
+      Order: order,
+      Description: desc,
+      "Created On": row["Created On"],
+      "User Status": row["User Status"],
+      MAT: mat,
+      CPH: desc.startsWith("JR") ? "JR" : cphMap[mat] || "",
+      Section: sectionMap[row.Room] || "",
+      "Part Complete": sum57[order]?.["Part Complete"] || "",
+      Aging: sum57[order]?.Aging || "",
+      Month: "",
+      Cost: cost,
+      Reman: "",
+      Include: include,
+      Exclude: exclude,
+      Planning: planning[order]?.["Event Start"] || "",
+      "Status AMT": planning[order]?.Status || ""
+    };
   });
-}
 
-window.onload = loadData;
+  const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "data.json";
+  link.click();
+}

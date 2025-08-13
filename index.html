@@ -1,25 +1,19 @@
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Monthly Plan BMB</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
   <script src="script.js" defer></script>
 </head>
 <body>
   <h1>Monthly Plan BMB</h1>
-  <table id="dataTable">
-    <thead>
-      <tr>
-        <th>Room</th><th>Order Type</th><th>Order</th><th>Description</th><th>Created On</th>
-        <th>User Status</th><th>MAT</th><th>CPH</th><th>Section</th><th>Status Part</th>
-        <th>Aging</th><th>Month</th><th>Cost</th><th>Reman</th><th>Include</th>
-        <th>Exclude</th><th>Planning</th><th>Status AMT</th><th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+
+  <button onclick="generateJSON()">Generate JSON</button>
+
+  <p>Setelah klik tombol, file <code>data.json</code> akan otomatis terdownload berdasarkan isi file Excel di folder <code>excel/</code>.</p>
 </body>
 </html>

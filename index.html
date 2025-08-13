@@ -7,35 +7,38 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
         }
-        h1 {
-            margin-bottom: 10px;
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 15px 20px;
+            font-size: 20px;
         }
         .tabs {
-            margin-bottom: 20px;
+            display: flex;
+            background-color: #eee;
+            border-bottom: 1px solid #ccc;
         }
         .tab {
-            display: inline-block;
             padding: 10px 20px;
-            background-color: #eee;
-            margin-right: 5px;
             cursor: pointer;
-            border-radius: 5px 5px 0 0;
+            border-right: 1px solid #ccc;
         }
         .tab.active {
             background-color: #ddd;
             font-weight: bold;
         }
-        .filters {
-            margin-bottom: 15px;
+        .content {
+            padding: 20px;
         }
-        .filters input, .filters select {
+        .filters input {
             margin-right: 10px;
             padding: 5px;
         }
         .buttons {
-            margin-bottom: 15px;
+            margin: 10px 0;
         }
         .buttons button {
             margin-right: 10px;
@@ -54,38 +57,67 @@
         th {
             background-color: #f2f2f2;
         }
+        #costRMContent {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Monthly Plan BMB</h1>
+    <header>Monthly Plan BMB</header>
 
     <div class="tabs">
-        <div class="tab active">Lembar Kerja</div>
-        <div class="tab">Cost RM</div>
+        <div class="tab active" onclick="showTab('lembarKerja')">Lembar Kerja</div>
+        <div class="tab" onclick="showTab('costRM')">Cost RM</div>
     </div>
 
-    <div class="filters">
-        <input type="text" placeholder="Filter Room" id="filterRoom">
-        <input type="text" placeholder="Filter Order" id="filterOrder">
-        <input type="text" placeholder="Filter MAT" id="filterMAT">
-        <input type="text" placeholder="Filter CPH" id="filterCPH">
-        <input type="text" placeholder="Filter Section" id="filterSection">
-    </div>
+    <div class="content">
+        <!-- Konten Lembar Kerja -->
+        <div id="lembarKerjaContent">
+            <div class="filters">
+                <input type="text" placeholder="Filter Room" id="filterRoom">
+                <input type="text" placeholder="Filter Order" id="filterOrder">
+                <input type="text" placeholder="Filter MAT" id="filterMAT">
+                <input type="text" placeholder="Filter CPH" id="filterCPH">
+                <input type="text" placeholder="Filter Section" id="filterSection">
+            </div>
 
-    <div class="buttons">
-        <button id="addOrderBtn">Add Order</button>
-        <button id="saveBtn">Save</button>
-        <button id="loadBtn">Load</button>
-    </div>
+            <div class="buttons">
+                <button id="addOrderBtn">Add Order</button>
+                <button id="saveBtn">Save</button>
+                <button id="loadBtn">Load</button>
+            </div>
 
-    <div id="tableContainer"></div>
+            <div id="tableContainer"></div>
+        </div>
+
+        <!-- Konten Cost RM -->
+        <div id="costRMContent">
+            <p>Konten Cost RM akan ditampilkan di sini.</p>
+        </div>
+    </div>
 
     <!-- Library XLSX untuk baca file Excel -->
     https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
 
     <!-- Script utama -->
     <script src="script.js"></script>
+
+    <!-- Script untuk navigasi tab -->
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            if (tabName === 'lembarKerja') {
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+                document.getElementById('lembarKerjaContent').style.display = 'block';
+                document.getElementById('costRMContent').style.display = 'none';
+            } else {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('lembarKerjaContent').style.display = 'none';
+                document.getElementById('costRMContent').style.display = 'block';
+            }
+        }
+    </script>
 
 </body>
 </html>

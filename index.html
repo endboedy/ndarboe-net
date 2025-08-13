@@ -80,12 +80,15 @@
                 <input type="text" placeholder="Filter MAT" id="filterMAT">
                 <input type="text" placeholder="Filter CPH" id="filterCPH">
                 <input type="text" placeholder="Filter Section" id="filterSection">
+                <input type="text" placeholder="Filter Month" id="filterMonth">
             </div>
 
             <div class="buttons">
-                <button id="addOrderBtn">Add Order</button>
-                <button id="saveBtn">Save</button>
-                <button id="loadBtn">Load</button>
+                <button id="filterBtn">Filter</button>
+                <button id="resetBtn">Reset</button>
+                <button id="refreshBtn">Refresh</button>
+                <button id="saveJSONBtn">Save JSON</button>
+                <button id="loadJSONBtn">Load JSON</button>
             </div>
 
             <div id="tableContainer"></div>
@@ -112,6 +115,7 @@
         }
     </script>
 
+    https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
     <script src="script.js"></script>
 </body>
 </html>

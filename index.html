@@ -3,137 +3,23 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monthly Plan BMB</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f4f4f4;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .filters {
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .filters select {
-      padding: 5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #eaeaea;
-    }
-    .action-buttons button {
-      margin-right: 5px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    .edit-btn {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-    }
-    .delete-btn {
-      background-color: #f44336;
-      color: white;
-      border: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+  <script src="script.js" defer></script>
 </head>
 <body>
-
   <h1>Monthly Plan BMB</h1>
-
-  <div class="filters">
-    <select id="filterRoom">
-      <option value="">Filter Room</option>
-      <option value="CO4395">CO4395</option>
-    </select>
-    <select id="filterOrder">
-      <option value="">Filter Order</option>
-      <option value="4700750754">4700750754</option>
-    </select>
-    <select id="filterCPH">
-      <option value="">Filter CPH</option>
-      <option value="External Job">External Job</option>
-    </select>
-    <select id="filterMAT">
-      <option value="">Filter MAT</option>
-      <option value="C22">C22</option>
-    </select>
-    <select id="filterSection">
-      <option value="">Filter Section</option>
-      <option value="Wheel Type">Wheel Type</option>
-    </select>
-    <select id="filterMonth">
-      <option value="">-- All --</option>
-      <option value="Sep">Sep</option>
-    </select>
-  </div>
-
-  <table>
+  <table id="dataTable">
     <thead>
       <tr>
-        <th>Room</th>
-        <th>Order Type</th>
-        <th>Order</th>
-        <th>Description</th>
-        <th>Created On</th>
-        <th>User Status</th>
-        <th>MAT</th>
-        <th>CPH</th>
-        <th>Section</th>
-        <th>Status Part</th>
-        <th>Aging</th>
-        <th>Month</th>
-        <th>Cost</th>
-        <th>Reman</th>
-        <th>Include</th>
-        <th>Exclude</th>
-        <th>Planning Date</th>
-        <th>Action</th>
+        <th>Room</th><th>Order Type</th><th>Order</th><th>Description</th><th>Created On</th>
+        <th>User Status</th><th>MAT</th><th>CPH</th><th>Section</th><th>Status Part</th>
+        <th>Aging</th><th>Month</th><th>Cost</th><th>Reman</th><th>Include</th>
+        <th>Exclude</th><th>Planning</th><th>Status AMT</th><th>Action</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>CO4395</td>
-        <td>PM37</td>
-        <td>4700750754</td>
-        <td>JR Repair Service Brake Caliper CO4395</td>
-        <td>07 Mar 2025</td>
-        <td>RELE</td>
-        <td>C22</td>
-        <td>External Job</td>
-        <td>Wheel Type</td>
-        <td></td>
-        <td></td>
-        <td>Sep</td>
-        <td>1075.76</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>30 Sep 2025</td>
-        <td class="action-buttons">
-          <button class="edit-btn">Edit</button>
-          <button class="delete-btn">Delete</button>
-        </td>
-      </tr>
-    </tbody>
+    <tbody></tbody>
   </table>
-
 </body>
 </html>

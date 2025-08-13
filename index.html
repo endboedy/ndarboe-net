@@ -15,6 +15,15 @@
       text-align: center;
       color: #333;
     }
+    .filters {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filters select {
+      padding: 5px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -48,6 +57,33 @@
 <body>
 
   <h1>Monthly Plan BMB</h1>
+
+  <div class="filters">
+    <select id="filterRoom">
+      <option value="">Filter Room</option>
+      <option value="CO4395">CO4395</option>
+    </select>
+    <select id="filterOrder">
+      <option value="">Filter Order</option>
+      <option value="4700750754">4700750754</option>
+    </select>
+    <select id="filterCPH">
+      <option value="">Filter CPH</option>
+      <option value="External Job">External Job</option>
+    </select>
+    <select id="filterMAT">
+      <option value="">Filter MAT</option>
+      <option value="C22">C22</option>
+    </select>
+    <select id="filterSection">
+      <option value="">Filter Section</option>
+      <option value="Wheel Type">Wheel Type</option>
+    </select>
+    <select id="filterMonth">
+      <option value="">-- All --</option>
+      <option value="Sep">Sep</option>
+    </select>
+  </div>
 
   <table>
     <thead>
@@ -85,7 +121,7 @@
         <td>Wheel Type</td>
         <td></td>
         <td></td>
-        <td></td>
+        <td>Sep</td>
         <td>1075.76</td>
         <td></td>
         <td></td>

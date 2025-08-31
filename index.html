@@ -18,11 +18,12 @@ td.red { background:red; color:white; }
 td.green { background:green; color:white; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
-button.save-btn, button.edit-btn, button.delete-btn, button.add-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
 button.save-btn { background:#1abc9c; color:white; }
 button.edit-btn { background:#f39c12; color:white; }
 button.delete-btn { background:#e74c3c; color:white; }
 button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
+button.load-btn { background:#8e44ad; color:white; }
 .filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
 .progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
 .progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
@@ -49,7 +50,8 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
         <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
         <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
         <button class="add-btn" onclick="addRow('component')">Add New</button>
-        <button class="save-btn" onclick="saveLoadJSON()">Save / Load JSON</button>
+        <button class="save-btn" onclick="saveJSON()">Save JSON</button>
+        <button class="load-btn" onclick="loadJSON()">Load JSON</button>
     </div>
     <table id="component-table">
         <thead>
@@ -141,7 +143,7 @@ function addRow(menu){
     }
 }
 
-// Edit Row (only editable columns)
+// Edit Row
 function editRow(btn){
     const row = btn.closest('tr');
     Array.from(row.cells).forEach((td,i)=>{
@@ -209,13 +211,13 @@ function recalcComponent(){
         r.cells[7].innerText = changeOut + freq;
         let life = currentSMU - changeOut;
         r.cells[8].innerText = life;
+        r.cells[8].className = 'num';
         if(life>freq){ r.cells[8].className='num red'; } 
-        else r.cells[8].className='num';
         let lifePerc = freq?Math.round((life/freq)*100):0;
         r.cells[9].innerText = lifePerc+'%';
+        r.cells[9].className='num';
         if(lifePerc>100) r.cells[9].className='num red';
         else if(lifePerc>=75) r.cells[9].className='num green';
-        else r.cells[9].className='num';
     }
 }
 
@@ -251,54 +253,52 @@ function updateSMU(){
     step();
 }
 
-// Save/Load JSON Menu 1 + 2
-function saveLoadJSON(){
-    const action = confirm("Tekan OK untuk Save, Cancel untuk Load JSON");
-    if(action){
-        // Save JSON
-        const componentData=[], changeoutData=[];
-        Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr=>{
-            const obj={};
-            Array.from(tr.cells).slice(0,11).forEach((td,i)=>{ obj[document.getElementById('component-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
-            componentData.push(obj);
-        });
-        Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr=>{
-            const obj={};
-            Array.from(tr.cells).slice(0,4).forEach((td,i)=>{ obj[document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
-            changeoutData.push(obj);
-        });
-        const blob=new Blob([JSON.stringify({component:componentData,changeout:changeoutData},null,2)],{type:"application/json"});
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a'); a.href=url; a.download='ndarboe_data.json'; a.click();
-    } else {
-        // Load JSON
-        const input=document.createElement('input'); input.type='file'; input.accept='application/json';
-        input.onchange=e=>{
-            const file=e.target.files[0]; const reader=new FileReader();
-            reader.onload=ev=>{
-                const data=JSON.parse(ev.target.result);
-                const compTable=document.getElementById('component-table').tBodies[0]; compTable.innerHTML='';
-                data.component.forEach(obj=>{
-                    let row=compTable.insertRow();
-                    Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
-                    let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                    <button class="save-btn" onclick="saveRow(this)">Save</button>
-                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
-                });
-                const coTable=document.getElementById('changeout-table').tBodies[0]; coTable.innerHTML='';
-                data.changeout.forEach(obj=>{
-                    let row=coTable.insertRow();
-                    Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
-                    let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                    <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                    <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
-                });
-                syncChangeOut();
-            };
-            reader.readAsText(file);
+// Save JSON
+function saveJSON(){
+    const componentData=[], changeoutData=[];
+    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr=>{
+        const obj={};
+        Array.from(tr.cells).slice(0,11).forEach((td,i)=>{ obj[document.getElementById('component-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+        componentData.push(obj);
+    });
+    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr=>{
+        const obj={};
+        Array.from(tr.cells).slice(0,4).forEach((td,i)=>{ obj[document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+        changeoutData.push(obj);
+    });
+    const blob=new Blob([JSON.stringify({component:componentData,changeout:changeoutData},null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='ndarboe_data.json'; a.click();
+}
+
+// Load JSON
+function loadJSON(){
+    const input=document.createElement('input'); input.type='file'; input.accept='application/json';
+    input.onchange=e=>{
+        const file=e.target.files[0]; const reader=new FileReader();
+        reader.onload=ev=>{
+            const data=JSON.parse(ev.target.result);
+            const compTable=document.getElementById('component-table').tBodies[0]; compTable.innerHTML='';
+            data.component.forEach(obj=>{
+                let row=compTable.insertRow();
+                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
+                let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                <button class="save-btn" onclick="saveRow(this)">Save</button>
+                <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
+            });
+            const coTable=document.getElementById('changeout-table').tBodies[0]; coTable.innerHTML='';
+            data.changeout.forEach(obj=>{
+                let row=coTable.insertRow();
+                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
+                let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+                <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
+            });
+            syncChangeOut();
         };
-        input.click();
-    }
+        reader.readAsText(file);
+    };
+    input.click();
 }
 </script>
 

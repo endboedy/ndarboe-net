@@ -49,8 +49,7 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
         <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
         <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
         <button class="add-btn" onclick="addRow('component')">Add New</button>
-        <button class="save-btn" onclick="saveJSON('component')">Save JSON</button>
-        <button class="add-btn" onclick="loadJSON('component')">Load JSON</button>
+        <button class="save-btn" onclick="saveLoadJSON()">Save / Load JSON</button>
     </div>
     <table id="component-table">
         <thead>
@@ -69,8 +68,6 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
         <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
         <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
         <button class="add-btn" onclick="addRow('changeout')">Add New</button>
-        <button class="save-btn" onclick="saveJSON('changeout')">Save JSON</button>
-        <button class="add-btn" onclick="loadJSON('changeout')">Load JSON</button>
     </div>
     <table id="changeout-table">
         <thead>
@@ -127,6 +124,7 @@ function addRow(menu){
         <td class="num">0%</td>
         <td></td>
         <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this)">Save</button>
         <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
         </td>`;
@@ -136,10 +134,27 @@ function addRow(menu){
         <td><input class="inline-input" placeholder="Change Out"></td>
         <td><input class="inline-input" placeholder="Remarks"></td>
         <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
         <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
         </td>`;
     }
+}
+
+// Edit Row (only editable columns)
+function editRow(btn){
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach((td,i)=>{
+        if(row.parentElement.parentElement.id=='component-table' || row.parentElement.parentElement.id=='changeout-table'){
+            if(row.parentElement.parentElement.id=='component-table' && i<=4){
+                let val = td.innerText;
+                td.innerHTML=`<input class="${i>=3?'num-input':'inline-input'}" value="${val}">`;
+            } else if(row.parentElement.parentElement.id=='changeout-table' && i<=3){
+                let val = td.innerText;
+                td.innerHTML=`<input class="inline-input" value="${val}">`;
+            }
+        }
+    });
 }
 
 // Save Row
@@ -194,7 +209,8 @@ function recalcComponent(){
         r.cells[7].innerText = changeOut + freq;
         let life = currentSMU - changeOut;
         r.cells[8].innerText = life;
-        if(life>freq){ r.cells[8].className='num red'; } else r.cells[8].className='num';
+        if(life>freq){ r.cells[8].className='num red'; }
+        else r.cells[8].className='num';
         let lifePerc = freq?Math.round((life/freq)*100):0;
         r.cells[9].innerText = lifePerc+'%';
         if(lifePerc>100) r.cells[9].className='num red';
@@ -235,40 +251,55 @@ function updateSMU(){
     step();
 }
 
-// Save JSON
-function saveJSON(menu){
-    const table = document.getElementById(menu+'-table');
-    const data = [];
-    Array.from(table.tBodies[0].rows).forEach(tr=>{
-        const obj={};
-        Array.from(tr.cells).slice(0,-1).forEach((td,i)=>{ obj[table.tHead.rows[0].cells[i].innerText]=td.innerText; });
-        data.push(obj);
-    });
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download=menu+'.json'; a.click();
-}
-
-// Load JSON
-function loadJSON(menu){
-    const input=document.createElement('input'); input.type='file'; input.accept='application/json';
-    input.onchange=e=>{
-        const file=e.target.files[0]; const reader=new FileReader();
-        reader.onload=ev=>{
-            const data=JSON.parse(ev.target.result);
-            const table=document.getElementById(menu+'-table').tBodies[0]; table.innerHTML='';
-            data.forEach(obj=>{
-                let row=table.insertRow();
-                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
-                let cell=row.insertCell(); cell.innerHTML=`<button class="save-btn" onclick="saveRow(this)">Save</button>
-                <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
-            });
-            if(menu=='changeout') syncChangeOut(); else recalcComponent();
+// Save/Load JSON Menu 1 + 2
+function saveLoadJSON(){
+    const action = confirm("Tekan OK untuk Save, Cancel untuk Load JSON");
+    if(action){
+        // Save JSON
+        const componentData=[], changeoutData=[];
+        Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr=>{
+            const obj={};
+            Array.from(tr.cells).slice(0,11).forEach((td,i)=>{ obj[document.getElementById('component-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+            componentData.push(obj);
+        });
+        Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr=>{
+            const obj={};
+            Array.from(tr.cells).slice(0,4).forEach((td,i)=>{ obj[document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+            changeoutData.push(obj);
+        });
+        const blob=new Blob([JSON.stringify({component:componentData,changeout:changeoutData},null,2)],{type:"application/json"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a'); a.href=url; a.download='ndarboe_data.json'; a.click();
+    } else {
+        // Load JSON
+        const input=document.createElement('input'); input.type='file'; input.accept='application/json';
+        input.onchange=e=>{
+            const file=e.target.files[0]; const reader=new FileReader();
+            reader.onload=ev=>{
+                const data=JSON.parse(ev.target.result);
+                const compTable=document.getElementById('component-table').tBodies[0];
+                compTable.innerHTML='';
+                data.component.forEach(obj=>{
+                    let row=compTable.insertRow();
+                    Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
+                    let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="save-btn" onclick="saveRow(this)">Save</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
+                });
+                const coTable=document.getElementById('changeout-table').tBodies[0];
+                coTable.innerHTML='';
+                data.changeout.forEach(obj=>{
+                    let row=coTable.insertRow();
+                    Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
+                    let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+                    <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
+                });
+                syncChangeOut();
+            };
+            reader.readAsText(file);
         };
-        reader.readAsText(file);
-    };
-    input.click();
+        input.click();
+    }
 }
 </script>
-</body>
-</html>

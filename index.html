@@ -26,8 +26,7 @@ button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
 .filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
 .progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
 .progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
-input.smuedit { width:60px; border:1px solid #ccc; padding:2px; border-radius:3px; text-align:center; font-size:12px; }
-input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3px; text-align:center; font-size:12px; }
+textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -48,6 +47,8 @@ input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3
         <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
         <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
         <button class="add-btn" onclick="addRow('component')">Add New</button>
+        <button class="save-btn" onclick="saveJSON('component')">Save JSON</button>
+        <button class="add-btn" onclick="loadJSON('component')">Load JSON</button>
     </div>
     <table id="component-table">
         <thead>
@@ -56,17 +57,7 @@ input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3
                 <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>CO4352</td><td>777</td><td>Engine</td><td class="num">500</td><td class="num">5000</td>
-                <td class="num">Yes</td><td class="num">3200</td><td class="num">3700</td><td class="num">100</td><td class="num">20%</td><td>Good</td>
-                <td>
-                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                    <button class="save-btn" onclick="saveRow(this)">Save</button>
-                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                </td>
-            </tr>
-        </tbody>
+        <tbody></tbody>
     </table>
 </section>
 
@@ -76,6 +67,8 @@ input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3
         <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
         <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
         <button class="add-btn" onclick="addRow('changeout')">Add New</button>
+        <button class="save-btn" onclick="saveJSON('changeout')">Save JSON</button>
+        <button class="add-btn" onclick="loadJSON('changeout')">Load JSON</button>
     </div>
     <table id="changeout-table">
         <thead>
@@ -83,29 +76,15 @@ input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3
                 <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>CO4352</td><td>Engine</td><td class="num">Yes</td><td>Scheduled</td>
-                <td>
-                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                    <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                    <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
-                </td>
-            </tr>
-        </tbody>
+        <tbody></tbody>
     </table>
 </section>
 
 <!-- Menu 3: Current SMU -->
 <section id="currentsmu" class="tab-content">
-    <p>Masukkan Equipment & SMU untuk update masal:</p>
-    <div id="smu-inputs">
-        <div style="margin-bottom:5px;">
-            <input type="text" class="textedit" placeholder="Equipment">
-            <input type="number" class="smuedit" placeholder="SMU">
-            <button class="add-btn" onclick="addSMURow()">Add</button>
-        </div>
-    </div>
+    <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
+    <textarea id="smu-paste"></textarea>
+    <button class="add-btn" onclick="pasteSMU()">Paste</button>
     <table id="smu-table">
         <thead>
             <tr><th>Equipment</th><th>SMU</th></tr>
@@ -115,6 +94,7 @@ input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3
     <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
     <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
 </section>
+
 </main>
 
 <script>
@@ -154,7 +134,7 @@ function addRow(menu){
 }
 
 // Edit/Save/Delete Row
-function editRow(btn){ /* kolom tetap text biasa, tidak perlu input */ }
+function editRow(btn){ alert("Kolom tidak bisa diubah, gunakan Add/Delete row."); }
 function saveRow(btn){ recalcComponent(); }
 function deleteRow(btn){ btn.closest('tr').remove(); recalcComponent(); }
 
@@ -175,7 +155,7 @@ function syncChangeOut(){
     let maxChange = {}, remarksMap={};
     for(let r of coTable){
         let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
-        maxChange[key] = 'Yes';
+        maxChange[key] = 1; // numerical for calculation
         remarksMap[key] = r.cells[3].innerText;
     }
     for(let r of compTable){
@@ -193,11 +173,9 @@ function recalcComponent(){
     const compTable = document.getElementById('component-table').tBodies[0].rows;
     for(let r of compTable){
         let freq = parseFloat(r.cells[3].innerText)||0;
-        let cost = parseFloat(r.cells[4].innerText)||0;
-        let changeOut = r.cells[5].innerText=='Yes'?1:0;
+        let changeOut = parseFloat(r.cells[5].innerText)||0;
         let currentSMU = parseFloat(r.cells[6].innerText)||0;
-        let nextChange = changeOut + freq;
-        r.cells[7].innerText = nextChange;
+        r.cells[7].innerText = changeOut + freq;
         r.cells[7].className='num';
         r.cells[4].className='num';
         r.cells[6].className='num';
@@ -213,18 +191,20 @@ function recalcComponent(){
     }
 }
 
-// Menu 3: Add SMU row
-function addSMURow(){
-    const inputs = document.querySelectorAll('#smu-inputs input');
-    const equip = inputs[0].value.trim();
-    const smu = inputs[1].value.trim();
-    if(!equip || !smu) return alert('Isi Equipment & SMU');
+// Menu 3: Paste SMU
+function pasteSMU(){
+    const text = document.getElementById('smu-paste').value.trim();
     const tbody = document.getElementById('smu-table').tBodies[0];
-    if(tbody.rows.length>=100) return alert('Maks 100 Equipment');
-    let row = tbody.insertRow();
-    row.insertCell(0).innerText = equip;
-    row.insertCell(1).innerText = smu;
-    inputs[0].value=''; inputs[1].value='';
+    tbody.innerHTML='';
+    const lines = text.split(/\r?\n/);
+    for(let line of lines){
+        let parts = line.trim().split(/\s+/); // split by tab/space
+        if(parts.length>=2){
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = parts[0];
+            row.insertCell(1).innerText = parts[1];
+        }
+    }
 }
 
 // Update SMU with progress
@@ -248,9 +228,59 @@ function updateSMU(){
         let perc = Math.round((count/total)*100);
         progressBar.style.width = perc+'%';
         progressBar.innerText = perc+'%';
-        setTimeout(updateStep,50);
+        setTimeout(updateStep,10);
     }
     updateStep();
+}
+
+// Save JSON
+function saveJSON(menu){
+    const table = document.getElementById(menu+'-table');
+    const data = [];
+    const trs = table.tBodies[0].rows;
+    for(let tr of trs){
+        const obj = {};
+        for(let i=0;i<tr.cells.length-1;i++){
+            obj[table.tHead.rows[0].cells[i].innerText] = tr.cells[i].innerText;
+        }
+        data.push(obj);
+    }
+    const jsonStr = JSON.stringify(data,null,2);
+    const blob = new Blob([jsonStr],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = menu+'.json'; a.click();
+}
+
+// Load JSON
+function loadJSON(menu){
+    const input = document.createElement('input');
+    input.type='file';
+    input.accept='application/json';
+    input.onchange = e=>{
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = ev=>{
+            const data = JSON.parse(ev.target.result);
+            const table = document.getElementById(menu+'-table').tBodies[0];
+            table.innerHTML='';
+            data.forEach(obj=>{
+                let row = table.insertRow();
+                let keys = Object.keys(obj);
+                keys.forEach((k,i)=>{
+                    row.insertCell(i).innerText = obj[k];
+                });
+                let cell = row.insertCell(keys.length);
+                cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                <button class="save-btn" onclick="saveRow(this)">Save</button>
+                <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
+            });
+            if(menu=='changeout') syncChangeOut();
+            else recalcComponent();
+        };
+        reader.readAsText(file);
+    };
+    input.click();
 }
 </script>
 

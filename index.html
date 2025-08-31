@@ -27,6 +27,8 @@ button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
 .progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
 .progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
 textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
+input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
+input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 </style>
 </head>
 <body>
@@ -98,64 +100,78 @@ textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
 </main>
 
 <script>
-// Tab Menu
+// Tabs
 const tabs = document.querySelectorAll('.tab-btn');
 const contents = document.querySelectorAll('.tab-content');
-tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        tabs.forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        const target = tab.getAttribute('data-tab');
-        contents.forEach(c=>c.classList.remove('active'));
-        document.getElementById(target).classList.add('active');
-    });
-});
+tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    contents.forEach(c=>c.classList.remove('active'));
+    document.getElementById(tab.dataset.tab).classList.add('active');
+}));
 
 // Add New Row
 function addRow(menu){
-    const table = document.getElementById(menu+'-table').getElementsByTagName('tbody')[0];
+    const table = document.getElementById(menu+'-table').tBodies[0];
     let row = table.insertRow();
     if(menu=='component'){
-        row.innerHTML = `<td></td><td></td><td></td><td class="num"></td><td class="num"></td>
-        <td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td><td></td>
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Model"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="num-input" placeholder="Freq"></td>
+        <td><input class="num-input" placeholder="Cost"></td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0%</td>
+        <td></td>
         <td>
-        <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this)">Save</button>
         <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
         </td>`;
     } else {
-        row.innerHTML = `<td></td><td></td><td class="num"></td><td></td>
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="inline-input" placeholder="Change Out"></td>
+        <td><input class="inline-input" placeholder="Remarks"></td>
         <td>
-        <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
         <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
         </td>`;
     }
 }
 
-// Edit/Save/Delete Row
-function editRow(btn){ alert("Kolom tidak bisa diubah, gunakan Add/Delete row."); }
-function saveRow(btn){ recalcComponent(); }
-function deleteRow(btn){ btn.closest('tr').remove(); recalcComponent(); }
+// Save Row
+function saveRow(btn){
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach(td=>{
+        const inp = td.querySelector('input');
+        if(inp) td.innerText = inp.value;
+    });
+    recalcComponent();
+}
+
+// Delete Row
+function deleteRow(btn){ btn.closest('tr').remove(); syncChangeOut(); recalcComponent(); }
 
 // Filter Table
 function filterTable(menu,colIndex,value){
-    const table = document.getElementById(menu+'-table');
-    const trs = table.tBodies[0].rows;
+    const trs = document.getElementById(menu+'-table').tBodies[0].rows;
     for(let tr of trs){
         let cell = tr.cells[colIndex].innerText.toLowerCase();
         tr.style.display = cell.includes(value.toLowerCase())?'':'none';
     }
 }
 
-// Change Out Sync to Component
+// Sync Change Out Menu 2 -> Menu 1
 function syncChangeOut(){
     const coTable = document.getElementById('changeout-table').tBodies[0].rows;
     const compTable = document.getElementById('component-table').tBodies[0].rows;
     let maxChange = {}, remarksMap={};
     for(let r of coTable){
         let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
-        maxChange[key] = 1; // numerical for calculation
+        maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
         remarksMap[key] = r.cells[3].innerText;
     }
     for(let r of compTable){
@@ -168,7 +184,7 @@ function syncChangeOut(){
     recalcComponent();
 }
 
-// Recalculate Next Change, Life, Life %
+// Recalculate Component Table
 function recalcComponent(){
     const compTable = document.getElementById('component-table').tBodies[0].rows;
     for(let r of compTable){
@@ -176,113 +192,83 @@ function recalcComponent(){
         let changeOut = parseFloat(r.cells[5].innerText)||0;
         let currentSMU = parseFloat(r.cells[6].innerText)||0;
         r.cells[7].innerText = changeOut + freq;
-        r.cells[7].className='num';
-        r.cells[4].className='num';
-        r.cells[6].className='num';
         let life = currentSMU - changeOut;
         r.cells[8].innerText = life;
-        r.cells[8].className='num';
-        if(life>freq){ r.cells[8].className='num red'; }
+        if(life>freq){ r.cells[8].className='num red'; } else r.cells[8].className='num';
         let lifePerc = freq?Math.round((life/freq)*100):0;
         r.cells[9].innerText = lifePerc+'%';
-        r.cells[9].className='num';
         if(lifePerc>100) r.cells[9].className='num red';
         else if(lifePerc>=75) r.cells[9].className='num green';
+        else r.cells[9].className='num';
     }
 }
 
-// Menu 3: Paste SMU
+// Menu 3 Paste SMU
 function pasteSMU(){
-    const text = document.getElementById('smu-paste').value.trim();
-    const tbody = document.getElementById('smu-table').tBodies[0];
-    tbody.innerHTML='';
-    const lines = text.split(/\r?\n/);
+    const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
+    const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
     for(let line of lines){
-        let parts = line.trim().split(/\s+/); // split by tab/space
+        let parts = line.trim().split(/\s+/);
         if(parts.length>=2){
             let row = tbody.insertRow();
-            row.insertCell(0).innerText = parts[0];
-            row.insertCell(1).innerText = parts[1];
+            row.insertCell(0).innerText=parts[0];
+            row.insertCell(1).innerText=parts[1];
         }
     }
 }
 
-// Update SMU with progress
+// Update SMU
 function updateSMU(){
-    const tbody = document.getElementById('smu-table').tBodies[0].rows;
+    const rows = document.getElementById('smu-table').tBodies[0].rows;
     const compTable = document.getElementById('component-table').tBodies[0].rows;
-    let total = tbody.length;
-    let count = 0;
-    if(total==0) return alert('Tidak ada data SMU untuk update');
     const progressBar = document.getElementById('progress-bar');
-    function updateStep(){
-        if(count>=total) { progressBar.style.width='100%'; progressBar.innerText='100%'; tbody.innerHTML=''; recalcComponent(); return; }
-        let equip = tbody[count].cells[0].innerText;
-        let smu = parseFloat(tbody[count].cells[1].innerText)||0;
-        for(let r of compTable){
-            if(r.cells[0].innerText==equip){
-                r.cells[6].innerText = smu;
-            }
-        }
+    let total=rows.length, count=0;
+    function step(){
+        if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
+        let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
+        for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
         count++;
-        let perc = Math.round((count/total)*100);
-        progressBar.style.width = perc+'%';
-        progressBar.innerText = perc+'%';
-        setTimeout(updateStep,10);
+        let perc=Math.round(count/total*100);
+        progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
+        setTimeout(step,10);
     }
-    updateStep();
+    step();
 }
 
 // Save JSON
 function saveJSON(menu){
     const table = document.getElementById(menu+'-table');
     const data = [];
-    const trs = table.tBodies[0].rows;
-    for(let tr of trs){
-        const obj = {};
-        for(let i=0;i<tr.cells.length-1;i++){
-            obj[table.tHead.rows[0].cells[i].innerText] = tr.cells[i].innerText;
-        }
+    Array.from(table.tBodies[0].rows).forEach(tr=>{
+        const obj={};
+        Array.from(tr.cells).slice(0,-1).forEach((td,i)=>{ obj[table.tHead.rows[0].cells[i].innerText]=td.innerText; });
         data.push(obj);
-    }
-    const jsonStr = JSON.stringify(data,null,2);
-    const blob = new Blob([jsonStr],{type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = menu+'.json'; a.click();
+    });
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=menu+'.json'; a.click();
 }
 
 // Load JSON
 function loadJSON(menu){
-    const input = document.createElement('input');
-    input.type='file';
-    input.accept='application/json';
-    input.onchange = e=>{
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = ev=>{
-            const data = JSON.parse(ev.target.result);
-            const table = document.getElementById(menu+'-table').tBodies[0];
-            table.innerHTML='';
+    const input=document.createElement('input'); input.type='file'; input.accept='application/json';
+    input.onchange=e=>{
+        const file=e.target.files[0]; const reader=new FileReader();
+        reader.onload=ev=>{
+            const data=JSON.parse(ev.target.result);
+            const table=document.getElementById(menu+'-table').tBodies[0]; table.innerHTML='';
             data.forEach(obj=>{
-                let row = table.insertRow();
-                let keys = Object.keys(obj);
-                keys.forEach((k,i)=>{
-                    row.insertCell(i).innerText = obj[k];
-                });
-                let cell = row.insertCell(keys.length);
-                cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                <button class="save-btn" onclick="saveRow(this)">Save</button>
+                let row=table.insertRow();
+                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
+                let cell=row.insertCell(); cell.innerHTML=`<button class="save-btn" onclick="saveRow(this)">Save</button>
                 <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
             });
-            if(menu=='changeout') syncChangeOut();
-            else recalcComponent();
+            if(menu=='changeout') syncChangeOut(); else recalcComponent();
         };
         reader.readAsText(file);
     };
     input.click();
 }
 </script>
-
 </body>
 </html>

@@ -5,25 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ndarboe.net</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; }
-.app-header { background:#34495e; color:white; padding:15px; display:flex; align-items:center; justify-content:space-between; }
-.menu button { background:#2c3e50; color:white; border:none; padding:10px 15px; margin-left:5px; cursor:pointer; border-radius:5px; }
+body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
+.app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
+.menu button { background:#2c3e50; color:white; border:none; padding:5px 10px; margin-left:5px; cursor:pointer; border-radius:5px; font-size:12px; }
 .menu button.active { background:#1abc9c; }
-main { padding:20px; }
-table { width:100%; border-collapse:collapse; margin-top:20px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background:#34495e; color:white; }
+main { padding:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:24px; }
+th { background:#34495e; color:white; font-size:12px; }
+td.num { text-align:right; }
+td.red { background:red; color:white; }
+td.green { background:green; color:white; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
-input.smuedit, input.textedit { width:80px; border:1px solid #ccc; padding:3px; border-radius:3px; text-align:center; }
-button.save-btn, button.edit-btn, button.delete-btn, button.add-btn { padding:5px 10px; border:none; border-radius:3px; cursor:pointer; margin:2px; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
 button.save-btn { background:#1abc9c; color:white; }
 button.edit-btn { background:#f39c12; color:white; }
 button.delete-btn { background:#e74c3c; color:white; }
-button.add-btn { background:#2980b9; color:white; margin-bottom:10px; }
-.filter-input { margin-right:5px; padding:3px; border-radius:3px; border:1px solid #ccc; }
-.progress-container { background:#ddd; border-radius:5px; margin-top:10px; height:20px; width:100%; }
-.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:20px; }
+button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
+.filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
+.progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
+.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
+input.smuedit { width:60px; border:1px solid #ccc; padding:2px; border-radius:3px; text-align:center; font-size:12px; }
+input.textedit { width:80px; border:1px solid #ccc; padding:2px; border-radius:3px; text-align:center; font-size:12px; }
 </style>
 </head>
 <body>
@@ -49,15 +53,13 @@ button.add-btn { background:#2980b9; color:white; margin-bottom:10px; }
         <thead>
             <tr>
                 <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
-                <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th>
-                <th>Remarks</th><th>Action</th>
+                <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>CO4352</td><td>777</td><td>Engine</td><td>500</td><td>$5000</td>
-                <td>Yes</td><td>3200</td><td>3700</td><td>500</td><td>64%</td>
-                <td>Good</td>
+                <td>CO4352</td><td>777</td><td>Engine</td><td class="num">500</td><td class="num">5000</td>
+                <td class="num">Yes</td><td class="num">3200</td><td class="num">3700</td><td class="num">100</td><td class="num">20%</td><td>Good</td>
                 <td>
                     <button class="edit-btn" onclick="editRow(this)">Edit</button>
                     <button class="save-btn" onclick="saveRow(this)">Save</button>
@@ -83,7 +85,7 @@ button.add-btn { background:#2980b9; color:white; margin-bottom:10px; }
         </thead>
         <tbody>
             <tr>
-                <td>CO4352</td><td>Engine</td><td>Yes</td><td>Scheduled</td>
+                <td>CO4352</td><td>Engine</td><td class="num">Yes</td><td>Scheduled</td>
                 <td>
                     <button class="edit-btn" onclick="editRow(this)">Edit</button>
                     <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
@@ -132,41 +134,29 @@ tabs.forEach(tab => {
 // Add New Row
 function addRow(menu){
     const table = document.getElementById(menu+'-table').getElementsByTagName('tbody')[0];
-    let cols = menu=='component'?12:5;
     let row = table.insertRow();
-    for(let i=0;i<cols-1;i++){
-        let cell = row.insertCell();
-        cell.innerHTML = (i<3)?'<input class="textedit">' : (i==3 || i==4 || (menu=='component' && i>6)?'<input class="textedit">' : (i==5 && menu=='component')?'<input class="textedit">':'');
-    }
-    let actionCell = row.insertCell();
-    actionCell.innerHTML = `
+    if(menu=='component'){
+        row.innerHTML = `<td></td><td></td><td></td><td class="num"></td><td class="num"></td>
+        <td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td><td class="num"></td><td></td>
+        <td>
         <button class="edit-btn" onclick="editRow(this)">Edit</button>
-        <button class="save-btn" onclick="saveRow(this);${menu=='changeout'?'syncChangeOut();':''}">Save</button>
-        <button class="delete-btn" onclick="deleteRow(this);${menu=='changeout'?'syncChangeOut();':''}">Delete</button>`;
+        <button class="save-btn" onclick="saveRow(this)">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+        </td>`;
+    } else {
+        row.innerHTML = `<td></td><td></td><td class="num"></td><td></td>
+        <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
+        </td>`;
+    }
 }
 
 // Edit/Save/Delete Row
-function editRow(btn){
-    const row = btn.closest('tr');
-    for(let i=0;i<row.cells.length-1;i++){
-        let cell = row.cells[i];
-        if(!cell.querySelector('input')){
-            let val = cell.innerText;
-            cell.innerHTML = `<input class="textedit" value="${val}">`;
-        }
-    }
-}
-function saveRow(btn){
-    const row = btn.closest('tr');
-    for(let i=0;i<row.cells.length-1;i++){
-        let inp = row.cells[i].querySelector('input');
-        if(inp) row.cells[i].innerText = inp.value;
-    }
-}
-function deleteRow(btn){
-    const row = btn.closest('tr');
-    row.parentNode.removeChild(row);
-}
+function editRow(btn){ /* kolom tetap text biasa, tidak perlu input */ }
+function saveRow(btn){ recalcComponent(); }
+function deleteRow(btn){ btn.closest('tr').remove(); recalcComponent(); }
 
 // Filter Table
 function filterTable(menu,colIndex,value){
@@ -182,16 +172,44 @@ function filterTable(menu,colIndex,value){
 function syncChangeOut(){
     const coTable = document.getElementById('changeout-table').tBodies[0].rows;
     const compTable = document.getElementById('component-table').tBodies[0].rows;
-    let maxChange = {};
-    // cari change out terbesar per Equipment+Component
+    let maxChange = {}, remarksMap={};
     for(let r of coTable){
         let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
         maxChange[key] = 'Yes';
+        remarksMap[key] = r.cells[3].innerText;
     }
-    // update Component table
     for(let r of compTable){
         let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
-        if(maxChange[key]) r.cells[5].innerText = maxChange[key];
+        if(maxChange[key]){
+            r.cells[5].innerText = maxChange[key];
+            r.cells[10].innerText = remarksMap[key];
+        }
+    }
+    recalcComponent();
+}
+
+// Recalculate Next Change, Life, Life %
+function recalcComponent(){
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    for(let r of compTable){
+        let freq = parseFloat(r.cells[3].innerText)||0;
+        let cost = parseFloat(r.cells[4].innerText)||0;
+        let changeOut = r.cells[5].innerText=='Yes'?1:0;
+        let currentSMU = parseFloat(r.cells[6].innerText)||0;
+        let nextChange = changeOut + freq;
+        r.cells[7].innerText = nextChange;
+        r.cells[7].className='num';
+        r.cells[4].className='num';
+        r.cells[6].className='num';
+        let life = currentSMU - changeOut;
+        r.cells[8].innerText = life;
+        r.cells[8].className='num';
+        if(life>freq){ r.cells[8].className='num red'; }
+        let lifePerc = freq?Math.round((life/freq)*100):0;
+        r.cells[9].innerText = lifePerc+'%';
+        r.cells[9].className='num';
+        if(lifePerc>100) r.cells[9].className='num red';
+        else if(lifePerc>=75) r.cells[9].className='num green';
     }
 }
 
@@ -202,6 +220,7 @@ function addSMURow(){
     const smu = inputs[1].value.trim();
     if(!equip || !smu) return alert('Isi Equipment & SMU');
     const tbody = document.getElementById('smu-table').tBodies[0];
+    if(tbody.rows.length>=100) return alert('Maks 100 Equipment');
     let row = tbody.insertRow();
     row.insertCell(0).innerText = equip;
     row.insertCell(1).innerText = smu;
@@ -217,9 +236,9 @@ function updateSMU(){
     if(total==0) return alert('Tidak ada data SMU untuk update');
     const progressBar = document.getElementById('progress-bar');
     function updateStep(){
-        if(count>=total) { progressBar.style.width='100%'; progressBar.innerText='100%'; tbody.innerHTML=''; return; }
+        if(count>=total) { progressBar.style.width='100%'; progressBar.innerText='100%'; tbody.innerHTML=''; recalcComponent(); return; }
         let equip = tbody[count].cells[0].innerText;
-        let smu = tbody[count].cells[1].innerText;
+        let smu = parseFloat(tbody[count].cells[1].innerText)||0;
         for(let r of compTable){
             if(r.cells[0].innerText==equip){
                 r.cells[6].innerText = smu;
@@ -229,7 +248,7 @@ function updateSMU(){
         let perc = Math.round((count/total)*100);
         progressBar.style.width = perc+'%';
         progressBar.innerText = perc+'%';
-        setTimeout(updateStep,300);
+        setTimeout(updateStep,50);
     }
     updateStep();
 }

@@ -145,14 +145,13 @@ function addRow(menu){
 function editRow(btn){
     const row = btn.closest('tr');
     Array.from(row.cells).forEach((td,i)=>{
-        if(row.parentElement.parentElement.id=='component-table' || row.parentElement.parentElement.id=='changeout-table'){
-            if(row.parentElement.parentElement.id=='component-table' && i<=4){
-                let val = td.innerText;
-                td.innerHTML=`<input class="${i>=3?'num-input':'inline-input'}" value="${val}">`;
-            } else if(row.parentElement.parentElement.id=='changeout-table' && i<=3){
-                let val = td.innerText;
-                td.innerHTML=`<input class="inline-input" value="${val}">`;
-            }
+        const parentId = row.closest('table').id;
+        if(parentId=='component-table' && i<=4){
+            let val = td.innerText;
+            td.innerHTML=`<input class="${i>=3?'num-input':'inline-input'}" value="${val}">`;
+        } else if(parentId=='changeout-table' && i<=3){
+            let val = td.innerText;
+            td.innerHTML=`<input class="inline-input" value="${val}">`;
         }
     });
 }
@@ -165,6 +164,7 @@ function saveRow(btn){
         if(inp) td.innerText = inp.value;
     });
     recalcComponent();
+    syncChangeOut();
 }
 
 // Delete Row
@@ -209,7 +209,7 @@ function recalcComponent(){
         r.cells[7].innerText = changeOut + freq;
         let life = currentSMU - changeOut;
         r.cells[8].innerText = life;
-        if(life>freq){ r.cells[8].className='num red'; }
+        if(life>freq){ r.cells[8].className='num red'; } 
         else r.cells[8].className='num';
         let lifePerc = freq?Math.round((life/freq)*100):0;
         r.cells[9].innerText = lifePerc+'%';
@@ -277,8 +277,7 @@ function saveLoadJSON(){
             const file=e.target.files[0]; const reader=new FileReader();
             reader.onload=ev=>{
                 const data=JSON.parse(ev.target.result);
-                const compTable=document.getElementById('component-table').tBodies[0];
-                compTable.innerHTML='';
+                const compTable=document.getElementById('component-table').tBodies[0]; compTable.innerHTML='';
                 data.component.forEach(obj=>{
                     let row=compTable.insertRow();
                     Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
@@ -286,8 +285,7 @@ function saveLoadJSON(){
                     <button class="save-btn" onclick="saveRow(this)">Save</button>
                     <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
                 });
-                const coTable=document.getElementById('changeout-table').tBodies[0];
-                coTable.innerHTML='';
+                const coTable=document.getElementById('changeout-table').tBodies[0]; coTable.innerHTML='';
                 data.changeout.forEach(obj=>{
                     let row=coTable.insertRow();
                     Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
@@ -303,3 +301,6 @@ function saveLoadJSON(){
     }
 }
 </script>
+
+</body>
+</html>

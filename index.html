@@ -5,65 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ndarboe.net</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #f5f6fa;
-    }
-    .app-header {
-        background: #34495e;
-        color: white;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .menu button {
-        background: #2c3e50;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        margin-left: 5px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    .menu button.active {
-        background: #1abc9c;
-    }
-    main {
-        padding: 20px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background: #34495e;
-        color: white;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    input.smuedit {
-        width: 80px;
-        border: 1px solid #ccc;
-        padding: 3px;
-        border-radius: 3px;
-        text-align: center;
-    }
-    button.save-btn {
-        background: #1abc9c;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        border-radius: 3px;
-    }
+body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; }
+.app-header { background:#34495e; color:white; padding:15px; display:flex; align-items:center; justify-content:space-between; }
+.menu button { background:#2c3e50; color:white; border:none; padding:10px 15px; margin-left:5px; cursor:pointer; border-radius:5px; }
+.menu button.active { background:#1abc9c; }
+main { padding:20px; }
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+th { background:#34495e; color:white; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+input.smuedit, input.textedit { width:80px; border:1px solid #ccc; padding:3px; border-radius:3px; text-align:center; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn { padding:5px 10px; border:none; border-radius:3px; cursor:pointer; margin:2px; }
+button.save-btn { background:#1abc9c; color:white; }
+button.edit-btn { background:#f39c12; color:white; }
+button.delete-btn { background:#e74c3c; color:white; }
+button.add-btn { background:#2980b9; color:white; margin-bottom:10px; }
+.filter-input { margin-right:5px; padding:3px; border-radius:3px; border:1px solid #ccc; }
+.progress-container { background:#ddd; border-radius:5px; margin-top:10px; height:20px; width:100%; }
+.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:20px; }
 </style>
 </head>
 <body>
@@ -78,87 +38,201 @@
 </header>
 
 <main>
-    <!-- Component -->
-    <section id="component" class="tab-content active">
-        <table>
-            <thead>
-                <tr>
-                    <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
-                    <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th>
-                    <th>Remarks</th><th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>CO4352</td><td>777</td><td>Engine</td><td>500</td><td>$5000</td>
-                    <td>Yes</td><td>3200</td><td>3700</td><td>500</td><td>64%</td>
-                    <td>Good</td><td><button>Edit</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+<!-- Menu 1: Component -->
+<section id="component" class="tab-content active">
+    <div>
+        <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
+        <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
+        <button class="add-btn" onclick="addRow('component')">Add New</button>
+    </div>
+    <table id="component-table">
+        <thead>
+            <tr>
+                <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
+                <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th>
+                <th>Remarks</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>CO4352</td><td>777</td><td>Engine</td><td>500</td><td>$5000</td>
+                <td>Yes</td><td>3200</td><td>3700</td><td>500</td><td>64%</td>
+                <td>Good</td>
+                <td>
+                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="save-btn" onclick="saveRow(this)">Save</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 
-    <!-- Change Out -->
-    <section id="changeout" class="tab-content">
-        <table>
-            <thead>
-                <tr><th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>CO4352</td><td>Engine</td><td>Yes</td><td>Scheduled</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+<!-- Menu 2: Change Out -->
+<section id="changeout" class="tab-content">
+    <div>
+        <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
+        <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
+        <button class="add-btn" onclick="addRow('changeout')">Add New</button>
+    </div>
+    <table id="changeout-table">
+        <thead>
+            <tr>
+                <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>CO4352</td><td>Engine</td><td>Yes</td><td>Scheduled</td>
+                <td>
+                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+                    <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 
-    <!-- Current SMU (Update Masal) -->
-    <section id="currentsmu" class="tab-content">
-        <table id="smu-table">
-            <thead>
-                <tr>
-                    <th>Equipment</th>
-                    <th>Current SMU</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>CO4343</td>
-                    <td><input type="number" class="smuedit" value="12321"></td>
-                    <td><button class="save-btn" onclick="saveSMU(this)">Save</button></td>
-                </tr>
-                <tr>
-                    <td>CO4211</td>
-                    <td><input type="number" class="smuedit" value="12321"></td>
-                    <td><button class="save-btn" onclick="saveSMU(this)">Save</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+<!-- Menu 3: Current SMU -->
+<section id="currentsmu" class="tab-content">
+    <p>Masukkan Equipment & SMU untuk update masal:</p>
+    <div id="smu-inputs">
+        <div style="margin-bottom:5px;">
+            <input type="text" class="textedit" placeholder="Equipment">
+            <input type="number" class="smuedit" placeholder="SMU">
+            <button class="add-btn" onclick="addSMURow()">Add</button>
+        </div>
+    </div>
+    <table id="smu-table">
+        <thead>
+            <tr><th>Equipment</th><th>SMU</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
+    <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
+</section>
 </main>
 
 <script>
-    // Tab menu
-    const tabs = document.querySelectorAll('.tab-btn');
-    const contents = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            const target = tab.getAttribute('data-tab');
-            contents.forEach(c => c.classList.remove('active'));
-            document.getElementById(target).classList.add('active');
-        });
+// Tab Menu
+const tabs = document.querySelectorAll('.tab-btn');
+const contents = document.querySelectorAll('.tab-content');
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-tab');
+        contents.forEach(c=>c.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
     });
+});
 
-    // Save Current SMU
-    function saveSMU(btn) {
-        const row = btn.closest('tr');
-        const equipment = row.cells[0].innerText;
-        const smu = row.querySelector('.smuedit').value;
-        alert(`Saved: ${equipment} → Current SMU = ${smu}`);
+// Add New Row
+function addRow(menu){
+    const table = document.getElementById(menu+'-table').getElementsByTagName('tbody')[0];
+    let cols = menu=='component'?12:5;
+    let row = table.insertRow();
+    for(let i=0;i<cols-1;i++){
+        let cell = row.insertCell();
+        cell.innerHTML = (i<3)?'<input class="textedit">' : (i==3 || i==4 || (menu=='component' && i>6)?'<input class="textedit">' : (i==5 && menu=='component')?'<input class="textedit">':'');
     }
+    let actionCell = row.insertCell();
+    actionCell.innerHTML = `
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this);${menu=='changeout'?'syncChangeOut();':''}">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this);${menu=='changeout'?'syncChangeOut();':''}">Delete</button>`;
+}
+
+// Edit/Save/Delete Row
+function editRow(btn){
+    const row = btn.closest('tr');
+    for(let i=0;i<row.cells.length-1;i++){
+        let cell = row.cells[i];
+        if(!cell.querySelector('input')){
+            let val = cell.innerText;
+            cell.innerHTML = `<input class="textedit" value="${val}">`;
+        }
+    }
+}
+function saveRow(btn){
+    const row = btn.closest('tr');
+    for(let i=0;i<row.cells.length-1;i++){
+        let inp = row.cells[i].querySelector('input');
+        if(inp) row.cells[i].innerText = inp.value;
+    }
+}
+function deleteRow(btn){
+    const row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+}
+
+// Filter Table
+function filterTable(menu,colIndex,value){
+    const table = document.getElementById(menu+'-table');
+    const trs = table.tBodies[0].rows;
+    for(let tr of trs){
+        let cell = tr.cells[colIndex].innerText.toLowerCase();
+        tr.style.display = cell.includes(value.toLowerCase())?'':'none';
+    }
+}
+
+// Change Out Sync to Component
+function syncChangeOut(){
+    const coTable = document.getElementById('changeout-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    let maxChange = {};
+    // cari change out terbesar per Equipment+Component
+    for(let r of coTable){
+        let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
+        maxChange[key] = 'Yes';
+    }
+    // update Component table
+    for(let r of compTable){
+        let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
+        if(maxChange[key]) r.cells[5].innerText = maxChange[key];
+    }
+}
+
+// Menu 3: Add SMU row
+function addSMURow(){
+    const inputs = document.querySelectorAll('#smu-inputs input');
+    const equip = inputs[0].value.trim();
+    const smu = inputs[1].value.trim();
+    if(!equip || !smu) return alert('Isi Equipment & SMU');
+    const tbody = document.getElementById('smu-table').tBodies[0];
+    let row = tbody.insertRow();
+    row.insertCell(0).innerText = equip;
+    row.insertCell(1).innerText = smu;
+    inputs[0].value=''; inputs[1].value='';
+}
+
+// Update SMU with progress
+function updateSMU(){
+    const tbody = document.getElementById('smu-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    let total = tbody.length;
+    let count = 0;
+    if(total==0) return alert('Tidak ada data SMU untuk update');
+    const progressBar = document.getElementById('progress-bar');
+    function updateStep(){
+        if(count>=total) { progressBar.style.width='100%'; progressBar.innerText='100%'; tbody.innerHTML=''; return; }
+        let equip = tbody[count].cells[0].innerText;
+        let smu = tbody[count].cells[1].innerText;
+        for(let r of compTable){
+            if(r.cells[0].innerText==equip){
+                r.cells[6].innerText = smu;
+            }
+        }
+        count++;
+        let perc = Math.round((count/total)*100);
+        progressBar.style.width = perc+'%';
+        progressBar.innerText = perc+'%';
+        setTimeout(updateStep,300);
+    }
+    updateStep();
+}
 </script>
 
 </body>

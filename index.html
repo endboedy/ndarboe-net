@@ -345,29 +345,36 @@ function loadJSON() {
             catch (err) { alert("File JSON tidak valid: " + err.message); return; }
 
             const compTable = document.getElementById('component-table').tBodies[0];
-            compTable.innerHTML = '';
+            compTable.innerHTML = ''; // reset table
+
+            const fragment = document.createDocumentFragment();
 
             data.forEach(obj => {
-                let row = compTable.insertRow();
-                row.innerHTML = `
-                    <td>${obj.Equipment || ''}</td>
-                    <td>${obj.Model || ''}</td>
-                    <td>${obj.Component || ''}</td>
-                    <td>${obj.Freq || ''}</td>
-                    <td>${obj.Cost || ''}</td>
-                    <td>${obj["Change Out"] || ''}</td>
-                    <td>${obj["Current SMU"] || ''}</td>
-                    <td>${obj["Next Change"] || ''}</td>
-                    <td>${obj.Life || ''}</td>
-                    <td class="life-perc">${obj["Life %"] || ''}</td>
-                    <td>${obj.Remarks || ''}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                        <button class="save-btn" onclick="saveRow(this)">Save</button>
-                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                    </td>
+                const row = document.createElement('tr');
+
+                ['Equipment','Model','Component','Freq','Cost','Change Out','Current SMU','Next Change','Life','Life %','Remarks'].forEach((key, i) => {
+                    const cell = row.insertCell();
+                    if(key === 'Life %'){
+                        cell.className = 'life-perc';
+                        cell.innerText = obj[key] || '0%';
+                    } else {
+                        cell.innerText = obj[key] || '';
+                        if(['Freq','Cost','Change Out','Current SMU','Next Change','Life'].includes(key)) cell.className='num';
+                    }
+                });
+
+                // Action cell
+                const actionCell = row.insertCell();
+                actionCell.innerHTML = `
+                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="save-btn" onclick="saveRow(this)">Save</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
                 `;
+
+                fragment.appendChild(row);
             });
+
+            compTable.appendChild(fragment);
             recalcComponent();
         };
 

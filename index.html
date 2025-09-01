@@ -2,160 +2,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ndarboe.net</title>
-  <link rel="icon" href="data:,">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f6fa;
-      font-size: 12px;
-    }
-    .app-header {
-      background: #34495e;
-      color: white;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-    .menu button {
-      background: #2c3e50;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      margin-left: 5px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 12px;
-    }
-    .menu button.active {
-      background: #1abc9c;
-    }
-    main {
-      padding: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 12px;
-      table-layout: fixed;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 4px;
-      text-align: left;
-      height: 24px;
-      word-wrap: break-word;
-      white-space: normal;
-    }
-    th {
-      background: #34495e;
-      color: white;
-      font-size: 12px;
-    }
-    td.num {
-      text-align: right;
-    }
-    td.red {
-      background: red;
-      color: white;
-    }
-    td.green {
-      background: green;
-      color: white;
-    }
-    th:nth-child(3), td:nth-child(3) {
-      width: 300px;
-      max-width: 300px;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn {
-      padding: 3px 6px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      margin: 1px;
-      font-size: 11px;
-    }
-    button.save-btn {
-      background: #1abc9c;
-      color: white;
-    }
-    button.edit-btn {
-      background: #f39c12;
-      color: white;
-    }
-    button.delete-btn {
-      background: #e74c3c;
-      color: white;
-    }
-    button.add-btn {
-      background: #2980b9;
-      color: white;
-      margin-bottom: 5px;
-    }
-    button.load-btn {
-      background: #8e44ad;
-      color: white;
-    }
-    .filter-input {
-      margin-right: 5px;
-      padding: 2px;
-      border-radius: 3px;
-      border: 1px solid #ccc;
-      font-size: 11px;
-      width: 100px;
-    }
-    .progress-container {
-      background: #ddd;
-      border-radius: 5px;
-      margin-top: 5px;
-      height: 15px;
-      width: 100%;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0;
-      background: #1abc9c;
-      border-radius: 5px;
-      text-align: center;
-      color: white;
-      line-height: 15px;
-      font-size: 11px;
-    }
-    textarea {
-      width: 100%;
-      height: 60px;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-    input.inline-input {
-      width: 100%;
-      border: none;
-      text-align: left;
-      font-size: 12px;
-      background: transparent;
-    }
-    input.num-input {
-      width: 100%;
-      border: none;
-      text-align: right;
-      font-size: 12px;
-      background: transparent;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ndarboe.net</title>
+<link rel="icon" href="data:,"> 
+<style>
+body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
+.app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
+.menu button { background:#2c3e50; color:white; border:none; padding:5px 10px; margin-left:5px; cursor:pointer; border-radius:5px; font-size:12px; }
+.menu button.active { background:#1abc9c; }
+main { padding:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:24px; }
+th { background:#34495e; color:white; font-size:12px; }
+td.num { text-align:right; }
+td.red { background:red; color:white; }
+td.green { background:green; color:white; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
+button.save-btn { background:#1abc9c; color:white; }
+button.edit-btn { background:#f39c12; color:white; }
+button.delete-btn { background:#e74c3c; color:white; }
+button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
+button.load-btn { background:#8e44ad; color:white; }
+.filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
+.progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
+.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
+textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
+input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
+input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
+
+/* Tambahan untuk memperlebar kolom Component */
+th.component, td.component {
+    width: 200px;
+    max-width: 200px;
+    word-wrap: break-word;
+}
+</style>
 </head>
 <body>
+
 
 <header class="app-header">
   <h1>Ndarboe.net</h1>

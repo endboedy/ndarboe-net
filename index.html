@@ -308,13 +308,14 @@ function addRow(menu){
 }
 
 
+
 function rowToInputs(tr) {
-  const tds = tr.cells;
-  for (let i = 0; i <= 4; i++) { // Equipment, Model, Component, Freq, Cost
-    const val = tds[i].innerText;
-    tds[i].innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${val}">`;
+    const tds = tr.cells;
+    for (let i = 0; i <= 4; i++) {
+      const val = tds[i].innerText;
+      tds[i].innerHTML = `<input class="inline-input" value="${val}">`;
+    }
   }
-}
 
 function inputsToRow(tr){
   const tds = tr.cells;

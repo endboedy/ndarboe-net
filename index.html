@@ -369,7 +369,8 @@ function loadJSON() {
         reader.onload = ev => {
             let data;
             try { 
-                data = JSON.parse(ev.target.result); 
+                const parsed = JSON.parse(ev.target.result); 
+                data = parsed.component || parsed; // handle format lama/baru
             } catch (err) { 
                 alert("File JSON tidak valid: " + err.message); 
                 return; 
@@ -383,19 +384,19 @@ function loadJSON() {
             data.forEach(obj => {
                 const row = document.createElement('tr');
 
-                // urutan kolom sesuai tabel
+                // urutan sesuai header table (harus sama dengan saveJSON)
                 [
-                    obj.equipment,
-                    obj.model,
-                    obj.component,
-                    obj.freq,
-                    obj.cost,
-                    obj.changeout,
-                    obj.current_smu,
-                    obj.next_change,
-                    obj.life,
-                    obj.life_perc,
-                    obj.remarks
+                    obj["Equipment"],
+                    obj["Model"],
+                    obj["Component"],
+                    obj["Freq"],
+                    obj["Cost"],
+                    obj["Change Out"],
+                    obj["Current SMU"],
+                    obj["Next Change"],
+                    obj["Life"],
+                    obj["Life %"],
+                    obj["Remarks"]
                 ].forEach((val, i) => {
                     const cell = row.insertCell();
                     if (i === 9) { // Life %
@@ -403,7 +404,7 @@ function loadJSON() {
                         cell.innerText = val || '0%';
                     } else {
                         cell.innerText = val || '';
-                        if ([3,4,5,6,7,8].includes(i)) cell.className = 'num'; // angka rata kanan
+                        if ([3,4,5,6,7,8].includes(i)) cell.className = 'num';
                     }
                 });
 

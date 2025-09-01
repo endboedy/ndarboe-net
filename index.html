@@ -31,10 +31,17 @@ button.load-btn { background:#8e44ad; color:white; }
 textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
 input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
 input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
+
+/* Lebarkan kolom Component */
+th:nth-child(3), td:nth-child(3) {
+    width: 300px;
+    word-break: break-word;
+}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="app-header">
   <h1>Ndarboe.net</h1>
   <nav class="menu">
@@ -44,6 +51,7 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
   </nav>
 </header>
 
+<!-- MAIN -->
 <main>
   <!-- Menu 1: Component -->
   <section id="component" class="tab-content active">
@@ -59,7 +67,7 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
         <tr>
           <th>Equipment</th>
           <th>Model</th>
-          <th style="width:300px;">Component</th>
+          <th>Component</th>
           <th>Freq</th>
           <th>Cost</th>
           <th>Change Out</th>
@@ -74,76 +82,41 @@ input.num-input { width:100%; border:none; text-align:right; font-size:12px; bac
       <tbody></tbody>
     </table>
   </section>
-</main>
 
-</body>
-</html>
-
-
-<header class="app-header">
-    <h1>Ndarboe.net</h1>
-    <nav class="menu">
-        <button class="tab-btn active" data-tab="component">Component</button>
-        <button class="tab-btn" data-tab="changeout">Change Out</button>
-        <button class="tab-btn" data-tab="currentsmu">Current SMU</button>
-    </nav>
-</header>
-
-<main>
-<!-- Menu 1: Component -->
-<section id="component" class="tab-content active">
+  <!-- Menu 2: Change Out -->
+  <section id="changeout" class="tab-content">
     <div>
-        <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
-        <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
-        <button class="add-btn" onclick="addRow('component')">Add New</button>
-        <button class="save-btn" onclick="saveJSON()">Save JSON</button>
-        <button class="load-btn" onclick="loadJSON()">Load JSON</button>
-    </div>
-    <table id="component-table">
-        <thead>
-            <tr>
-                <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
-                <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</section>
-
-<!-- Menu 2: Change Out -->
-<section id="changeout" class="tab-content">
-    <div>
-        <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
-        <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
-        <button class="add-btn" onclick="addRow('changeout')">Add New</button>
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
+      <button class="add-btn" onclick="addRow('changeout')">Add New</button>
     </div>
     <table id="changeout-table">
-        <thead>
-            <tr>
-                <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
+      <thead>
+        <tr>
+          <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
     </table>
-</section>
+  </section>
 
-<!-- Menu 3: Current SMU -->
-<section id="currentsmu" class="tab-content">
+  <!-- Menu 3: Current SMU -->
+  <section id="currentsmu" class="tab-content">
     <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
     <textarea id="smu-paste"></textarea>
     <button class="add-btn" onclick="pasteSMU()">Paste</button>
     <table id="smu-table">
-        <thead>
-            <tr><th>Equipment</th><th>SMU</th></tr>
-        </thead>
-        <tbody></tbody>
+      <thead>
+        <tr><th>Equipment</th><th>SMU</th></tr>
+      </thead>
+      <tbody></tbody>
     </table>
     <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
     <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
-</section>
-
+  </section>
 </main>
 
+<!-- SCRIPT -->
 <script>
 // Tabs
 const tabs = document.querySelectorAll('.tab-btn');
@@ -196,10 +169,10 @@ function editRow(btn){
         const parentId = row.closest('table').id;
         if(parentId=='component-table' && i<=4){
             let val = td.innerText;
-            td.innerHTML=`<input class="${i>=3?'num-input':'inline-input'}" value="${val}">`;
+            td.innerHTML=<input class="${i>=3?'num-input':'inline-input'}" value="${val}">;
         } else if(parentId=='changeout-table' && i<=3){
             let val = td.innerText;
-            td.innerHTML=`<input class="inline-input" value="${val}">`;
+            td.innerHTML=<input class="inline-input" value="${val}">;
         }
     });
 }
@@ -299,12 +272,10 @@ function updateSMU(){
     step();
 }
 
-
-// ✅ SAVE JSON dengan sanitasi NaN
+// SAVE JSON
 function saveJSON() {
     const componentData = [], changeoutData = [];
 
-    // Ambil data dari tabel component
     Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
         const obj = {};
         Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
@@ -316,7 +287,6 @@ function saveJSON() {
         componentData.push(obj);
     });
 
-    // Ambil data dari tabel changeout
     Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
         const obj = {};
         Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
@@ -336,9 +306,7 @@ function saveJSON() {
     a.click();
 }
 
-
-// ✅ LOAD JSON dengan error handling
-
+// LOAD JSON
 function loadJSON() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -360,7 +328,6 @@ function loadJSON() {
                 return;
             }
 
-            // Jika data berupa array langsung
             if (!Array.isArray(data)) {
                 alert("Format JSON tidak sesuai. Harus berupa array.");
                 return;
@@ -397,33 +364,6 @@ function loadJSON() {
 
     input.click();
 }
-
-// Fungsi Edit, Save, Delete
-function editRow(btn) {
-    const row = btn.closest('tr');
-    [...row.cells].forEach((cell, i) => {
-        if (i < 11) {
-            const val = cell.innerText;
-            cell.innerHTML = `<input class="${i === 4 || i === 9 ? 'num-input' : 'inline-input'}" value="${val}">`;
-        }
-    });
-}
-
-function saveRow(btn) {
-    const row = btn.closest('tr');
-    [...row.cells].forEach((cell, i) => {
-        if (i < 11) {
-            const input = cell.querySelector('input');
-            if (input) cell.innerText = input.value;
-        }
-    });
-}
-
-function deleteRow(btn) {
-    const row = btn.closest('tr');
-    row.remove();
-}
-
 </script>
 
 </body>

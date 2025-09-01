@@ -293,6 +293,7 @@ function saveJSON() {
 
 
 // ✅ LOAD JSON dengan error handling
+
 function loadJSON() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -314,40 +315,36 @@ function loadJSON() {
                 return;
             }
 
-            // Load ke tabel component (menu1)
+            // Jika data berupa array langsung
+            if (!Array.isArray(data)) {
+                alert("Format JSON tidak sesuai. Harus berupa array.");
+                return;
+            }
+
             const compTable = document.getElementById('component-table').tBodies[0];
             compTable.innerHTML = '';
-            (data.menu1 || []).forEach(obj => {
+
+            data.forEach(obj => {
                 let row = compTable.insertRow();
-                Object.values(obj).forEach(v => {
-                    let td = row.insertCell();
-                    td.innerText = v;
-                });
-                let cell = row.insertCell();
-                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                                  <button class="save-btn" onclick="saveRow(this)">Save</button>
-                                  <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
+                row.innerHTML = `
+                    <td>${obj.Equipment || ''}</td>
+                    <td>${obj.Model || ''}</td>
+                    <td>${obj.Component || ''}</td>
+                    <td>${obj.Freq || ''}</td>
+                    <td>${obj.Cost || ''}</td>
+                    <td>${obj["Change Out"] || ''}</td>
+                    <td>${obj["Current SMU"] || ''}</td>
+                    <td>${obj["Next Change"] || ''}</td>
+                    <td>${obj.Life || ''}</td>
+                    <td>${obj["Life %"] || ''}</td>
+                    <td>${obj.Remarks || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                `;
             });
-
-            // Load ke tabel changeout (menu2)
-            const coTable = document.getElementById('changeout-table').tBodies[0];
-            coTable.innerHTML = '';
-            (data.menu2 || []).forEach(obj => {
-                let row = coTable.insertRow();
-                Object.values(obj).forEach(v => {
-                    let td = row.insertCell();
-                    td.innerText = v;
-                });
-                let cell = row.insertCell();
-                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                                  <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                                  <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
-            });
-
-            // Sinkronisasi changeout jika ada function
-            if (typeof syncChangeOut === 'function') {
-                syncChangeOut();
-            }
         };
 
         reader.readAsText(file);
@@ -355,6 +352,33 @@ function loadJSON() {
 
     input.click();
 }
+
+// Fungsi Edit, Save, Delete
+function editRow(btn) {
+    const row = btn.closest('tr');
+    [...row.cells].forEach((cell, i) => {
+        if (i < 11) {
+            const val = cell.innerText;
+            cell.innerHTML = `<input class="${i === 4 || i === 9 ? 'num-input' : 'inline-input'}" value="${val}">`;
+        }
+    });
+}
+
+function saveRow(btn) {
+    const row = btn.closest('tr');
+    [...row.cells].forEach((cell, i) => {
+        if (i < 11) {
+            const input = cell.querySelector('input');
+            if (input) cell.innerText = input.value;
+        }
+    });
+}
+
+function deleteRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+}
+
 </script>
 
 </body>

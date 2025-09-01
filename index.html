@@ -253,51 +253,99 @@ function updateSMU(){
     step();
 }
 
-// Save JSON
-function saveJSON(){
-    const componentData=[], changeoutData=[];
-    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr=>{
-        const obj={};
-        Array.from(tr.cells).slice(0,11).forEach((td,i)=>{ obj[document.getElementById('component-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+
+// ✅ SAVE JSON dengan sanitasi NaN
+function saveJSON() {
+    const componentData = [], changeoutData = [];
+
+    // Ambil data dari tabel component
+    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
+            const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
         componentData.push(obj);
     });
-    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr=>{
-        const obj={};
-        Array.from(tr.cells).slice(0,4).forEach((td,i)=>{ obj[document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText]=td.innerText; });
+
+    // Ambil data dari tabel changeout
+    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
+            const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
         changeoutData.push(obj);
     });
-    const blob=new Blob([JSON.stringify({component:componentData,changeout:changeoutData},null,2)],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download='ndarboe_data.json'; a.click();
+
+    const blob = new Blob([JSON.stringify({ component: componentData, changeout: changeoutData }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ndarboe_data.json';
+    a.click();
 }
 
-// Load JSON
-function loadJSON(){
-    const input=document.createElement('input'); input.type='file'; input.accept='application/json';
-    input.onchange=e=>{
-        const file=e.target.files[0]; const reader=new FileReader();
-        reader.onload=ev=>{
-            const data=JSON.parse(ev.target.result);
-            const compTable=document.getElementById('component-table').tBodies[0]; compTable.innerHTML='';
-            data.component.forEach(obj=>{
-                let row=compTable.insertRow();
-                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
-                let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                <button class="save-btn" onclick="saveRow(this)">Save</button>
-                <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
+// ✅ LOAD JSON dengan error handling
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = ev => {
+            let data;
+            try {
+                data = JSON.parse(ev.target.result);
+            } catch (err) {
+                alert("File JSON tidak valid: " + err.message);
+                console.error("JSON Parse Error:", err);
+                return;
+            }
+
+            // Load ke tabel component
+            const compTable = document.getElementById('component-table').tBodies[0];
+            compTable.innerHTML = '';
+            data.component.forEach(obj => {
+                let row = compTable.insertRow();
+                Object.values(obj).forEach(v => {
+                    let td = row.insertCell();
+                    td.innerText = v;
+                });
+                let cell = row.insertCell();
+                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                                  <button class="save-btn" onclick="saveRow(this)">Save</button>
+                                  <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
             });
-            const coTable=document.getElementById('changeout-table').tBodies[0]; coTable.innerHTML='';
-            data.changeout.forEach(obj=>{
-                let row=coTable.insertRow();
-                Object.values(obj).forEach(v=>{ let td=row.insertCell(); td.innerText=v; });
-                let cell=row.insertCell(); cell.innerHTML=`<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
+
+            // Load ke tabel changeout
+            const coTable = document.getElementById('changeout-table').tBodies[0];
+            coTable.innerHTML = '';
+            data.changeout.forEach(obj => {
+                let row = coTable.insertRow();
+                Object.values(obj).forEach(v => {
+                    let td = row.insertCell();
+                    td.innerText = v;
+                });
+                let cell = row.insertCell();
+                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                                  <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+                                  <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
             });
+
             syncChangeOut();
         };
+
         reader.readAsText(file);
     };
+
     input.click();
 }
 </script>

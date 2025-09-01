@@ -248,13 +248,14 @@ function renderComponentTable(page=1){
   $('#component-table tbody').innerHTML = html;
 
  // paging UI
-document.getElementById('component-paging').style.display = 'flex';
-document.getElementById('pg-info').textContent = Page ${currentPage} / ${totalPages};
-document.getElementById('pg-range').textContent = ${start+1}-${end} of ${componentFiltered.length};
-document.getElementById('pg-prev').disabled = currentPage === 1;
-document.getElementById('pg-first').disabled = currentPage === 1;
-document.getElementById('pg-next').disabled = currentPage === totalPages;
-document.getElementById('pg-last').disabled = currentPage === totalPages;
+('#component-paging').css('display', 'flex');
+$('#pg-info').html(`Page ${currentPage} /&nbsp;${totalPages}`);
+$('#pg-range').text(`${start + 1}-${end} of ${componentFiltered.length}`);
+$('#pg-prev').prop('disabled', currentPage === 1);
+$('#pg-first').prop('disabled', currentPage === 1);
+$('#pg-next').prop('disabled', currentPage === totalPages);
+$('#pg-last').prop('disabled', currentPage === totalPages);
+
 
 function gotoPage(p){ renderComponentTable(p); }
 function changePageSize(val){

@@ -1,77 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ndarboe.net</title>
-<link rel="icon" href="data:,">
+<link rel="icon" href="data:,"> 
 <style>
-  body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
-  .app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
-  .menu button { background:#2c3e50; color:white; border:none; padding:5px 10px; margin-left:5px; cursor:pointer; border-radius:5px; font-size:12px; }
-  .menu button.active { background:#1abc9c; }
-  main { padding:10px; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; table-layout:fixed; }
-  th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  th { background:#34495e; color:white; font-size:12px; }
-  td.num { text-align:right; }
-  td.red { background:red; color:white; }
-  td.green { background:green; color:white; }
-  .tab-content { display:none; }
-  .tab-content.active { display:block; }
-  button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
-  button.save-btn { background:#1abc9c; color:white; }
-  button.edit-btn { background:#f39c12; color:white; }
-  button.delete-btn { background:#e74c3c; color:white; }
-  button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
-  button.load-btn { background:#8e44ad; color:white; }
-  .filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:140px; }
-  .progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
-  .progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; transition:width .2s; }
-  textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
-  input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
-  input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
+body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
+.app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
+.menu button { background:#2c3e50; color:white; border:none; padding:5px 10px; margin-left:5px; cursor:pointer; border-radius:5px; font-size:12px; }
+.menu button.active { background:#1abc9c; }
+main { padding:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; } /* tinggi kolom dikurangi */
+th { background:#34495e; color:white; font-size:12px; }
+td.num { text-align:right; }
+td.red { background:red; color:white; }
+td.green { background:green; color:white; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
+button.save-btn { background:#1abc9c; color:white; }
+button.edit-btn { background:#f39c12; color:white; }
+button.delete-btn { background:#e74c3c; color:white; }
+button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
+button.load-btn { background:#8e44ad; color:white; }
+.filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
+.progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
+.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
+textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
+input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
+input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
-  /* Equipment & Model lebih kecil */
-  #component-table th:nth-child(1), #component-table td:nth-child(1),  /* Equipment */
-  #component-table th:nth-child(2), #component-table td:nth-child(2)   /* Model */
-  { width:80px; max-width:80px; }
+/* Equipment & Model lebih kecil */
+th:nth-child(1), td:nth-child(1),  /* Equipment */
+th:nth-child(2), td:nth-child(2)   /* Model */
+{ 
+  width: 80px; 
+  max-width: 80px; 
+}
 
-  /* Perlebar kolom Component */
-  #component-table th:nth-child(3), #component-table td:nth-child(3) { 
-    width:260px; max-width:260px; 
-  }
+/* Perlebar kolom Component */
+th:nth-child(3), td:nth-child(3) { 
+  width: 250px; 
+  max-width: 250px; 
+  word-wrap: break-word; 
+}
 
-  /* Kolom numerik (Freq → Life %) sama lebar & rata kanan */
-  #component-table th:nth-child(4), #component-table td:nth-child(4),
-  #component-table th:nth-child(5), #component-table td:nth-child(5),
-  #component-table th:nth-child(6), #component-table td:nth-child(6),
-  #component-table th:nth-child(7), #component-table td:nth-child(7),
-  #component-table th:nth-child(8), #component-table td:nth-child(8),
-  #component-table th:nth-child(9), #component-table td:nth-child(9),
-  #component-table th:nth-child(10), #component-table td:nth-child(10)
-  { width:80px; max-width:80px; text-align:right; }
+/* Kolom numerik (Freq → Life) */
+th:nth-child(4), td:nth-child(4),  /* Freq */
+th:nth-child(5), td:nth-child(5),  /* Cost */
+th:nth-child(6), td:nth-child(6),  /* Change Out */
+th:nth-child(7), td:nth-child(7),  /* Current SMU */
+th:nth-child(8), td:nth-child(8),  /* Next Change */
+th:nth-child(9), td:nth-child(9),  /* Life */
+th:nth-child(10), td:nth-child(10) /* Life % */
+{ 
+  width: 80px; 
+  max-width: 80px; 
+  text-align: right; 
+}
 
-  /* Perlebar kolom Remarks */
-  #component-table th:nth-child(11), #component-table td:nth-child(11) { 
-    width:220px; max-width:220px; 
-  }
+/* Perlebar kolom Remarks */
+th:nth-child(11), td:nth-child(11) { 
+  width: 200px; 
+  max-width: 200px; 
+  word-wrap: break-word; 
+}
 
-  /* Action diperkecil tapi muat 3 tombol */
-  #component-table th:nth-child(12), #component-table td:nth-child(12) { 
-    width:140px; max-width:140px; text-align:center;
-  }
+/* Action diperkecil */
+th:nth-child(12), td:nth-child(12) { 
+  width: 120px; 
+  max-width: 120px; 
+  text-align: center;
+}
 
-  /* Life % pewarnaan */
-  td.life-perc { font-weight:bold; text-align:right; }
-  td.life-perc.red { background:#e74c3c; color:white; }
-  td.life-perc.green { background:#27ae60; color:white; }
-  td.life-perc.yellow { background:#f1c40f; color:black; }
+/* Life % pewarnaan */
+td.life-perc { font-weight:bold; text-align:right; }
+td.life-perc.red { background:red; color:white; }
+td.life-perc.green { background:green; color:white; }
+td.life-perc.yellow { background:yellow; color:black; }
 
-  /* Pagination */
-  .paging { display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap; }
-  .paging button { padding:3px 8px; font-size:11px; }
-  .paging .info { font-size:11px; color:#555; }
 </style>
 </head>
 <body>
@@ -89,13 +98,12 @@
   <!-- Menu 1: Component -->
   <section id="component" class="tab-content active">
     <div>
-      <input id="filter-equip" type="text" class="filter-input" placeholder="Filter Equipment">
-      <input id="filter-comp" type="text" class="filter-input" placeholder="Filter Component">
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
       <button class="add-btn" onclick="addRow('component')">Add New</button>
       <button class="save-btn" onclick="saveJSON()">Save JSON</button>
       <button class="load-btn" onclick="loadJSON()">Load JSON</button>
     </div>
-
     <table id="component-table">
       <thead>
         <tr>
@@ -115,28 +123,13 @@
       </thead>
       <tbody></tbody>
     </table>
-
-    <div class="paging" id="component-paging" style="display:none;">
-      <button id="pg-first" onclick="gotoPage(1)">&laquo; First</button>
-      <button id="pg-prev" onclick="gotoPage(currentPage-1)">&lsaquo; Prev</button>
-      <span class="info" id="pg-info">Page 1/1</span>
-      <button id="pg-next" onclick="gotoPage(currentPage+1)">Next &rsaquo;</button>
-      <button id="pg-last" onclick="gotoPage(totalPages)">&raquo; Last</button>
-      <span class="info" id="pg-range"></span>
-      <select id="page-size" onchange="changePageSize(this.value)">
-        <option value="100">100</option>
-        <option value="200" selected>200</option>
-        <option value="500">500</option>
-        <option value="1000">1000</option>
-      </select>
-    </div>
   </section>
 
   <!-- Menu 2: Change Out -->
   <section id="changeout" class="tab-content">
     <div>
-      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTableDOM('changeout','0',this.value)">
-      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTableDOM('changeout','1',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
       <button class="add-btn" onclick="addRow('changeout')">Add New</button>
     </div>
     <table id="changeout-table">
@@ -166,367 +159,268 @@
 </main>
 
 <script>
-/* ===================== STATE & UTIL ===================== */
-let componentAll = [];        // semua data (array objek)
-let componentFiltered = [];   // hasil filter
-let currentPage = 1;
-let pageSize = 200;
-let totalPages = 1;
-
-const $ = sel => document.querySelector(sel);
-
-/* Debounce untuk filter input */
-function debounce(fn, delay=200){
-  let t; 
-  return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), delay); };
-}
-
-/* ===================== TABS ===================== */
+// Tabs
 const tabs = document.querySelectorAll('.tab-btn');
 const contents = document.querySelectorAll('.tab-content');
 tabs.forEach(tab => tab.addEventListener('click', () => {
-  tabs.forEach(t=>t.classList.remove('active'));
-  tab.classList.add('active');
-  contents.forEach(c=>c.classList.remove('active'));
-  document.getElementById(tab.dataset.tab).classList.add('active');
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    contents.forEach(c=>c.classList.remove('active'));
+    document.getElementById(tab.dataset.tab).classList.add('active');
 }));
 
-/* ===================== RENDER COMPONENT (PAGED) ===================== */
-function computeFields(row){
-  const freq = toNum(row['Freq']);
-  const changeOut = toNum(row['Change Out']);
-  const currentSMU = toNum(row['Current SMU']);
-  const nextChange = changeOut + freq;
-  const life = currentSMU - changeOut;
-  const lifePerc = freq ? Math.round((life / freq) * 100) : 0;
-  return { nextChange, life, lifePerc };
-}
-function toNum(v){ const n = parseFloat((v??'').toString().replace(/,/g,'')); return isNaN(n)?0:n; }
-
-function lifePercClass(p){
-  if(p > 100) return 'life-perc red';
-  if(p >= 75) return 'life-perc green';
-  if(p >= 50) return 'life-perc yellow';
-  return 'life-perc yellow';
-}
-
-function renderComponentTable(page=1){
-  if(componentFiltered.length===0){
-    $('#component-table tbody').innerHTML = '';
-    $('#component-paging').style.display = 'none';
-    return;
-  }
-  totalPages = Math.max(1, Math.ceil(componentFiltered.length / pageSize));
-  currentPage = Math.min(Math.max(1,page), totalPages);
-
-  const start = (currentPage-1)*pageSize;
-  const end = Math.min(start+pageSize, componentFiltered.length);
-  const slice = componentFiltered.slice(start, end);
-
-  let html = '';
-  for(const row of slice){
-    const { nextChange, life, lifePerc } = computeFields(row);
-    html += `<tr data-id="${row._id}">
-      <td>${row['Equipment']||''}</td>
-      <td>${row['Model']||''}</td>
-      <td>${row['Component']||''}</td>
-      <td class="num">${row['Freq']||''}</td>
-      <td class="num">${row['Cost']||''}</td>
-      <td class="num">${row['Change Out']||''}</td>
-      <td class="num">${row['Current SMU']||''}</td>
-      <td class="num">${nextChange}</td>
-      <td class="num">${life}</td>
-      <td class="${lifePercClass(lifePerc)}">${lifePerc}%</td>
-      <td>${row['Remarks']||''}</td>
-      <td>
+// Add New Row
+function addRow(menu){
+    const table = document.getElementById(menu+'-table').tBodies[0];
+    let row = table.insertRow();
+    if(menu=='component'){
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Model"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="num-input" placeholder="Freq"></td>
+        <td><input class="num-input" placeholder="Cost"></td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="life-perc">0%</td>
+        <td></td>
+        <td>
         <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this)">Save</button>
         <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-      </td>
-    </tr>`;
-  }
-  $('#component-table tbody').innerHTML = html;
-
- // paging UI
-('#component-paging').css('display', 'flex');
-$('#pg-info').html(`Page ${currentPage} /&nbsp;${totalPages}`);
-$('#pg-range').text(`${start + 1}-${end} of ${componentFiltered.length}`);
-$('#pg-prev').prop('disabled', currentPage === 1);
-$('#pg-first').prop('disabled', currentPage === 1);
-$('#pg-next').prop('disabled', currentPage === totalPages);
-$('#pg-last').prop('disabled', currentPage === totalPages);
-
-
-function gotoPage(p){ renderComponentTable(p); }
-function changePageSize(val){
-  pageSize = parseInt(val,10)||200;
-  renderComponentTable(1);
-}
-
-/* ===================== FILTER (IN-MEMORY) ===================== */
-const onFilterChange = debounce(()=>{
-  const fEquip = ($('#filter-equip').value||'').toLowerCase();
-  const fComp  = ($('#filter-comp').value||'').toLowerCase();
-  componentFiltered = componentAll.filter(r=>{
-    const e = (r['Equipment']||'').toLowerCase();
-    const c = (r['Component']||'').toLowerCase();
-    return e.includes(fEquip) && c.includes(fComp);
-  });
-  renderComponentTable(1);
-}, 200);
-
-$('#filter-equip').addEventListener('keyup', onFilterChange);
-$('#filter-comp').addEventListener('keyup', onFilterChange);
-
-/* ===================== ROW OPS (Component) ===================== */
-function addRow(menu){
-  if(menu!=='component'){
-    // menu changeout (lama, DOM-based) tetap seperti dulu
-    const table = document.getElementById(menu+'-table').tBodies[0];
-    let row = table.insertRow();
-    row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
-      <td><input class="inline-input" placeholder="Component"></td>
-      <td><input class="inline-input" placeholder="Change Out"></td>
-      <td><input class="inline-input" placeholder="Remarks"></td>
-      <td>
+        </td>`;
+    } else {
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="inline-input" placeholder="Change Out"></td>
+        <td><input class="inline-input" placeholder="Remarks"></td>
+        <td>
         <button class="edit-btn" onclick="editRow(this)">Edit</button>
         <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
         <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
-      </td>`;
-    return;
-  }
-
-  // tambah ke data & render ulang page 1
-  const newId = (componentAll.length? componentAll[componentAll.length-1]._id+1 : 1);
-  const obj = {
-    _id:newId,
-    'Equipment':'','Model':'','Component':'',
-    'Freq':'','Cost':'','Change Out':'','Current SMU':'','Remarks':''
-  };
-  componentAll.push(obj);
-  onFilterChange(); // akan panggil render page 1
-}
-
-
-
-function rowToInputs(tr) {
-    const tds = tr.cells;
-    for (let i = 0; i <= 4; i++) {
-      const val = tds[i].innerText;
-      tds[i].innerHTML = `<input class="inline-input" value="${val}">`;
+        </td>`;
     }
-  }
-
-function inputsToRow(tr){
-  const tds = tr.cells;
-  for(let i=0;i<=4;i++){
-    const inp = tds[i].querySelector('input');
-    if(inp) tds[i].textContent = inp.value;
-  }
 }
 
+
+// Edit Row
+  
 function editRow(btn){
-  const tr = btn.closest('tr');
-  const parentId = tr.closest('table').id;
-  if(parentId==='component-table'){
-    rowToInputs(tr);
-  } else if(parentId==='changeout-table'){
-    for(let i=0;i<=3;i++){
-      const val = tr.cells[i].innerText;
-      tr.cells[i].innerHTML = <input class="inline-input" value="${val}">;
-    }
-  }
-}
-
-function saveRow(btn){
-  const tr = btn.closest('tr');
-  const tableId = tr.closest('table').id;
-  if(tableId==='component-table'){
-    // simpan ke DOM dulu
-    inputsToRow(tr);
-
-    // update ke data in-memory
-    const id = parseInt(tr.getAttribute('data-id'),10);
-    const obj = componentAll.find(x=>x._id===id);
-    if(obj){
-      obj['Equipment'] = tr.cells[0].innerText;
-      obj['Model'] = tr.cells[1].innerText;
-      obj['Component'] = tr.cells[2].innerText;
-      obj['Freq'] = tr.cells[3].innerText;
-      obj['Cost'] = tr.cells[4].innerText;
-      // kolom 5..8 dihitung saat render
-      obj['Change Out'] = tr.cells[5].innerText; // kalau diubah via syncChangeOut/updateSMU bisa berubah
-      obj['Current SMU'] = tr.cells[6].innerText;
-      obj['Remarks'] = tr.cells[10].innerText;
-    }
-    // re-render current page agar Next/Life/Life% terupdate & warna sesuai
-    renderComponentTable(currentPage);
-    syncChangeOut();
-  } else if(tableId==='changeout-table'){
-    for(let i=0;i<=3;i++){
-      const inp = tr.cells[i].querySelector('input');
-      if(inp) tr.cells[i].innerText = inp.value;
-    }
-    syncChangeOut();
-  }
-}
-
-function deleteRow(btn){
-  const tr = btn.closest('tr');
-  const tableId = tr.closest('table').id;
-  if(tableId==='component-table'){
-    const id = parseInt(tr.getAttribute('data-id'),10);
-    componentAll = componentAll.filter(x=>x._id!==id);
-    onFilterChange(); // filter+render ulang
-  } else {
-    tr.remove();
-    syncChangeOut();
-  }
-}
-
-/* ===================== FILTER (ChangeOut lama—DOM hide/show) ===================== */
-function filterTableDOM(menu,colIndex,value){
-  const trs = document.getElementById(menu+'-table').tBodies[0].rows;
-  const v = (value||'').toLowerCase();
-  for(let tr of trs){
-    let cell = tr.cells[colIndex].innerText.toLowerCase();
-    tr.style.display = cell.includes(v)?'':'none';
-  }
-}
-
-/* ===================== SYNC Change Out -> Component ===================== */
-function syncChangeOut(){
-  // ambil max change out & remarks dari tabel changeout (DOM)
-  const coRows = document.getElementById('changeout-table').tBodies[0].rows;
-  const maxChange = {}, remarksMap = {};
-  for(let r of coRows){
-    const key = (r.cells[0].innerText||'')+'|'+(r.cells[1].innerText||'');
-    const val = toNum(r.cells[2].innerText);
-    maxChange[key] = Math.max(maxChange[key]||0, val);
-    remarksMap[key] = r.cells[3].innerText||'';
-  }
-  // update ke data in-memory
-  for(const obj of componentAll){
-    const key = (obj['Equipment']||'')+'|'+(obj['Component']||'');
-    if(maxChange[key]!=null){
-      obj['Change Out'] = maxChange[key].toString();
-      obj['Remarks'] = remarksMap[key]||obj['Remarks']||'';
-    }
-  }
-  renderComponentTable(currentPage);
-}
-
-/* ===================== SMU ===================== */
-function pasteSMU(){
-  const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
-  const tbody = document.getElementById('smu-table').tBodies[0];
-  tbody.innerHTML='';
-  for(let line of lines){
-    const parts = line.trim().split(/\s+/);
-    if(parts.length>=2){
-      let row = tbody.insertRow();
-      row.insertCell(0).innerText=parts[0];
-      row.insertCell(1).innerText=parts[1];
-    }
-  }
-}
-
-function updateSMU(){
-  const rows = document.getElementById('smu-table').tBodies[0].rows;
-  const progressBar = document.getElementById('progress-bar');
-  const total = rows.length;
-  let i=0;
-
-  function step(){
-    if(i>=total){ progressBar.style.width='100%'; progressBar.textContent='100%'; renderComponentTable(currentPage); return; }
-    const equip = rows[i].cells[0].innerText;
-    const smu = toNum(rows[i].cells[1].innerText);
-    for(const obj of componentAll){
-      if(obj['Equipment']===equip) obj['Current SMU']= smu.toString();
-    }
-    i++;
-    const perc = Math.round(i/total*100);
-    progressBar.style.width=perc+'%'; progressBar.textContent=perc+'%';
-    setTimeout(step, 5);
-  }
-  step();
-}
-
-/* ===================== SAVE/LOAD ===================== */
-function saveJSON(){
-  // simpan data componentAll + changeout DOM
-  const changeoutData = [];
-  Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr=>{
-    changeoutData.push({
-      "Equipment": tr.cells[0].innerText,
-      "Component": tr.cells[1].innerText,
-      "Change Out": tr.cells[2].innerText,
-      "Remarks": tr.cells[3].innerText
-    });
-  });
-  const payload = {
-    component: componentAll.map(({_id, ...rest})=>rest),
-    changeout: changeoutData
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ndarboe_data.json'; a.click();
-  URL.revokeObjectURL(url);
-}
-
-/* Load JSON: support format lama (array) & baru ({component,changeout}) */
-function loadJSON(){
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'application/json';
-  input.onchange = e=>{
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      let parsed;
-      try{
-        parsed = JSON.parse(ev.target.result);
-      }catch(err){
-        alert("File JSON tidak valid: "+err.message);
-        return;
-      }
-
-      // normalisasi data component
-      let comp = Array.isArray(parsed) ? parsed : (parsed.component || []);
-      let chg  = Array.isArray(parsed) ? []      : (parsed.changeout || []);
-      // beri _id
-      componentAll = comp.map((o,idx)=>({_id:idx+1, ...o}));
-      // isi tabel changeout (optional)
-      const coBody = document.getElementById('changeout-table').tBodies[0];
-      coBody.innerHTML='';
-      if(chg.length){
-        const frag = document.createDocumentFragment();
-        for(const r of chg){
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${r["Equipment"]||''}</td>
-            <td>${r["Component"]||''}</td>
-            <td>${r["Change Out"]||''}</td>
-            <td>${r["Remarks"]||''}</td>
-            <td>
-              <button class="edit-btn" onclick="editRow(this)">Edit</button>
-              <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-              <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
-            </td>`;
-          frag.appendChild(tr);
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach((td, i) => {
+        const parentId = row.closest('table').id;
+        if (parentId === 'component-table' && i <= 4) {
+            td.innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">`;
+        } else if (parentId === 'changeout-table' && i <= 3) {
+            td.innerHTML = `<input class="inline-input" value="${td.innerText}">`;
         }
-        coBody.appendChild(frag);
-      }
-      // set filter & render pertama (cepat karena cuma 1 page)
-      $('#filter-equip').value=''; $('#filter-comp').value='';
-      componentFiltered = componentAll.slice();
-      renderComponentTable(1);
+    });
+}
+
+
+// Save Row
+function saveRow(btn){
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach(td=>{
+        const inp = td.querySelector('input');
+        if(inp) td.innerText = inp.value;
+    });
+    recalcComponent();
+    syncChangeOut();
+}
+
+// Delete Row
+function deleteRow(btn){ 
+    btn.closest('tr').remove(); 
+    syncChangeOut(); 
+    recalcComponent(); 
+}
+
+// Filter Table
+function filterTable(menu,colIndex,value){
+    const trs = document.getElementById(menu+'-table').tBodies[0].rows;
+    for(let tr of trs){
+        let cell = tr.cells[colIndex].innerText.toLowerCase();
+        tr.style.display = cell.includes(value.toLowerCase())?'':'none';
+    }
+}
+
+// Sync Change Out Menu 2 -> Menu 1
+function syncChangeOut(){
+    const coTable = document.getElementById('changeout-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    let maxChange = {}, remarksMap={};
+    for(let r of coTable){
+        let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
+        maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
+        remarksMap[key] = r.cells[3].innerText;
+    }
+    for(let r of compTable){
+        let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
+        if(maxChange[key]){
+            r.cells[5].innerText = maxChange[key];
+            r.cells[10].innerText = remarksMap[key];
+        }
+    }
+    recalcComponent();
+}
+
+// Recalculate Component Table
+function recalcComponent(){
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    for(let r of compTable){
+        let freq = parseFloat(r.cells[3].innerText)||0;
+        let changeOut = parseFloat(r.cells[5].innerText)||0;
+        let currentSMU = parseFloat(r.cells[6].innerText)||0;
+        r.cells[7].innerText = changeOut + freq;
+        let life = currentSMU - changeOut;
+        r.cells[8].innerText = life;
+        r.cells[8].className = 'num';
+
+        let lifePerc = freq ? Math.round((life/freq)*100) : 0;
+        r.cells[9].innerText = lifePerc + '%';
+        r.cells[9].className = 'life-perc';
+
+        if(lifePerc > 100) r.cells[9].className='life-perc red';
+        else if(lifePerc >= 75) r.cells[9].className='life-perc green';
+        else if(lifePerc >=50) r.cells[9].className='life-perc yellow';
+        else r.cells[9].className='life-perc yellow';
+    }
+}
+
+// Menu 3 Paste SMU
+function pasteSMU(){
+    const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
+    const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
+    for(let line of lines){
+        let parts = line.trim().split(/\s+/);
+        if(parts.length>=2){
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText=parts[0];
+            row.insertCell(1).innerText=parts[1];
+        }
+    }
+}
+
+// Update SMU
+function updateSMU(){
+    const rows = document.getElementById('smu-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    const progressBar = document.getElementById('progress-bar');
+    let total=rows.length, count=0;
+    function step(){
+        if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
+        let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
+        for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
+        count++;
+        let perc=Math.round(count/total*100);
+        progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
+        setTimeout(step,10);
+    }
+    step();
+}
+
+// Save JSON
+function saveJSON() {
+    const componentData = [], changeoutData = [];
+
+    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
+            const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        componentData.push(obj);
+    });
+
+    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
+            const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        changeoutData.push(obj);
+    });
+
+    const blob = new Blob([JSON.stringify({ component: componentData, changeout: changeoutData }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ndarboe_data.json';
+    a.click();
+}
+
+<script>
+// Load JSON dari file upload
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = ev => {
+            let data;
+            try { 
+                const parsed = JSON.parse(ev.target.result); 
+                console.log("Hasil parse JSON:", parsed); // 🔍 debug
+
+                // jika parsed array → langsung pakai
+                // jika object dengan key "component" → ambil isinya
+                data = Array.isArray(parsed) ? parsed : (parsed.component || []);
+
+                if (!Array.isArray(data)) {
+                    alert("Format JSON tidak sesuai (harus array).");
+                    return;
+                }
+            } catch (err) { 
+                alert("File JSON tidak valid: " + err.message); 
+                return; 
+            }
+
+            const compTable = document.getElementById('component-table').tBodies[0];
+            compTable.innerHTML = ''; // reset
+
+            // bikin string HTML langsung
+            let html = '';
+            data.forEach(obj => {
+                html += `<tr>
+                    <td>${obj["Equipment"] || ''}</td>
+                    <td>${obj["Model"] || ''}</td>
+                    <td>${obj["Component"] || ''}</td>
+                    <td class="num">${obj["Freq"] || ''}</td>
+                    <td class="num">${obj["Cost"] || ''}</td>
+                    <td class="num">${obj["Change Out"] || ''}</td>
+                    <td class="num">${obj["Current SMU"] || ''}</td>
+                    <td class="num">${obj["Next Change"] || ''}</td>
+                    <td class="num">${obj["Life"] || ''}</td>
+                    <td class="life-perc">${obj["Life %"] || '0%'}</td>
+                    <td>${obj["Remarks"] || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            // masukkan sekali ke DOM
+            compTable.innerHTML = html;
+
+            recalcComponent();
+        };
+        reader.readAsText(file);
     };
-    reader.readAsText(file);
-  };
-  input.click();
+    input.click();
 }
 </script>
-
 </body>
 </html>

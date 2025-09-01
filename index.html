@@ -361,11 +361,6 @@ function loadJSON() {
     input.type = 'file';
     input.accept = 'application/json';
 
-function loadJSON() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
-
     input.onchange = e => {
         const file = e.target.files[0];
         if (!file) return;
@@ -412,11 +407,11 @@ function loadJSON() {
 
             recalcComponent();
         };
-
         reader.readAsText(file);
     };
+
     input.click();
 }
-  </script>
+</script>
 </body>
 </html>

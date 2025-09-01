@@ -195,15 +195,19 @@ function addRow(menu){
 
 
 // Edit Row
-function editRow(btn){
-    const row = btn.closest('tr');
-    Array.from(row.cells).forEach((td, i) => {
-        const parentId = row.closest('table').id;
-        if (parentId === 'component-table' && i <= 4) {
-            td.innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">`;
-        } else if (parentId === 'changeout-table' && i <= 3) {
-            td.innerHTML = `<input class="inline-input" value="${td.innerText}">`;
-        }
+  function editRow(btn){
+  const row = btn.closest('tr');
+  [...row.cells].forEach((td,i)=>{
+    const parentId = row.closest('table').id;
+    if(parentId==='component-table' && i<=4){
+      td.innerHTML = '<input class="${i>=3?'num-input':'inline-input'}" value="${td.innerText}">';
+    } else if(parentId==='changeout-table' && i<=3){
+      td.innerHTML = '<input class="inline-input" value="${td.innerText}">';
+    }
+  });
+  row.querySelector('.edit-btn').style.display='none';
+  row.querySelector('.save-btn').style.display='inline-block';
+}
     });
 }
 

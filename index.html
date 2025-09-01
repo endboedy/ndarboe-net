@@ -292,6 +292,7 @@ function saveJSON() {
 }
 
 
+// ✅ LOAD JSON dengan error handling
 function loadJSON() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -299,52 +300,53 @@ function loadJSON() {
 
     input.onchange = e => {
         const file = e.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
 
         reader.onload = ev => {
             let data;
             try {
                 data = JSON.parse(ev.target.result);
-
-                if (!data || !Array.isArray(data.component) || !Array.isArray(data.changeout)) {
-                    throw new Error("Struktur JSON tidak sesuai. Harus punya 'component' dan 'changeout' sebagai array.");
-                }
-
-                // Load ke tabel component
-                const compTable = document.getElementById('component-table').tBodies[0];
-                compTable.innerHTML = '';
-                data.component.forEach(obj => {
-                    let row = compTable.insertRow();
-                    Object.values(obj).forEach(v => {
-                        let td = row.insertCell();
-                        td.innerText = v;
-                    });
-                    let cell = row.insertCell();
-                    cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                                      <button class="save-btn" onclick="saveRow(this)">Save</button>
-                                      <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
-                });
-
-                // Load ke tabel changeout
-                const coTable = document.getElementById('changeout-table').tBodies[0];
-                coTable.innerHTML = '';
-                data.changeout.forEach(obj => {
-                    let row = coTable.insertRow();
-                    Object.values(obj).forEach(v => {
-                        let td = row.insertCell();
-                        td.innerText = v;
-                    });
-                    let cell = row.insertCell();
-                    cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
-                                      <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                                      <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
-                });
-
-                syncChangeOut();
-
             } catch (err) {
                 alert("File JSON tidak valid: " + err.message);
                 console.error("JSON Parse Error:", err);
+                return;
+            }
+
+            // Load ke tabel component (menu1)
+            const compTable = document.getElementById('component-table').tBodies[0];
+            compTable.innerHTML = '';
+            (data.menu1 || []).forEach(obj => {
+                let row = compTable.insertRow();
+                Object.values(obj).forEach(v => {
+                    let td = row.insertCell();
+                    td.innerText = v;
+                });
+                let cell = row.insertCell();
+                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                                  <button class="save-btn" onclick="saveRow(this)">Save</button>
+                                  <button class="delete-btn" onclick="deleteRow(this)">Delete</button>`;
+            });
+
+            // Load ke tabel changeout (menu2)
+            const coTable = document.getElementById('changeout-table').tBodies[0];
+            coTable.innerHTML = '';
+            (data.menu2 || []).forEach(obj => {
+                let row = coTable.insertRow();
+                Object.values(obj).forEach(v => {
+                    let td = row.insertCell();
+                    td.innerText = v;
+                });
+                let cell = row.insertCell();
+                cell.innerHTML = `<button class="edit-btn" onclick="editRow(this)">Edit</button>
+                                  <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+                                  <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>`;
+            });
+
+            // Sinkronisasi changeout jika ada function
+            if (typeof syncChangeOut === 'function') {
+                syncChangeOut();
             }
         };
 

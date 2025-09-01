@@ -1,279 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ndarboe.net — Component (fast load)</title>
-<style>
-  /* base */
-  body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; color:#222; font-size:12px; }
-  .app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; }
-  .menu { display:flex; gap:6px; }
-  .menu button { background:#2c3e50; color:white; border:none; padding:6px 10px; cursor:pointer; border-radius:5px; font-size:12px; }
-  .controls { padding:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .controls .right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  <meta charset="UTF-8">
+  <title>Work Order EM</title>
+  <style>
+    body { font-family: Arial; font-size: 12px; margin: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #999; padding: 4px; text-align: left; }
 
-  /* table */
-  main { padding:10px; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; background:white; }
-  thead th { background:#34495e; color:white; padding:6px 8px; text-align:left; border:1px solid #ccc; font-size:12px; }
-  tbody td { border:1px solid #ccc; padding:4px 6px; height:20px; vertical-align:middle; }
-  td.num { text-align:right; }
-  .life-perc { font-weight:600; text-align:right; }
+    /* Equipment & Model lebih kecil */
+    th:nth-child(1), td:nth-child(1),  
+    th:nth-child(2), td:nth-child(2) { width: 80px; max-width: 80px; }
 
-  /* column widths */
-  th:nth-child(1), td:nth-child(1),
-  th:nth-child(2), td:nth-child(2) { width:80px; max-width:80px; }             /* Equipment, Model small */
-  th:nth-child(3), td:nth-child(3) { width:300px; max-width:300px; word-wrap:break-word; } /* Component wide */
-  /* numeric columns */
-  th:nth-child(4), td:nth-child(4),
-  th:nth-child(5), td:nth-child(5),
-  th:nth-child(6), td:nth-child(6),
-  th:nth-child(7), td:nth-child(7),
-  th:nth-child(8), td:nth-child(8),
-  th:nth-child(9), td:nth-child(9),
-  th:nth-child(10), td:nth-child(10) { width:80px; max-width:80px; text-align:right; }
-  th:nth-child(11), td:nth-child(11) { width:260px; max-width:260px; word-wrap:break-word; } /* Remarks wider */
-  th:nth-child(12), td:nth-child(12) { width:120px; max-width:120px; text-align:center; white-space:nowrap; } /* Action */
+    /* Perlebar kolom Component */
+    th:nth-child(3), td:nth-child(3) { width: 250px; max-width: 250px; word-wrap: break-word; }
 
-  /* life % colors */
-  .life-red { background:#e74c3c; color:white; }
-  .life-green { background:#1abc9c; color:white; }
-  .life-yellow { background:#f1c40f; color:black; }
+    /* Kolom numerik (Freq → Life %) */
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6),
+    th:nth-child(7), td:nth-child(7),
+    th:nth-child(8), td:nth-child(8),
+    th:nth-child(9), td:nth-child(9),
+    th:nth-child(10), td:nth-child(10) {
+      width: 80px; max-width: 80px; text-align: right;
+    }
 
-  /* buttons */
-  button.small { padding:3px 6px; font-size:11px; border-radius:4px; border:none; cursor:pointer; }
-  .btn-edit { background:#f39c12; color:white; }
-  .btn-save { background:#1abc9c; color:white; }
-  .btn-del  { background:#e74c3c; color:white; }
+    /* Perlebar kolom Remarks */
+    th:nth-child(11), td:nth-child(11) {
+      width: 200px; max-width: 200px; word-wrap: break-word;
+    }
 
-  /* inputs */
-  .filter-input { padding:4px 6px; border-radius:4px; border:1px solid #ccc; font-size:12px; width:220px; }
-  select { padding:4px; border-radius:4px; }
-  .progress-container { width:240px; background:#eee; border-radius:6px; overflow:hidden; height:12px; }
-  .progress-bar { height:100%; width:0%; background:#1abc9c; font-size:10px; color:white; text-align:center; line-height:12px; }
+    /* Action lebih kecil */
+    th:nth-child(12), td:nth-child(12) {
+      width: 100px; max-width: 100px; text-align: center;
+    }
 
-  /* page info */
-  #page-info { font-size:12px; color:#333; margin-left:6px; }
-
-  /* responsive tweaks */
-  @media (max-width:900px){
-    th:nth-child(3), td:nth-child(3) { width:220px; max-width:220px; }
-    th:nth-child(11), td:nth-child(11) { width:160px; max-width:160px; }
-  }
-</style>
+    .pagination { margin-top: 10px; }
+    .pagination button { margin: 2px; }
+  </style>
 </head>
 <body>
+  <h2>Work Order EM</h2>
+  <button onclick="loadJSON()">📂 Load JSON</button>
+  <input type="text" id="searchBox" placeholder="Cari data..." oninput="applySearch()">
 
-<header class="app-header">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <h1 style="margin:0;font-size:16px;">Ndarboe.net</h1>
-    <div style="color:#cbd6df;font-size:12px;">Component (fast viewer)</div>
-  </div>
-  <div class="menu">
-    <!-- kept simple: other menus can be added later -->
-    <button onclick="location.reload()">Refresh</button>
-  </div>
-</header>
-
-<main>
-  <div class="controls">
-    <button class="small" onclick="loadJSON()">Load JSON</button>
-
-    <input id="search" class="filter-input" placeholder="Cari Equipment / Component / Remarks..." />
-
-    <div class="right">
-      <label>Rows/page:
-        <select id="page-size" onchange="changePageSize()">
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="200" selected>200</option>
-          <option value="500">500</option>
-        </select>
-      </label>
-
-      <div class="progress-container" title="Load progress" style="display:none" id="load-progress-wrap">
-        <div id="load-progress" class="progress-bar"></div>
-      </div>
-
-      <span id="page-info">Page 0 of 0</span>
-    </div>
-  </div>
-
-  <table id="component-table" aria-describedby="page-info">
+  <table id="component-table">
     <thead>
       <tr>
-        <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
-        <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
+        <th>Equipment</th>
+        <th>Model</th>
+        <th>Component</th>
+        <th>Freq</th>
+        <th>Cost</th>
+        <th>Change Out</th>
+        <th>Current SMU</th>
+        <th>Next Change</th>
+        <th>Life</th>
+        <th>Life %</th>
+        <th>Remarks</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
-    <button class="small" onclick="prevPage()">Prev</button>
-    <button class="small" onclick="nextPage()">Next</button>
-    <div id="page-controls" style="margin-left:10px;"></div>
-  </div>
-</main>
+  <div class="pagination" id="pagination"></div>
 
 <script>
-/* ============================
-   Data & state
-   ============================ */
-let data = [];         // original full data array (objects)
-let filteredData = []; // current filtered array
+let allData = [];      // semua data dari JSON
+let filteredData = []; // hasil filter/search
 let currentPage = 1;
-let pageSize = 200;    // default (will sync with select)
-const pageSizeSelect = document.getElementById('page-size');
-pageSize = parseInt(pageSizeSelect.value,10);
+const rowsPerPage = 100;
 
-/* ----------------------------
-   Utility: safe number parse
-   ---------------------------- */
-function toNum(v){
-  if (v===null || v===undefined || v==='') return 0;
-  // remove non-digit except dot and minus
-  const s = String(v).toString().replace(/[^0-9.\-]/g,'');
-  if (s==='') return 0;
-  const n = Number(s);
-  return isNaN(n)?0:n;
-}
-
-/* ----------------------------
-   Compute derived metrics for an object
-   (we store computed fields to avoid recompute in DOM)
-   ---------------------------- */
-function computeMetrics(obj){
-  // ensure numeric fields exist
-  obj.Freq = toNum(obj.Freq);
-  obj.Cost = toNum(obj.Cost);
-  obj['Change Out'] = toNum(obj['Change Out']);
-  obj['Current SMU'] = toNum(obj['Current SMU']);
-  // Next Change = Change Out + Freq
-  obj['Next Change'] = (obj['Change Out'] || 0) + (obj.Freq || 0);
-  // Life = Current SMU - Change Out
-  obj.Life = (obj['Current SMU']||0) - (obj['Change Out']||0);
-  // Life % = (life / freq) * 100 rounded
-  obj['Life %_num'] = obj.Freq ? Math.round((obj.Life / obj.Freq) * 100) : 0;
-  // store display string
-  obj['Life %'] = obj['Life %_num'] + '%';
-}
-
-/* ----------------------------
-   Render one page (fast)
-   ---------------------------- */
-function renderTable(){
-  const tbody = document.getElementById('component-table').tBodies[0];
-  tbody.innerHTML = ''; // clear
-
-  // sanitize current page
-  const total = filteredData.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  const start = (currentPage - 1) * pageSize;
-  const end = Math.min(start + pageSize, total);
-  const slice = filteredData.slice(start, end);
-
-  // build HTML string
-  let html = '';
-  for (let i = 0; i < slice.length; i++){
-    const o = slice[i];
-    // note: escape minimal — if you expect < > in data, you could sanitize here
-    html += `<tr data-idx="${start + i}">
-      <td>${o["Equipment"] || ''}</td>
-      <td>${o["Model"] || ''}</td>
-      <td>${o["Component"] || ''}</td>
-      <td class="num">${o.Freq || ''}</td>
-      <td class="num">${o.Cost || ''}</td>
-      <td class="num">${o['Change Out'] || ''}</td>
-      <td class="num">${o['Current SMU'] || ''}</td>
-      <td class="num">${o['Next Change'] || ''}</td>
-      <td class="num">${o['Life'] || ''}</td>
-      <td class="life-perc ${lifeClass(o['Life %_num'])}">${o['Life %'] || '0%'}</td>
-      <td>${o['Remarks'] || ''}</td>
-      <td>
-        <button class="small btn-edit" data-action="edit">Edit</button>
-        <button class="small btn-save" data-action="save" style="display:none">Save</button>
-        <button class="small btn-del" data-action="delete">Delete</button>
-      </td>
-    </tr>`;
-  }
-
-  tbody.innerHTML = html;
-  updatePageInfo();
-}
-
-/* =============================
-   Helper: color class for life %
-   ============================= */
-function lifeClass(perc) {
-  if (perc > 100) return 'life-red';
-  if (perc >= 75) return 'life-green';
-  if (perc >= 50) return 'life-yellow';
-  // below 50 also yellow per your request; adjust if needed
-  return 'life-yellow';
-}
-
-/* =============================
-   Paging controls
-   ============================= */
-function updatePageInfo(){
-  const pageInfo = document.getElementById('page-info');
-  const total = filteredData.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const end = Math.min(currentPage * pageSize, total);
-  pageInfo.textContent = Page ${currentPage} of ${totalPages}, showing ${start}–${end} of ${total};
-}
-
-function nextPage(){
-  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
-  if (currentPage < totalPages) { currentPage++; renderTable(); }
-}
-function prevPage(){
-  if (currentPage > 1) { currentPage--; renderTable(); }
-}
-function changePageSize(){
-  pageSize = parseInt(document.getElementById('page-size').value,10) || 200;
-  currentPage = 1;
-  renderTable();
-}
-
-/* =============================
-   Search (debounced)
-   ============================= */
-let searchTimer = null;
-document.getElementById('search').addEventListener('input', () => {
-  if (searchTimer) clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => applyFilter(), 300);
-});
-
-function applyFilter(){
-  const kw = document.getElementById('search').value.trim().toLowerCase();
-  if (!kw) {
-    filteredData = data;
-  } else {
-    // filter by Equipment, Model, Component, Remarks (fast)
-    filteredData = data.filter(o => {
-      return (String(o["Equipment"]||'') + ' ' + String(o["Model"]||'') + ' ' + String(o["Component"]||'') + ' ' + String(o["Remarks"]||'')).toLowerCase().includes(kw);
-    });
-  }
-  currentPage = 1;
-  renderTable();
-}
-
-/* =============================
-   Load JSON (file input)
-   - supports two shapes:
-     1) array of objects
-     2) object with { component: [...] , changeout: [...] }
-   - precomputes numeric metrics for each object
-   - shows a tiny progress UI during parsing step
-   ============================= */
-function loadJSON(){
+// 📂 Load JSON
+function loadJSON() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'application/json';
@@ -281,157 +82,110 @@ function loadJSON(){
   input.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
-    // show progress UI
-    const pwrap = document.getElementById('load-progress-wrap');
-    const pbar = document.getElementById('load-progress');
-    pwrap.style.display = 'inline-block';
-    pbar.style.width = '4%';
-    pbar.textContent = '...';
 
     const reader = new FileReader();
     reader.onload = ev => {
       try {
         const parsed = JSON.parse(ev.target.result);
-        // determine actual array
-        let arr = Array.isArray(parsed) ? parsed : (parsed.component || []);
-        if (!Array.isArray(arr)) arr = [];
-        // precompute metrics in batches to keep UI responsive
-        data = []; // reset
-        const total = arr.length;
-        let i = 0;
-        const batch = 500; // process 500 objects per tick
-        function processBatch(){
-          const end = Math.min(i + batch, total);
-          for (; i < end; i++){
-            const obj = Object.assign({}, arr[i]); // shallow copy
-            // ensure keys exist (if different naming in your JSON, adjust here)
-            // compute numeric metrics
-            computeMetrics(obj);
-            data.push(obj);
-          }
-          // update progress
-          const perc = total ? Math.round((i/total)*100) : 100;
-          pbar.style.width = perc + '%';
-          pbar.textContent = perc < 10 ? '' : (perc + '%');
-
-          if (i < total) {
-            // allow browser to breathe
-            setTimeout(processBatch, 0);
-          } else {
-            // done
-            pbar.style.width = '100%';
-            pbar.textContent = 'Done';
-            setTimeout(()=>{ pwrap.style.display='none'; pbar.style.width='0%'; pbar.textContent=''; }, 400);
-            // initial filteredData = data, render page1
-            filteredData = data;
-            currentPage = 1;
-            renderTable();
-            console.log('Loaded', data.length, 'rows');
-          }
-        }
-        processBatch();
+        allData = parsed.component || parsed; 
+        filteredData = allData; 
+        currentPage = 1;
+        renderTable();
       } catch (err) {
-        alert('File JSON tidak valid: ' + err.message);
-        document.getElementById('load-progress-wrap').style.display='none';
+        alert("File JSON tidak valid: " + err.message);
       }
     };
     reader.readAsText(file);
   };
-
   input.click();
 }
 
-/* =============================
-   Event delegation for action buttons (edit/save/delete)
-   - edit turns first 5 editable cells into inputs (Equipment, Model, Component, Freq, Cost)
-   - save commits changes back to underlying data object and recomputes metrics
-   ============================= */
-document.querySelector('#component-table tbody').addEventListener('click', e => {
-  const button = e.target.closest('button');
-  if (!button) return;
-  const action = button.getAttribute('data-action');
-  const row = button.closest('tr');
-  if (!row) return;
-  const rowIdx = row.dataset.idx ? Number(row.dataset.idx) : null;
-  const dataIndex = rowIdx !== null ? rowIdx : null;
+// 🔎 Search filter
+function applySearch() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  filteredData = allData.filter(obj =>
+    Object.values(obj).some(val =>
+      String(val).toLowerCase().includes(q)
+    )
+  );
+  currentPage = 1;
+  renderTable();
+}
 
-  if (action === 'edit') {
-    // hide edit, show save
-    button.style.display = 'none';
-    const saveBtn = row.querySelector('[data-action="save"]');
-    if (saveBtn) saveBtn.style.display = 'inline-block';
-    // convert certain cells to inputs (cols 0..4)
-    for (let c=0;c<=4;c++){
-      const cell = row.cells[c];
-      const val = cell.innerText;
-      const cls = c>=3 ? 'num-input' : 'inline-input';
-      cell.innerHTML = <input class="${cls}" value="${val}">;
-    }
-  } else if (action === 'save') {
-    // save values back to data object
-    const idx = Number(row.dataset.idx);
-    const globalIndex = idx; // slice offset already encoded in data-idx (we used start+i)
-    // compute actual index in filteredData
-    const actualObj = filteredData[globalIndex];
-    if (!actualObj) {
-      // fallback: if not found, do nothing
-      alert('Data object not found for this row.');
-      return;
-    }
-    // read back values from inputs (cols 0..4)
-    const newVals = [];
-    for (let c=0;c<=4;c++){
-      const cell = row.cells[c];
-      const inp = cell.querySelector('input');
-      const v = inp ? inp.value : cell.innerText;
-      newVals.push(v);
-    }
-    // map back to object
-    actualObj["Equipment"] = newVals[0];
-    actualObj["Model"] = newVals[1];
-    actualObj["Component"] = newVals[2];
-    actualObj["Freq"] = newVals[3];
-    actualObj["Cost"] = newVals[4];
-    // recompute metrics
-    computeMetrics(actualObj);
+// 🖨 Render Table + Pagination
+function renderTable() {
+  const tbody = document.querySelector("#component-table tbody");
+  tbody.innerHTML = "";
 
-    // revert buttons
-    const editBtn = row.querySelector('[data-action="edit"]');
-    if (editBtn) editBtn.style.display = 'inline-block';
-    button.style.display = 'none'; // hide save
+  const start = (currentPage - 1) * rowsPerPage;
+  const pageData = filteredData.slice(start, start + rowsPerPage);
 
-    // re-render this page to update view
-    renderTable();
-  } else if (action === 'delete') {
-    // remove from data and filteredData: we have index relative to filteredData
-    const idx = Number(row.dataset.idx);
-    const obj = filteredData[idx];
-    if (!obj) { alert('item not found'); return; }
-    // remove from original data array as well (by identity)
-    const oi = data.indexOf(obj);
-    if (oi >= 0) data.splice(oi,1);
-    // remove from filteredData
-    filteredData.splice(idx,1);
-    // re-render (keep page where possible)
-    const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
-    if (currentPage > totalPages) currentPage = totalPages;
-    renderTable();
+  let html = "";
+  pageData.forEach(obj => {
+    html += `
+      <tr>
+        <td>${obj["Equipment"] || ""}</td>
+        <td>${obj["Model"] || ""}</td>
+        <td>${obj["Component"] || ""}</td>
+        <td class="num">${obj["Freq"] || ""}</td>
+        <td class="num">${obj["Cost"] || ""}</td>
+        <td class="num">${obj["Change Out"] || ""}</td>
+        <td class="num">${obj["Current SMU"] || ""}</td>
+        <td class="num">${obj["Next Change"] || ""}</td>
+        <td class="num">${obj["Life"] || ""}</td>
+        <td class="life-perc">${obj["Life %"] || "0%"}</td>
+        <td>${obj["Remarks"] || ""}</td>
+        <td>
+          <button onclick="editRow(this)">Edit</button>
+          <button onclick="saveRow(this)">Save</button>
+          <button onclick="deleteRow(this)">Delete</button>
+        </td>
+      </tr>`;
+  });
+
+  tbody.innerHTML = html;
+  renderPagination();
+}
+
+// 📄 Render pagination
+function renderPagination() {
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const container = document.getElementById("pagination");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) btn.disabled = true;
+    btn.onclick = () => { currentPage = i; renderTable(); };
+    container.appendChild(btn);
   }
-});
+}
 
-/* =============================
-   Small helper: when filtering / rendering, our data-idx used rows start index offset.
-   In renderTable we set data-idx to (start + i) so it's global index in filteredData.
-   ============================= */
+// ✏ Edit / Save / Delete row
+function editRow(btn) {
+  const row = btn.closest("tr");
+  [...row.cells].forEach((cell, i) => {
+    if (i < 11) {
+      const val = cell.innerText;
+      cell.innerHTML = <input value="${val}">;
+    }
+  });
+}
 
-/* =============================
-   Init: ensure pageSize select matches variable
-   ============================= */
-(function init(){
-  document.getElementById('page-size').value = pageSize;
-  // nothing else to do initially
-})();
+function saveRow(btn) {
+  const row = btn.closest("tr");
+  [...row.cells].forEach((cell, i) => {
+    if (i < 11) {
+      const input = cell.querySelector("input");
+      if (input) cell.textContent = input.value;
+    }
+  });
+}
+
+function deleteRow(btn) {
+  btn.closest("tr").remove();
+}
 </script>
-
 </body>
 </html>

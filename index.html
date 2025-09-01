@@ -365,25 +365,34 @@ function loadJSON() {
         const file = e.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = ev => {
-            let data;
-            try { 
-                const parsed = JSON.parse(ev.target.result); 
-                console.log("Hasil parse JSON:", parsed); // 🔍 debug
+       
+const reader = new FileReader();
+reader.onload = (ev) => {
+    try {
+        const parsed = JSON.parse(ev.target.result);
+        console.log("Hasil parse JSON:", parsed);
 
-                // jika parsed array → langsung pakai
-                // jika object dengan key "component" → ambil isinya
-                data = Array.isArray(parsed) ? parsed : (parsed.component || []);
+        // Ambil data array dari JSON
+        const data = Array.isArray(parsed)
+            ? parsed
+            : (parsed.component && Array.isArray(parsed.component))
+                ? parsed.component
+                : null;
 
-                if (!Array.isArray(data)) {
-                    alert("Format JSON tidak sesuai (harus array).");
-                    return;
-                }
-            } catch (err) { 
-                alert("File JSON tidak valid: " + err.message); 
-                return; 
-            }
+        if (!data) {
+            alert("Format JSON tidak sesuai. Harus berupa array atau object dengan key 'component' yang berisi array.");
+            return;
+        }
+
+        // Lanjutkan proses dengan data
+        console.log("Data siap diproses:", data);
+        // ... lanjutkan logic kamu di sini
+
+    } catch (err) {
+        alert("File JSON tidak valid: " + err.message);
+    }
+};
+
 
             const compTable = document.getElementById('component-table').tBodies[0];
             compTable.innerHTML = ''; // reset

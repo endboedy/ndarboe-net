@@ -249,7 +249,7 @@ function renderComponentTable(page=1){
 
   // paging UI
   $('#component-paging').style.display = 'flex';
-  $('#pg-info').textContent = Page ${currentPage} / ${totalPages};
+  document.getElementById('pg-info').textContent = Page ${currentPage} / ${totalPages};
   $('#pg-range').textContent = ${start+1}-${end} of ${componentFiltered.length};
   $('#pg-prev').disabled = currentPage===1;
   $('#pg-first').disabled = currentPage===1;

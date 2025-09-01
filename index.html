@@ -353,7 +353,7 @@ function saveJSON() {
     a.click();
 }
 
-// Load JSON
+// Load JSON dari file upload
 function loadJSON() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -364,11 +364,14 @@ function loadJSON() {
         if (!file) return;
 
         const reader = new FileReader();
-
         reader.onload = ev => {
             let data;
-            try { data = JSON.parse(ev.target.result); }
-            catch (err) { alert("File JSON tidak valid: " + err.message); return; }
+            try { 
+                data = JSON.parse(ev.target.result); 
+            } catch (err) { 
+                alert("File JSON tidak valid: " + err.message); 
+                return; 
+            }
 
             const compTable = document.getElementById('component-table').tBodies[0];
             compTable.innerHTML = ''; // reset table
@@ -378,18 +381,31 @@ function loadJSON() {
             data.forEach(obj => {
                 const row = document.createElement('tr');
 
-                ['Equipment','Model','Component','Freq','Cost','Change Out','Current SMU','Next Change','Life','Life %','Remarks'].forEach((key, i) => {
+                // urutan kolom sesuai tabel
+                [
+                    obj.equipment,
+                    obj.model,
+                    obj.component,
+                    obj.freq,
+                    obj.cost,
+                    obj.changeout,
+                    obj.current_smu,
+                    obj.next_change,
+                    obj.life,
+                    obj.life_perc,
+                    obj.remarks
+                ].forEach((val, i) => {
                     const cell = row.insertCell();
-                    if(key === 'Life %'){
+                    if (i === 9) { // Life %
                         cell.className = 'life-perc';
-                        cell.innerText = obj[key] || '0%';
+                        cell.innerText = val || '0%';
                     } else {
-                        cell.innerText = obj[key] || '';
-                        if(['Freq','Cost','Change Out','Current SMU','Next Change','Life'].includes(key)) cell.className='num';
+                        cell.innerText = val || '';
+                        if ([3,4,5,6,7,8].includes(i)) cell.className = 'num'; // angka rata kanan
                     }
                 });
 
-                // Action cell
+                // kolom Action
                 const actionCell = row.insertCell();
                 actionCell.innerHTML = `
                     <button class="edit-btn" onclick="editRow(this)">Edit</button>
@@ -410,6 +426,5 @@ function loadJSON() {
     input.click();
 }
 </script>
-
 </body>
 </html>

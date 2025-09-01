@@ -247,15 +247,14 @@ function renderComponentTable(page=1){
   }
   $('#component-table tbody').innerHTML = html;
 
-  // paging UI
-  $('#component-paging').style.display = 'flex';
-  document.getElementById('pg-info').textContent = Page ${currentPage} / ${totalPages};
-  $('#pg-range').textContent = ${start+1}-${end} of ${componentFiltered.length};
-  $('#pg-prev').disabled = currentPage===1;
-  $('#pg-first').disabled = currentPage===1;
-  $('#pg-next').disabled = currentPage===totalPages;
-  $('#pg-last').disabled = currentPage===totalPages;
-}
+ // paging UI
+document.getElementById('component-paging').style.display = 'flex';
+document.getElementById('pg-info').textContent = Page ${currentPage} / ${totalPages};
+document.getElementById('pg-range').textContent = ${start+1}-${end} of ${componentFiltered.length};
+document.getElementById('pg-prev').disabled = currentPage === 1;
+document.getElementById('pg-first').disabled = currentPage === 1;
+document.getElementById('pg-next').disabled = currentPage === totalPages;
+document.getElementById('pg-last').disabled = currentPage === totalPages;
 
 function gotoPage(p){ renderComponentTable(p); }
 function changePageSize(val){

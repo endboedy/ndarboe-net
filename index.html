@@ -32,8 +32,12 @@ textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
 input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
 input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
-/* Lebar kolom Component */
-th:nth-child(3), td:nth-child(3) { width:250px; max-width:250px; word-wrap: break-word; }
+/* Perlebar kolom Component */
+th:nth-child(3), td:nth-child(3) {
+    width:250px;
+    max-width:250px;
+    word-wrap:break-word;
+}
 </style>
 </head>
 <body>
@@ -48,69 +52,58 @@ th:nth-child(3), td:nth-child(3) { width:250px; max-width:250px; word-wrap: brea
 </header>
 
 <main>
-<!-- Menu 1: Component -->
-<section id="component" class="tab-content active">
-  <div>
-    <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
-    <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
-    <button class="add-btn" onclick="addRow('component')">Add New</button>
-    <button class="save-btn" onclick="saveJSON()">Save JSON</button>
-    <button class="load-btn" onclick="loadJSON()">Load JSON</button>
-  </div>
-  <table id="component-table">
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Model</th>
-        <th>Component</th>
-        <th>Freq</th>
-        <th>Cost</th>
-        <th>Change Out</th>
-        <th>Current SMU</th>
-        <th>Next Change</th>
-        <th>Life</th>
-        <th>Life %</th>
-        <th>Remarks</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
+  <!-- Menu 1: Component -->
+  <section id="component" class="tab-content active">
+    <div>
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
+      <button class="add-btn" onclick="addRow('component')">Add New</button>
+      <button class="save-btn" onclick="saveJSON()">Save JSON</button>
+      <button class="load-btn" onclick="loadJSON()">Load JSON</button>
+    </div>
+    <table id="component-table">
+      <thead>
+        <tr>
+          <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
+          <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
 
-<!-- Menu 2: Change Out -->
-<section id="changeout" class="tab-content">
-  <div>
-    <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
-    <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
-    <button class="add-btn" onclick="addRow('changeout')">Add New</button>
-  </div>
-  <table id="changeout-table">
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Component</th>
-        <th>Change Out</th>
-        <th>Remarks</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
+  <!-- Menu 2: Change Out -->
+  <section id="changeout" class="tab-content">
+    <div>
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
+      <button class="add-btn" onclick="addRow('changeout')">Add New</button>
+    </div>
+    <table id="changeout-table">
+      <thead>
+        <tr>
+          <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
 
-<!-- Menu 3: Current SMU -->
-<section id="currentsmu" class="tab-content">
-  <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
-  <textarea id="smu-paste"></textarea>
-  <button class="add-btn" onclick="pasteSMU()">Paste</button>
-  <table id="smu-table">
-    <thead><tr><th>Equipment</th><th>SMU</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
-  <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
-</section>
+  <!-- Menu 3: Current SMU -->
+  <section id="currentsmu" class="tab-content">
+    <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
+    <textarea id="smu-paste"></textarea>
+    <button class="add-btn" onclick="pasteSMU()">Paste</button>
+    <table id="smu-table">
+      <thead>
+        <tr><th>Equipment</th><th>SMU</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
+    <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
+  </section>
+
 </main>
 
 <script>
@@ -124,219 +117,235 @@ tabs.forEach(tab => tab.addEventListener('click', () => {
     document.getElementById(tab.dataset.tab).classList.add('active');
 }));
 
-// Add Row
+// Add New Row
 function addRow(menu){
-  const table = document.getElementById(menu+'-table').tBodies[0];
-  let row = table.insertRow();
-  if(menu==='component'){
-    row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
-                     <td><input class="inline-input" placeholder="Model"></td>
-                     <td><input class="inline-input" placeholder="Component"></td>
-                     <td><input class="num-input" placeholder="Freq"></td>
-                     <td><input class="num-input" placeholder="Cost"></td>
-                     <td class="num">0</td>
-                     <td class="num">0</td>
-                     <td class="num">0</td>
-                     <td class="num">0</td>
-                     <td class="num">0%</td>
-                     <td></td>
-                     <td>
-                       <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                       <button class="save-btn" onclick="saveRow(this)">Save</button>
-                       <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                     </td>`;
-  } else {
-    row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
-                     <td><input class="inline-input" placeholder="Component"></td>
-                     <td><input class="inline-input" placeholder="Change Out"></td>
-                     <td><input class="inline-input" placeholder="Remarks"></td>
-                     <td>
-                       <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                       <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-                       <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
-                     </td>`;
-  }
+    const table = document.getElementById(menu+'-table').tBodies[0];
+    let row = table.insertRow();
+    if(menu=='component'){
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Model"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="num-input" placeholder="Freq"></td>
+        <td><input class="num-input" placeholder="Cost"></td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0%</td>
+        <td></td>
+        <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this)">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+        </td>`;
+    } else {
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="inline-input" placeholder="Change Out"></td>
+        <td><input class="inline-input" placeholder="Remarks"></td>
+        <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
+        </td>`;
+    }
 }
 
-// Edit, Save, Delete Rows
+// Edit Row
 function editRow(btn){
-  const row=btn.closest('tr');
-  [...row.cells].forEach((td,i)=>{
-    const parentId = row.closest('table').id;
-    if(parentId==='component-table' && i<=4){
-      td.innerHTML=<input class="${i>=3?'num-input':'inline-input'}" value="${td.innerText}">;
-    } else if(parentId==='changeout-table' && i<=3){
-      td.innerHTML=<input class="inline-input" value="${td.innerText}">;
-    }
-  });
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach((td,i)=>{
+        const parentId = row.closest('table').id;
+        if(parentId=='component-table' && i<=4){
+            td.innerHTML=<input class="${i>=3?'num-input':'inline-input'}" value="${td.innerText}">;
+        } else if(parentId=='changeout-table' && i<=3){
+            td.innerHTML=<input class="inline-input" value="${td.innerText}">;
+        }
+    });
 }
 
+// Save Row
 function saveRow(btn){
-  const row=btn.closest('tr');
-  [...row.cells].forEach((td,i)=>{
-    const inp=td.querySelector('input');
-    if(inp) td.innerText=inp.value;
-  });
-  recalcComponent();
-  syncChangeOut();
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach(td=>{
+        const inp = td.querySelector('input');
+        if(inp) td.innerText = inp.value;
+    });
+    recalcComponent();
+    syncChangeOut();
 }
 
-function deleteRow(btn){ btn.closest('tr').remove(); syncChangeOut(); recalcComponent(); }
+// Delete Row
+function deleteRow(btn){ 
+    btn.closest('tr').remove(); 
+    syncChangeOut(); 
+    recalcComponent(); 
+}
 
-// Filter
+// Filter Table
 function filterTable(menu,colIndex,value){
-  const trs=document.getElementById(menu+'-table').tBodies[0].rows;
-  for(let tr of trs){
-    tr.style.display = tr.cells[colIndex].innerText.toLowerCase().includes(value.toLowerCase())?'':'none';
-  }
+    const trs = document.getElementById(menu+'-table').tBodies[0].rows;
+    for(let tr of trs){
+        let cell = tr.cells[colIndex].innerText.toLowerCase();
+        tr.style.display = cell.includes(value.toLowerCase())?'':'none';
+    }
 }
 
-// Sync Change Out
+// Sync Change Out Menu 2 -> Menu 1
 function syncChangeOut(){
-  const coTable=document.getElementById('changeout-table').tBodies[0].rows;
-  const compTable=document.getElementById('component-table').tBodies[0].rows;
-  let maxChange={}, remarksMap={};
-  for(let r of coTable){
-    let key=r.cells[0].innerText+'|'+r.cells[1].innerText;
-    maxChange[key]=Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
-    remarksMap[key]=r.cells[3].innerText;
-  }
-  for(let r of compTable){
-    let key=r.cells[0].innerText+'|'+r.cells[2].innerText;
-    if(maxChange[key]){
-      r.cells[5].innerText=maxChange[key];
-      r.cells[10].innerText=remarksMap[key];
+    const coTable = document.getElementById('changeout-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    let maxChange = {}, remarksMap={};
+    for(let r of coTable){
+        let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
+        maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
+        remarksMap[key] = r.cells[3].innerText;
     }
-  }
-  recalcComponent();
+    for(let r of compTable){
+        let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
+        if(maxChange[key]){
+            r.cells[5].innerText = maxChange[key];
+            r.cells[10].innerText = remarksMap[key];
+        }
+    }
+    recalcComponent();
 }
 
-// Recalc Component
+// Recalculate Component Table
 function recalcComponent(){
-  const compTable=document.getElementById('component-table').tBodies[0].rows;
-  for(let r of compTable){
-    let freq=parseFloat(r.cells[3].innerText)||0;
-    let changeOut=parseFloat(r.cells[5].innerText)||0;
-    let currentSMU=parseFloat(r.cells[6].innerText)||0;
-    r.cells[7].innerText = changeOut+freq;
-    let life=currentSMU-changeOut;
-    r.cells[8].innerText=life; r.cells[8].className='num';
-    if(life>freq) r.cells[8].className='num red';
-    let lifePerc = freq?Math.round((life/freq)*100):0;
-    r.cells[9].innerText=lifePerc+'%';
-    r.cells[9].className='num';
-    if(lifePerc>100) r.cells[9].className='num red';
-    else if(lifePerc>=75) r.cells[9].className='num green';
-  }
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    for(let r of compTable){
+        let freq = parseFloat(r.cells[3].innerText)||0;
+        let changeOut = parseFloat(r.cells[5].innerText)||0;
+        let currentSMU = parseFloat(r.cells[6].innerText)||0;
+        r.cells[7].innerText = changeOut + freq;
+        let life = currentSMU - changeOut;
+        r.cells[8].innerText = life;
+        r.cells[8].className = 'num';
+        if(life>freq){ r.cells[8].className='num red'; } 
+        let lifePerc = freq?Math.round((life/freq)*100):0;
+        r.cells[9].innerText = lifePerc+'%';
+        r.cells[9].className='num';
+        if(lifePerc>100) r.cells[9].className='num red';
+        else if(lifePerc>=75) r.cells[9].className='num green';
+    }
 }
 
-// Paste SMU
+// Menu 3 Paste SMU
 function pasteSMU(){
-  const lines=document.getElementById('smu-paste').value.trim().split(/\r?\n/);
-  const tbody=document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
-  for(let line of lines){
-    let parts=line.trim().split(/\s+/);
-    if(parts.length>=2){
-      let row=tbody.insertRow();
-      row.insertCell(0).innerText=parts[0];
-      row.insertCell(1).innerText=parts[1];
+    const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
+    const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
+    for(let line of lines){
+        let parts = line.trim().split(/\s+/);
+        if(parts.length>=2){
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText=parts[0];
+            row.insertCell(1).innerText=parts[1];
+        }
     }
-  }
 }
 
 // Update SMU
 function updateSMU(){
-  const rows=document.getElementById('smu-table').tBodies[0].rows;
-  const compTable=document.getElementById('component-table').tBodies[0].rows;
-  const progressBar=document.getElementById('progress-bar');
-  let total=rows.length,count=0;
-  function step(){
-    if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
-    let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
-    for(let r of compTable) if(r.cells[0].innerText===equip) r.cells[6].innerText=smu;
-    count++;
-    let perc=Math.round(count/total*100);
-    progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
-    setTimeout(step,10);
-  }
-  step();
+    const rows = document.getElementById('smu-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    const progressBar = document.getElementById('progress-bar');
+    let total=rows.length, count=0;
+    function step(){
+        if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
+        let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
+        for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
+        count++;
+        let perc=Math.round(count/total*100);
+        progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
+        setTimeout(step,10);
+    }
+    step();
 }
 
 // Save JSON
-function saveJSON(){
-  const compData=[], coData=[];
-  const compTable=document.getElementById('component-table').tBodies[0].rows;
-  for(let tr of compTable){
-    const obj={};
-    Array.from(tr.cells).slice(0,11).forEach((td,i)=>{
-      let key=document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
-      obj[key]=td.innerText||"0";
+function saveJSON() {
+    const componentData = [], changeoutData = [];
+
+    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
+            const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        componentData.push(obj);
     });
-    compData.push(obj);
-  }
-  const coTable=document.getElementById('changeout-table').tBodies[0].rows;
-  for(let tr of coTable){
-    const obj={};
-    Array.from(tr.cells).slice(0,4).forEach((td,i)=>{
-      let key=document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
-      obj[key]=td.innerText||"0";
+
+    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
+            const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        changeoutData.push(obj);
     });
-    coData.push(obj);
-  }
-  const blob=new Blob([JSON.stringify({component:compData,changeout:coData},null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='ndarboe_data.json'; a.click();
+
+    const blob = new Blob([JSON.stringify({ component: componentData, changeout: changeoutData }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ndarboe_data.json';
+    a.click();
 }
 
 // Load JSON
-function loadJSON(){
-  const input=document.createElement('input'); input.type='file'; input.accept='application/json';
-  input.onchange=e=>{
-    const file=e.target.files[0]; if(!file) return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      let data;
-      try{ data=JSON.parse(ev.target.result); }catch(err){ alert("JSON tidak valid: "+err.message); return; }
-      if(!data.component || !data.changeout){ alert("Format JSON salah"); return; }
-      const compTable=document.getElementById('component-table').tBodies[0]; compTable.innerHTML='';
-      data.component.forEach(obj=>{
-        let row=compTable.insertRow();
-        row.innerHTML=`<td>${obj.Equipment||''}</td>
-                       <td>${obj.Model||''}</td>
-                       <td>${obj.Component||''}</td>
-                       <td>${obj.Freq||''}</td>
-                       <td>${obj.Cost||''}</td>
-                       <td>${obj["Change Out"]||''}</td>
-                       <td>${obj["Current SMU"]||''}</td>
-                       <td>${obj["Next Change"]||''}</td>
-                       <td>${obj.Life||''}</td>
-                       <td>${obj["Life %"]||''}</td>
-                       <td>${obj.Remarks||''}</td>
-                       <td>
-                         <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                         <button class="save-btn" onclick="saveRow(this)">Save</button>
-                         <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                       </td>`;
-      });
-      const coTable=document.getElementById('changeout-table').tBodies[0]; coTable.innerHTML='';
-      data.changeout.forEach(obj=>{
-        let row=coTable.insertRow();
-        row.innerHTML=`<td>${obj.Equipment||''}</td>
-                       <td>${obj.Component||''}</td>
-                       <td>${obj["Change Out"]||''}</td>
-                       <td>${obj.Remarks||''}</td>
-                       <td>
-                         <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                         <button class="save-btn" onclick="saveRow(this);syncChangeOut()">Save</button>
-                         <button class="delete-btn" onclick="deleteRow(this);syncChangeOut()">Delete</button>
-                       </td>`;
-      });
-      syncChangeOut();
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = ev => {
+            let data;
+            try { data = JSON.parse(ev.target.result); }
+            catch (err) { alert("File JSON tidak valid: " + err.message); return; }
+
+            const compTable = document.getElementById('component-table').tBodies[0];
+            compTable.innerHTML = '';
+
+            data.forEach(obj => {
+                let row = compTable.insertRow();
+                row.innerHTML = `
+                    <td>${obj.Equipment || ''}</td>
+                    <td>${obj.Model || ''}</td>
+                    <td>${obj.Component || ''}</td>
+                    <td>${obj.Freq || ''}</td>
+                    <td>${obj.Cost || ''}</td>
+                    <td>${obj["Change Out"] || ''}</td>
+                    <td>${obj["Current SMU"] || ''}</td>
+                    <td>${obj["Next Change"] || ''}</td>
+                    <td>${obj.Life || ''}</td>
+                    <td>${obj["Life %"] || ''}</td>
+                    <td>${obj.Remarks || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                `;
+            });
+        };
+
+        reader.readAsText(file);
     };
-    reader.readAsText(file);
-  };
-  input.click();
+
+    input.click();
 }
+
 </script>
 
 </body>

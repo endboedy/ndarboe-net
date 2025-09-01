@@ -355,6 +355,7 @@ function saveJSON() {
     a.click();
 }
 
+<script>
 // Load JSON dari file upload
 function loadJSON() {
     const input = document.createElement('input');
@@ -370,61 +371,54 @@ function loadJSON() {
             let data;
             try { 
                 const parsed = JSON.parse(ev.target.result); 
-                data = parsed.component || parsed; 
+                console.log("Hasil parse JSON:", parsed); // 🔍 debug
+
+                // jika parsed array → langsung pakai
+                // jika object dengan key "component" → ambil isinya
+                data = Array.isArray(parsed) ? parsed : (parsed.component || []);
+
+                if (!Array.isArray(data)) {
+                    alert("Format JSON tidak sesuai (harus array).");
+                    return;
+                }
             } catch (err) { 
                 alert("File JSON tidak valid: " + err.message); 
                 return; 
             }
 
             const compTable = document.getElementById('component-table').tBodies[0];
-            compTable.innerHTML = ''; // reset tabel
+            compTable.innerHTML = ''; // reset
 
-            let i = 0;
-            const batchSize = 500; // render per 500 baris
+            // bikin string HTML langsung
+            let html = '';
+            data.forEach(obj => {
+                html += `<tr>
+                    <td>${obj["Equipment"] || ''}</td>
+                    <td>${obj["Model"] || ''}</td>
+                    <td>${obj["Component"] || ''}</td>
+                    <td class="num">${obj["Freq"] || ''}</td>
+                    <td class="num">${obj["Cost"] || ''}</td>
+                    <td class="num">${obj["Change Out"] || ''}</td>
+                    <td class="num">${obj["Current SMU"] || ''}</td>
+                    <td class="num">${obj["Next Change"] || ''}</td>
+                    <td class="num">${obj["Life"] || ''}</td>
+                    <td class="life-perc">${obj["Life %"] || '0%'}</td>
+                    <td>${obj["Remarks"] || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>`;
+            });
 
-            function renderBatch() {
-                const fragment = document.createDocumentFragment();
-                const end = Math.min(i + batchSize, data.length);
+            // masukkan sekali ke DOM
+            compTable.innerHTML = html;
 
-                for (; i < end; i++) {
-                    const obj = data[i];
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${obj["Equipment"] || ''}</td>
-                        <td>${obj["Model"] || ''}</td>
-                        <td>${obj["Component"] || ''}</td>
-                        <td class="num">${obj["Freq"] || ''}</td>
-                        <td class="num">${obj["Cost"] || ''}</td>
-                        <td class="num">${obj["Change Out"] || ''}</td>
-                        <td class="num">${obj["Current SMU"] || ''}</td>
-                        <td class="num">${obj["Next Change"] || ''}</td>
-                        <td class="num">${obj["Life"] || ''}</td>
-                        <td class="life-perc">${obj["Life %"] || '0%'}</td>
-                        <td>${obj["Remarks"] || ''}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                            <button class="save-btn" onclick="saveRow(this)">Save</button>
-                            <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                        </td>
-                    `;
-                    fragment.appendChild(row);
-                }
-
-                compTable.appendChild(fragment);
-
-                if (i < data.length) {
-                    setTimeout(renderBatch, 0); // lanjut batch berikutnya
-                } else {
-                    console.log("✅ Semua data dimuat:", data.length, "rows");
-                    recalcComponent(); // baru hitung setelah selesai semua
-                }
-            }
-
-            renderBatch();
+            recalcComponent();
         };
         reader.readAsText(file);
     };
-
     input.click();
 }
 </script>

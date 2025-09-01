@@ -361,6 +361,11 @@ function loadJSON() {
     input.type = 'file';
     input.accept = 'application/json';
 
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
     input.onchange = e => {
         const file = e.target.files[0];
         if (!file) return;
@@ -370,56 +375,41 @@ function loadJSON() {
             let data;
             try { 
                 const parsed = JSON.parse(ev.target.result); 
-                data = parsed.component || parsed; // handle format lama/baru
+                data = parsed.component || parsed; 
             } catch (err) { 
                 alert("File JSON tidak valid: " + err.message); 
                 return; 
             }
 
             const compTable = document.getElementById('component-table').tBodies[0];
-            compTable.innerHTML = ''; // reset table
+            compTable.innerHTML = ''; // reset
 
-            const fragment = document.createDocumentFragment();
-
+            // 🔥 bikin string HTML langsung
+            let html = '';
             data.forEach(obj => {
-                const row = document.createElement('tr');
-
-                // urutan sesuai header table (harus sama dengan saveJSON)
-                [
-                    obj["Equipment"],
-                    obj["Model"],
-                    obj["Component"],
-                    obj["Freq"],
-                    obj["Cost"],
-                    obj["Change Out"],
-                    obj["Current SMU"],
-                    obj["Next Change"],
-                    obj["Life"],
-                    obj["Life %"],
-                    obj["Remarks"]
-                ].forEach((val, i) => {
-                    const cell = row.insertCell();
-                    if (i === 9) { // Life %
-                        cell.className = 'life-perc';
-                        cell.innerText = val || '0%';
-                    } else {
-                        cell.innerText = val || '';
-                        if ([3,4,5,6,7,8].includes(i)) cell.className = 'num';
-                    }
-                });
-
-                // kolom Action
-                const actionCell = row.insertCell();
-                actionCell.innerHTML = `
-                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                    <button class="save-btn" onclick="saveRow(this)">Save</button>
-                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                `;
-
-                fragment.appendChild(row);
+                html += `<tr>
+                    <td>${obj["Equipment"] || ''}</td>
+                    <td>${obj["Model"] || ''}</td>
+                    <td>${obj["Component"] || ''}</td>
+                    <td class="num">${obj["Freq"] || ''}</td>
+                    <td class="num">${obj["Cost"] || ''}</td>
+                    <td class="num">${obj["Change Out"] || ''}</td>
+                    <td class="num">${obj["Current SMU"] || ''}</td>
+                    <td class="num">${obj["Next Change"] || ''}</td>
+                    <td class="num">${obj["Life"] || ''}</td>
+                    <td class="life-perc">${obj["Life %"] || '0%'}</td>
+                    <td>${obj["Remarks"] || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>`;
             });
 
-            compTable.appendChild(fragment);
+            // masukkan sekali ke DOM
+            compTable.innerHTML = html;
+
             recalcComponent();
         };
 

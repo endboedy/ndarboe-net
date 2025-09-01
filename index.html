@@ -33,44 +33,46 @@ input.inline-input { width:100%; border:none; text-align:left; font-size:12px; b
 input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
 /* Equipment & Model lebih kecil */
-th:nth-child(1), td:nth-child(1), /* Equipment */
-th:nth-child(2), td:nth-child(2)  /* Model */
+th:nth-child(1), td:nth-child(1),  /* Equipment */
+th:nth-child(2), td:nth-child(2)   /* Model */
 { 
-  width:80px; 
-  max-width:80px; 
+  width: 80px; 
+  max-width: 80px; 
 }
 
 /* Perlebar kolom Component */
 th:nth-child(3), td:nth-child(3) { 
-  width:300px; 
-  max-width:300px; 
-  word-wrap:break-word; 
+  width: 250px; 
+  max-width: 250px; 
+  word-wrap: break-word; 
 }
 
-/* Kolom numerik sama lebar dan rata kanan */
-th:nth-child(4), td:nth-child(4),
-th:nth-child(5), td:nth-child(5),
-th:nth-child(6), td:nth-child(6),
-th:nth-child(7), td:nth-child(7),
-th:nth-child(8), td:nth-child(8),
-th:nth-child(9), td:nth-child(9),
-th:nth-child(10), td:nth-child(10) { 
-  width:80px; 
-  max-width:80px; 
-  text-align:right; 
+/* Kolom numerik (Freq → Life) */
+th:nth-child(4), td:nth-child(4),  /* Freq */
+th:nth-child(5), td:nth-child(5),  /* Cost */
+th:nth-child(6), td:nth-child(6),  /* Change Out */
+th:nth-child(7), td:nth-child(7),  /* Current SMU */
+th:nth-child(8), td:nth-child(8),  /* Next Change */
+th:nth-child(9), td:nth-child(9),  /* Life */
+th:nth-child(10), td:nth-child(10) /* Life % */
+{ 
+  width: 80px; 
+  max-width: 80px; 
+  text-align: right; 
 }
 
 /* Perlebar kolom Remarks */
 th:nth-child(11), td:nth-child(11) { 
-  width:250px; 
-  max-width:250px; 
-  word-wrap:break-word; 
+  width: 200px; 
+  max-width: 200px; 
+  word-wrap: break-word; 
 }
 
-/* Perkecil kolom Action */
+/* Action diperkecil */
 th:nth-child(12), td:nth-child(12) { 
-  width:60px; 
-  max-width:60px; 
+  width: 60px; 
+  max-width: 60px; 
+  text-align: center;
 }
 
 /* Life % pewarnaan */

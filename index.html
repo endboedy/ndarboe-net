@@ -1,190 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Work Order EM</title>
-  <style>
-    body { font-family: Arial; font-size: 12px; margin: 10px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #999; padding: 4px; text-align: left; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ndarboe.net</title>
+<link rel="icon" href="data:,"> 
+<style>
+body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
+.app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
+.menu button { background:#2c3e50; color:white; border:none; padding:5px 10px; margin-left:5px; cursor:pointer; border-radius:5px; font-size:12px; }
+.menu button.active { background:#1abc9c; }
+main { padding:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; } /* tinggi kolom dikurangi */
+th { background:#34495e; color:white; font-size:12px; }
+td.num { text-align:right; }
+td.red { background:red; color:white; }
+td.green { background:green; color:white; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+button.save-btn, button.edit-btn, button.delete-btn, button.add-btn, button.load-btn { padding:3px 6px; border:none; border-radius:3px; cursor:pointer; margin:1px; font-size:11px; }
+button.save-btn { background:#1abc9c; color:white; }
+button.edit-btn { background:#f39c12; color:white; }
+button.delete-btn { background:#e74c3c; color:white; }
+button.add-btn { background:#2980b9; color:white; margin-bottom:5px; }
+button.load-btn { background:#8e44ad; color:white; }
+.filter-input { margin-right:5px; padding:2px; border-radius:3px; border:1px solid #ccc; font-size:11px; width:100px; }
+.progress-container { background:#ddd; border-radius:5px; margin-top:5px; height:15px; width:100%; }
+.progress-bar { height:100%; width:0; background:#1abc9c; border-radius:5px; text-align:center; color:white; line-height:15px; font-size:11px; }
+textarea { width:100%; height:60px; font-size:12px; margin-top:5px; }
+input.inline-input { width:100%; border:none; text-align:left; font-size:12px; background:transparent; }
+input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
-    /* Equipment & Model lebih kecil */
-    th:nth-child(1), td:nth-child(1),  
-    th:nth-child(2), td:nth-child(2) { width: 80px; max-width: 80px; }
+/* Equipment & Model lebih kecil */
+th:nth-child(1), td:nth-child(1),  /* Equipment */
+th:nth-child(2), td:nth-child(2)   /* Model */
+{ 
+  width: 80px; 
+  max-width: 80px; 
+}
 
-    /* Perlebar kolom Component */
-    th:nth-child(3), td:nth-child(3) { width: 250px; max-width: 250px; word-wrap: break-word; }
+/* Perlebar kolom Component */
+th:nth-child(3), td:nth-child(3) { 
+  width: 250px; 
+  max-width: 250px; 
+  word-wrap: break-word; 
+}
 
-    /* Kolom numerik (Freq → Life %) */
-    th:nth-child(4), td:nth-child(4),
-    th:nth-child(5), td:nth-child(5),
-    th:nth-child(6), td:nth-child(6),
-    th:nth-child(7), td:nth-child(7),
-    th:nth-child(8), td:nth-child(8),
-    th:nth-child(9), td:nth-child(9),
-    th:nth-child(10), td:nth-child(10) {
-      width: 80px; max-width: 80px; text-align: right;
-    }
+/* Kolom numerik (Freq → Life) */
+th:nth-child(4), td:nth-child(4),  /* Freq */
+th:nth-child(5), td:nth-child(5),  /* Cost */
+th:nth-child(6), td:nth-child(6),  /* Change Out */
+th:nth-child(7), td:nth-child(7),  /* Current SMU */
+th:nth-child(8), td:nth-child(8),  /* Next Change */
+th:nth-child(9), td:nth-child(9),  /* Life */
+th:nth-child(10), td:nth-child(10) /* Life % */
+{ 
+  width: 80px; 
+  max-width: 80px; 
+  text-align: right; 
+}
 
-    /* Perlebar kolom Remarks */
-    th:nth-child(11), td:nth-child(11) {
-      width: 200px; max-width: 200px; word-wrap: break-word;
-    }
+/* Perlebar kolom Remarks */
+th:nth-child(11), td:nth-child(11) { 
+  width: 200px; 
+  max-width: 200px; 
+  word-wrap: break-word; 
+}
 
-    /* Action lebih kecil */
-    th:nth-child(12), td:nth-child(12) {
-      width: 100px; max-width: 100px; text-align: center;
-    }
+/* Action diperkecil */
+th:nth-child(12), td:nth-child(12) { 
+  width: 120px; 
+  max-width: 120px; 
+  text-align: center;
+}
 
-    .pagination { margin-top: 10px; }
-    .pagination button { margin: 2px; }
-  </style>
+/* Life % pewarnaan */
+td.life-perc { font-weight:bold; text-align:right; }
+td.life-perc.red { background:red; color:white; }
+td.life-perc.green { background:green; color:white; }
+td.life-perc.yellow { background:yellow; color:black; }
+
+</style>
 </head>
 <body>
-  <h2>Work Order EM</h2>
-  <button onclick="loadJSON()">📂 Load JSON</button>
-  <input type="text" id="searchBox" placeholder="Cari data..." oninput="applySearch()">
 
-  <table id="component-table">
-    <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Model</th>
-        <th>Component</th>
-        <th>Freq</th>
-        <th>Cost</th>
-        <th>Change Out</th>
-        <th>Current SMU</th>
-        <th>Next Change</th>
-        <th>Life</th>
-        <th>Life %</th>
-        <th>Remarks</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<header class="app-header">
+  <h1>Ndarboe.net</h1>
+  <nav class="menu">
+    <button class="tab-btn active" data-tab="component">Component</button>
+    <button class="tab-btn" data-tab="changeout">Change Out</button>
+    <button class="tab-btn" data-tab="currentsmu">Current SMU</button>
+  </nav>
+</header>
 
-  <div class="pagination" id="pagination"></div>
+<main>
+  <!-- Menu 1: Component -->
+  <section id="component" class="tab-content active">
+    <div>
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('component','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('component','2',this.value)">
+      <button class="add-btn" onclick="addRow('component')">Add New</button>
+      <button class="save-btn" onclick="saveJSON()">Save JSON</button>
+      <button class="load-btn" onclick="loadJSON()">Load JSON</button>
+    </div>
+    <table id="component-table">
+      <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Model</th>
+          <th>Component</th>
+          <th>Freq</th>
+          <th>Cost</th>
+          <th>Change Out</th>
+          <th>Current SMU</th>
+          <th>Next Change</th>
+          <th>Life</th>
+          <th>Life %</th>
+          <th>Remarks</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Menu 2: Change Out -->
+  <section id="changeout" class="tab-content">
+    <div>
+      <input type="text" class="filter-input" placeholder="Filter Equipment" onkeyup="filterTable('changeout','0',this.value)">
+      <input type="text" class="filter-input" placeholder="Filter Component" onkeyup="filterTable('changeout','1',this.value)">
+      <button class="add-btn" onclick="addRow('changeout')">Add New</button>
+    </div>
+    <table id="changeout-table">
+      <thead>
+        <tr>
+          <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Menu 3: Current SMU -->
+  <section id="currentsmu" class="tab-content">
+    <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
+    <textarea id="smu-paste"></textarea>
+    <button class="add-btn" onclick="pasteSMU()">Paste</button>
+    <table id="smu-table">
+      <thead>
+        <tr><th>Equipment</th><th>SMU</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
+    <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
+  </section>
+</main>
 
 <script>
-let allData = [];      // semua data dari JSON
-let filteredData = []; // hasil filter/search
-let currentPage = 1;
-const rowsPerPage = 100;
+// Tabs
+const tabs = document.querySelectorAll('.tab-btn');
+const contents = document.querySelectorAll('.tab-content');
+tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    contents.forEach(c=>c.classList.remove('active'));
+    document.getElementById(tab.dataset.tab).classList.add('active');
+}));
 
-// 📂 Load JSON
-function loadJSON() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'application/json';
-
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const parsed = JSON.parse(ev.target.result);
-        allData = parsed.component || parsed; 
-        filteredData = allData; 
-        currentPage = 1;
-        renderTable();
-      } catch (err) {
-        alert("File JSON tidak valid: " + err.message);
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-// 🔎 Search filter
-function applySearch() {
-  const q = document.getElementById('searchBox').value.toLowerCase();
-  filteredData = allData.filter(obj =>
-    Object.values(obj).some(val =>
-      String(val).toLowerCase().includes(q)
-    )
-  );
-  currentPage = 1;
-  renderTable();
-}
-
-// 🖨 Render Table + Pagination
-function renderTable() {
-  const tbody = document.querySelector("#component-table tbody");
-  tbody.innerHTML = "";
-
-  const start = (currentPage - 1) * rowsPerPage;
-  const pageData = filteredData.slice(start, start + rowsPerPage);
-
-  let html = "";
-  pageData.forEach(obj => {
-    html += `
-      <tr>
-        <td>${obj["Equipment"] || ""}</td>
-        <td>${obj["Model"] || ""}</td>
-        <td>${obj["Component"] || ""}</td>
-        <td class="num">${obj["Freq"] || ""}</td>
-        <td class="num">${obj["Cost"] || ""}</td>
-        <td class="num">${obj["Change Out"] || ""}</td>
-        <td class="num">${obj["Current SMU"] || ""}</td>
-        <td class="num">${obj["Next Change"] || ""}</td>
-        <td class="num">${obj["Life"] || ""}</td>
-        <td class="life-perc">${obj["Life %"] || "0%"}</td>
-        <td>${obj["Remarks"] || ""}</td>
+// Add New Row
+function addRow(menu){
+    const table = document.getElementById(menu+'-table').tBodies[0];
+    let row = table.insertRow();
+    if(menu=='component'){
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Model"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="num-input" placeholder="Freq"></td>
+        <td><input class="num-input" placeholder="Cost"></td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="life-perc">0%</td>
+        <td></td>
         <td>
-          <button onclick="editRow(this)">Edit</button>
-          <button onclick="saveRow(this)">Save</button>
-          <button onclick="deleteRow(this)">Delete</button>
-        </td>
-      </tr>`;
-  });
-
-  tbody.innerHTML = html;
-  renderPagination();
-}
-
-// 📄 Render pagination
-function renderPagination() {
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const container = document.getElementById("pagination");
-  container.innerHTML = "";
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === currentPage) btn.disabled = true;
-    btn.onclick = () => { currentPage = i; renderTable(); };
-    container.appendChild(btn);
-  }
-}
-
-// ✏ Edit / Save / Delete row
-function editRow(btn) {
-  const row = btn.closest("tr");
-  [...row.cells].forEach((cell, i) => {
-    if (i < 11) {
-      const val = cell.innerText;
-      cell.innerHTML = <input value="${val}">;
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this)">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+        </td>`;
+    } else {
+        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
+        <td><input class="inline-input" placeholder="Component"></td>
+        <td><input class="inline-input" placeholder="Change Out"></td>
+        <td><input class="inline-input" placeholder="Remarks"></td>
+        <td>
+        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+        <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
+        <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
+        </td>`;
     }
-  });
 }
 
-function saveRow(btn) {
-  const row = btn.closest("tr");
-  [...row.cells].forEach((cell, i) => {
-    if (i < 11) {
-      const input = cell.querySelector("input");
-      if (input) cell.textContent = input.value;
+
+// Edit Row
+  
+function editRow(btn){
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach((td, i) => {
+        const parentId = row.closest('table').id;
+        if (parentId === 'component-table' && i <= 4) {
+            td.innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">`;
+        } else if (parentId === 'changeout-table' && i <= 3) {
+            td.innerHTML = `<input class="inline-input" value="${td.innerText}">`;
+        }
+    });
+}
+
+
+// Save Row
+function saveRow(btn){
+    const row = btn.closest('tr');
+    Array.from(row.cells).forEach(td=>{
+        const inp = td.querySelector('input');
+        if(inp) td.innerText = inp.value;
+    });
+    recalcComponent();
+    syncChangeOut();
+}
+
+// Delete Row
+function deleteRow(btn){ 
+    btn.closest('tr').remove(); 
+    syncChangeOut(); 
+    recalcComponent(); 
+}
+
+// Filter Table
+function filterTable(menu,colIndex,value){
+    const trs = document.getElementById(menu+'-table').tBodies[0].rows;
+    for(let tr of trs){
+        let cell = tr.cells[colIndex].innerText.toLowerCase();
+        tr.style.display = cell.includes(value.toLowerCase())?'':'none';
     }
-  });
 }
 
-function deleteRow(btn) {
-  btn.closest("tr").remove();
+// Sync Change Out Menu 2 -> Menu 1
+function syncChangeOut(){
+    const coTable = document.getElementById('changeout-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    let maxChange = {}, remarksMap={};
+    for(let r of coTable){
+        let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
+        maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
+        remarksMap[key] = r.cells[3].innerText;
+    }
+    for(let r of compTable){
+        let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
+        if(maxChange[key]){
+            r.cells[5].innerText = maxChange[key];
+            r.cells[10].innerText = remarksMap[key];
+        }
+    }
+    recalcComponent();
+}
+
+// Recalculate Component Table
+function recalcComponent(){
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    for(let r of compTable){
+        let freq = parseFloat(r.cells[3].innerText)||0;
+        let changeOut = parseFloat(r.cells[5].innerText)||0;
+        let currentSMU = parseFloat(r.cells[6].innerText)||0;
+        r.cells[7].innerText = changeOut + freq;
+        let life = currentSMU - changeOut;
+        r.cells[8].innerText = life;
+        r.cells[8].className = 'num';
+
+        let lifePerc = freq ? Math.round((life/freq)*100) : 0;
+        r.cells[9].innerText = lifePerc + '%';
+        r.cells[9].className = 'life-perc';
+
+        if(lifePerc > 100) r.cells[9].className='life-perc red';
+        else if(lifePerc >= 75) r.cells[9].className='life-perc green';
+        else if(lifePerc >=50) r.cells[9].className='life-perc yellow';
+        else r.cells[9].className='life-perc yellow';
+    }
+}
+
+// Menu 3 Paste SMU
+function pasteSMU(){
+    const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
+    const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
+    for(let line of lines){
+        let parts = line.trim().split(/\s+/);
+        if(parts.length>=2){
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText=parts[0];
+            row.insertCell(1).innerText=parts[1];
+        }
+    }
+}
+
+// Update SMU
+function updateSMU(){
+    const rows = document.getElementById('smu-table').tBodies[0].rows;
+    const compTable = document.getElementById('component-table').tBodies[0].rows;
+    const progressBar = document.getElementById('progress-bar');
+    let total=rows.length, count=0;
+    function step(){
+        if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
+        let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
+        for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
+        count++;
+        let perc=Math.round(count/total*100);
+        progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
+        setTimeout(step,10);
+    }
+    step();
+}
+
+// Save JSON
+function saveJSON() {
+    const componentData = [], changeoutData = [];
+
+    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
+            const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        componentData.push(obj);
+    });
+
+    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
+        const obj = {};
+        Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
+            const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
+            let value = td.innerText;
+            if (value === "NaN" || value === "" || value === undefined) value = "0";
+            obj[key] = value;
+        });
+        changeoutData.push(obj);
+    });
+
+    const blob = new Blob([JSON.stringify({ component: componentData, changeout: changeoutData }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ndarboe_data.json';
+    a.click();
+}
+
+<script>
+// Load JSON dari file upload
+function loadJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = ev => {
+            let data;
+            try { 
+                const parsed = JSON.parse(ev.target.result); 
+                console.log("Hasil parse JSON:", parsed); // 🔍 debug
+
+                // jika parsed array → langsung pakai
+                // jika object dengan key "component" → ambil isinya
+                data = Array.isArray(parsed) ? parsed : (parsed.component || []);
+
+                if (!Array.isArray(data)) {
+                    alert("Format JSON tidak sesuai (harus array).");
+                    return;
+                }
+            } catch (err) { 
+                alert("File JSON tidak valid: " + err.message); 
+                return; 
+            }
+
+            const compTable = document.getElementById('component-table').tBodies[0];
+            compTable.innerHTML = ''; // reset
+
+            // bikin string HTML langsung
+            let html = '';
+            data.forEach(obj => {
+                html += `<tr>
+                    <td>${obj["Equipment"] || ''}</td>
+                    <td>${obj["Model"] || ''}</td>
+                    <td>${obj["Component"] || ''}</td>
+                    <td class="num">${obj["Freq"] || ''}</td>
+                    <td class="num">${obj["Cost"] || ''}</td>
+                    <td class="num">${obj["Change Out"] || ''}</td>
+                    <td class="num">${obj["Current SMU"] || ''}</td>
+                    <td class="num">${obj["Next Change"] || ''}</td>
+                    <td class="num">${obj["Life"] || ''}</td>
+                    <td class="life-perc">${obj["Life %"] || '0%'}</td>
+                    <td>${obj["Remarks"] || ''}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                        <button class="save-btn" onclick="saveRow(this)">Save</button>
+                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            // masukkan sekali ke DOM
+            compTable.innerHTML = html;
+
+            recalcComponent();
+        };
+        reader.readAsText(file);
+    };
+    input.click();
 }
 </script>
 </body>

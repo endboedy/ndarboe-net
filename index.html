@@ -12,7 +12,7 @@ body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:1
 .menu button.active { background:#1abc9c; }
 main { padding:10px; }
 table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
-th, td { border:1px solid #ccc; padding:4px; text-align:left; height:24px; }
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; } /* tinggi kolom dikurangi */
 th { background:#34495e; color:white; font-size:12px; }
 td.num { text-align:right; }
 td.red { background:red; color:white; }
@@ -33,11 +33,27 @@ input.inline-input { width:100%; border:none; text-align:left; font-size:12px; b
 input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
 /* Perlebar kolom Component */
-th:nth-child(3), td:nth-child(3) {
-    width:250px;
-    max-width:250px;
-    word-wrap:break-word;
-}
+th:nth-child(3), td:nth-child(3) { width:250px; max-width:250px; word-wrap:break-word; }
+
+/* Kolom numerik sama lebar dan rata kanan */
+th:nth-child(4), td:nth-child(4),
+th:nth-child(5), td:nth-child(5),
+th:nth-child(6), td:nth-child(6),
+th:nth-child(7), td:nth-child(7),
+th:nth-child(8), td:nth-child(8),
+th:nth-child(9), td:nth-child(9),
+th:nth-child(10), td:nth-child(10) { width:80px; max-width:80px; text-align:right; }
+
+/* Kolom Remarks & Action */
+th:nth-child(11), td:nth-child(11) { width:120px; }
+th:nth-child(12), td:nth-child(12) { width:140px; }
+
+/* Life % pewarnaan */
+td.life-perc { font-weight:bold; text-align:right; }
+td.life-perc.red { background:red; color:white; }
+td.life-perc.green { background:green; color:white; }
+td.life-perc.yellow { background:yellow; color:black; }
+
 </style>
 </head>
 <body>
@@ -64,8 +80,18 @@ th:nth-child(3), td:nth-child(3) {
     <table id="component-table">
       <thead>
         <tr>
-          <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
-          <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th><th>Remarks</th><th>Action</th>
+          <th>Equipment</th>
+          <th>Model</th>
+          <th>Component</th>
+          <th>Freq</th>
+          <th>Cost</th>
+          <th>Change Out</th>
+          <th>Current SMU</th>
+          <th>Next Change</th>
+          <th>Life</th>
+          <th>Life %</th>
+          <th>Remarks</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -103,7 +129,6 @@ th:nth-child(3), td:nth-child(3) {
     <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
     <div class="progress-container"><div class="progress-bar" id="progress-bar">0%</div></div>
   </section>
-
 </main>
 
 <script>
@@ -131,7 +156,7 @@ function addRow(menu){
         <td class="num">0</td>
         <td class="num">0</td>
         <td class="num">0</td>
-        <td class="num">0%</td>
+        <td class="life-perc">0%</td>
         <td></td>
         <td>
         <button class="edit-btn" onclick="editRow(this)">Edit</button>
@@ -151,20 +176,18 @@ function addRow(menu){
     }
 }
 
-
 // Edit Row
 function editRow(btn){
     const row = btn.closest('tr');
     Array.from(row.cells).forEach((td, i) => {
         const parentId = row.closest('table').id;
         if (parentId === 'component-table' && i <= 4) {
-            td.innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">`;
+            td.innerHTML = <input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">;
         } else if (parentId === 'changeout-table' && i <= 3) {
-            td.innerHTML = `<input class="inline-input" value="${td.innerText}">`;
+            td.innerHTML = <input class="inline-input" value="${td.innerText}">;
         }
     });
 }
-
 
 // Save Row
 function saveRow(btn){
@@ -224,12 +247,15 @@ function recalcComponent(){
         let life = currentSMU - changeOut;
         r.cells[8].innerText = life;
         r.cells[8].className = 'num';
-        if(life>freq){ r.cells[8].className='num red'; } 
-        let lifePerc = freq?Math.round((life/freq)*100):0;
-        r.cells[9].innerText = lifePerc+'%';
-        r.cells[9].className='num';
-        if(lifePerc>100) r.cells[9].className='num red';
-        else if(lifePerc>=75) r.cells[9].className='num green';
+
+        let lifePerc = freq ? Math.round((life/freq)*100) : 0;
+        r.cells[9].innerText = lifePerc + '%';
+        r.cells[9].className = 'life-perc';
+
+        if(lifePerc > 100) r.cells[9].className='life-perc red';
+        else if(lifePerc >= 75) r.cells[9].className='life-perc green';
+        else if(lifePerc >=50) r.cells[9].className='life-perc yellow';
+        else r.cells[9].className='life-perc yellow';
     }
 }
 
@@ -331,7 +357,7 @@ function loadJSON() {
                     <td>${obj["Current SMU"] || ''}</td>
                     <td>${obj["Next Change"] || ''}</td>
                     <td>${obj.Life || ''}</td>
-                    <td>${obj["Life %"] || ''}</td>
+                    <td class="life-perc">${obj["Life %"] || ''}</td>
                     <td>${obj.Remarks || ''}</td>
                     <td>
                         <button class="edit-btn" onclick="editRow(this)">Edit</button>
@@ -340,6 +366,7 @@ function loadJSON() {
                     </td>
                 `;
             });
+            recalcComponent();
         };
 
         reader.readAsText(file);
@@ -347,7 +374,6 @@ function loadJSON() {
 
     input.click();
 }
-
 </script>
 
 </body>

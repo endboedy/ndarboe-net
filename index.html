@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ndarboe.net</title>
-<link rel="icon" href="data:,"> 
+<link rel="icon" href="data:," />
+<!-- SheetJS untuk baca Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.2/dist/xlsx.full.min.js"></script>
+
 <style>
 body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:12px; }
 .app-header { background:#34495e; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
@@ -12,7 +15,7 @@ body { font-family: Arial, sans-serif; margin:0; background:#f5f6fa; font-size:1
 .menu button.active { background:#1abc9c; }
 main { padding:10px; }
 table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
-th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; } /* tinggi kolom dikurangi */
+th, td { border:1px solid #ccc; padding:4px; text-align:left; height:20px; }
 th { background:#34495e; color:white; font-size:12px; }
 td.num { text-align:right; }
 td.red { background:red; color:white; }
@@ -33,54 +36,31 @@ input.inline-input { width:100%; border:none; text-align:left; font-size:12px; b
 input.num-input { width:100%; border:none; text-align:right; font-size:12px; background:transparent; }
 
 /* Equipment & Model lebih kecil */
-th:nth-child(1), td:nth-child(1),  /* Equipment */
-th:nth-child(2), td:nth-child(2)   /* Model */
-{ 
-  width: 80px; 
-  max-width: 80px; 
-}
+th:nth-child(1), td:nth-child(1), th:nth-child(2), td:nth-child(2) { width: 80px; max-width: 80px; }
 
 /* Perlebar kolom Component */
-th:nth-child(3), td:nth-child(3) { 
-  width: 250px; 
-  max-width: 250px; 
-  word-wrap: break-word; 
-}
+th:nth-child(3), td:nth-child(3) { width: 250px; max-width: 250px; word-wrap: break-word; }
 
-/* Kolom numerik (Freq → Life) */
-th:nth-child(4), td:nth-child(4),  /* Freq */
-th:nth-child(5), td:nth-child(5),  /* Cost */
-th:nth-child(6), td:nth-child(6),  /* Change Out */
-th:nth-child(7), td:nth-child(7),  /* Current SMU */
-th:nth-child(8), td:nth-child(8),  /* Next Change */
-th:nth-child(9), td:nth-child(9),  /* Life */
-th:nth-child(10), td:nth-child(10) /* Life % */
-{ 
-  width: 80px; 
-  max-width: 80px; 
-  text-align: right; 
-}
+/* Kolom numerik */
+th:nth-child(4), td:nth-child(4),
+th:nth-child(5), td:nth-child(5),
+th:nth-child(6), td:nth-child(6),
+th:nth-child(7), td:nth-child(7),
+th:nth-child(8), td:nth-child(8),
+th:nth-child(9), td:nth-child(9),
+th:nth-child(10), td:nth-child(10) { width: 80px; max-width: 80px; text-align: right; }
 
 /* Perlebar kolom Remarks */
-th:nth-child(11), td:nth-child(11) { 
-  width: 200px; 
-  max-width: 200px; 
-  word-wrap: break-word; 
-}
+th:nth-child(11), td:nth-child(11) { width: 200px; max-width: 200px; word-wrap: break-word; }
 
 /* Action diperkecil */
-th:nth-child(12), td:nth-child(12) { 
-  width: 120px; 
-  max-width: 120px; 
-  text-align: center;
-}
+th:nth-child(12), td:nth-child(12) { width: 120px; max-width: 120px; text-align:center; }
 
 /* Life % pewarnaan */
 td.life-perc { font-weight:bold; text-align:right; }
 td.life-perc.red { background:red; color:white; }
 td.life-perc.green { background:green; color:white; }
 td.life-perc.yellow { background:yellow; color:black; }
-
 </style>
 </head>
 <body>
@@ -103,22 +83,14 @@ td.life-perc.yellow { background:yellow; color:black; }
       <button class="add-btn" onclick="addRow('component')">Add New</button>
       <button class="save-btn" onclick="saveJSON()">Save JSON</button>
       <button class="load-btn" onclick="loadJSON()">Load JSON</button>
+      <button class="load-btn" onclick="loadExcel()">Load Excel</button>
     </div>
     <table id="component-table">
       <thead>
         <tr>
-          <th>Equipment</th>
-          <th>Model</th>
-          <th>Component</th>
-          <th>Freq</th>
-          <th>Cost</th>
-          <th>Change Out</th>
-          <th>Current SMU</th>
-          <th>Next Change</th>
-          <th>Life</th>
-          <th>Life %</th>
-          <th>Remarks</th>
-          <th>Action</th>
+          <th>Equipment</th><th>Model</th><th>Component</th><th>Freq</th><th>Cost</th>
+          <th>Change Out</th><th>Current SMU</th><th>Next Change</th><th>Life</th><th>Life %</th>
+          <th>Remarks</th><th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -134,9 +106,7 @@ td.life-perc.yellow { background:yellow; color:black; }
     </div>
     <table id="changeout-table">
       <thead>
-        <tr>
-          <th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th>
-        </tr>
+        <tr><th>Equipment</th><th>Component</th><th>Change Out</th><th>Remarks</th><th>Action</th></tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -145,12 +115,10 @@ td.life-perc.yellow { background:yellow; color:black; }
   <!-- Menu 3: Current SMU -->
   <section id="currentsmu" class="tab-content">
     <p>Paste Equipment & SMU (misal copy dari Excel, tab/space dipisah):</p>
-    <textarea id="smu-paste"></textarea>
+    <textarea id="smu-paste" placeholder="CO4348    10500&#10;CO4350    9800"></textarea>
     <button class="add-btn" onclick="pasteSMU()">Paste</button>
     <table id="smu-table">
-      <thead>
-        <tr><th>Equipment</th><th>SMU</th></tr>
-      </thead>
+      <thead><tr><th>Equipment</th><th>SMU</th></tr></thead>
       <tbody></tbody>
     </table>
     <button class="save-btn" onclick="updateSMU()">Update Current SMU</button>
@@ -163,272 +131,444 @@ td.life-perc.yellow { background:yellow; color:black; }
 const tabs = document.querySelectorAll('.tab-btn');
 const contents = document.querySelectorAll('.tab-content');
 tabs.forEach(tab => tab.addEventListener('click', () => {
-    tabs.forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    contents.forEach(c=>c.classList.remove('active'));
-    document.getElementById(tab.dataset.tab).classList.add('active');
+  tabs.forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  contents.forEach(c=>c.classList.remove('active'));
+  document.getElementById(tab.dataset.tab).classList.add('active');
 }));
 
 // Add New Row
 function addRow(menu){
-    const table = document.getElementById(menu+'-table').tBodies[0];
-    let row = table.insertRow();
-    if(menu=='component'){
-        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
-        <td><input class="inline-input" placeholder="Model"></td>
-        <td><input class="inline-input" placeholder="Component"></td>
-        <td><input class="num-input" placeholder="Freq"></td>
-        <td><input class="num-input" placeholder="Cost"></td>
-        <td class="num">0</td>
-        <td class="num">0</td>
-        <td class="num">0</td>
-        <td class="num">0</td>
-        <td class="life-perc">0%</td>
-        <td></td>
-        <td>
-        <button class="edit-btn" onclick="editRow(this)">Edit</button>
-        <button class="save-btn" onclick="saveRow(this)">Save</button>
-        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-        </td>`;
-    } else {
-        row.innerHTML = `<td><input class="inline-input" placeholder="Equipment"></td>
-        <td><input class="inline-input" placeholder="Component"></td>
-        <td><input class="inline-input" placeholder="Change Out"></td>
-        <td><input class="inline-input" placeholder="Remarks"></td>
-        <td>
-        <button class="edit-btn" onclick="editRow(this)">Edit</button>
-        <button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>
-        <button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>
-        </td>`;
-    }
+  const table = document.getElementById(menu+'-table').tBodies[0];
+  let row = table.insertRow();
+  if(menu=='component'){
+    row.innerHTML =
+      '<td><input class="inline-input" placeholder="Equipment"></td>'+
+      '<td><input class="inline-input" placeholder="Model"></td>'+
+      '<td><input class="inline-input" placeholder="Component"></td>'+
+      '<td><input class="num-input" placeholder="Freq"></td>'+
+      '<td><input class="num-input" placeholder="Cost"></td>'+
+      '<td class="num">0</td>'+
+      '<td class="num">0</td>'+
+      '<td class="num">0</td>'+
+      '<td class="num">0</td>'+
+      '<td class="life-perc">0%</td>'+
+      '<td></td>'+
+      '<td>'+
+      '<button class="edit-btn" onclick="editRow(this)">Edit</button>'+
+      '<button class="save-btn" onclick="saveRow(this)">Save</button>'+
+      '<button class="delete-btn" onclick="deleteRow(this)">Delete</button>'+
+      '</td>';
+  } else {
+    row.innerHTML =
+      '<td><input class="inline-input" placeholder="Equipment"></td>'+
+      '<td><input class="inline-input" placeholder="Component"></td>'+
+      '<td><input class="inline-input" placeholder="Change Out"></td>'+
+      '<td><input class="inline-input" placeholder="Remarks"></td>'+
+      '<td>'+
+      '<button class="edit-btn" onclick="editRow(this)">Edit</button>'+
+      '<button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>'+
+      '<button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>'+
+      '</td>';
+  }
 }
 
-
-// Edit Row
-  
+// Edit Row (tanpa backtick biar aman copy/paste)
 function editRow(btn){
-    const row = btn.closest('tr');
-    Array.from(row.cells).forEach((td, i) => {
-        const parentId = row.closest('table').id;
-        if (parentId === 'component-table' && i <= 4) {
-            td.innerHTML = `<input class="${i >= 3 ? 'num-input' : 'inline-input'}" value="${td.innerText}">`;
-        } else if (parentId === 'changeout-table' && i <= 3) {
-            td.innerHTML = `<input class="inline-input" value="${td.innerText}">`;
-        }
-    });
+  const row = btn.closest('tr');
+  Array.from(row.cells).forEach((td, i) => {
+    const parentId = row.closest('table').id;
+    if (parentId === 'component-table' && i <= 4) {
+      td.innerHTML = '<input class="' + (i >= 3 ? 'num-input' : 'inline-input') + '" value="' + td.innerText + '">';
+    } else if (parentId === 'changeout-table' && i <= 3) {
+      td.innerHTML = '<input class="inline-input" value="' + td.innerText + '">';
+    }
+  });
 }
-
 
 // Save Row
 function saveRow(btn){
-    const row = btn.closest('tr');
-    Array.from(row.cells).forEach(td=>{
-        const inp = td.querySelector('input');
-        if(inp) td.innerText = inp.value;
-    });
-    recalcComponent();
-    syncChangeOut();
+  const row = btn.closest('tr');
+  Array.from(row.cells).forEach(td=>{
+    const inp = td.querySelector('input');
+    if(inp) td.innerText = inp.value;
+  });
+  recalcComponent();
+  syncChangeOut();
 }
 
 // Delete Row
-function deleteRow(btn){ 
-    btn.closest('tr').remove(); 
-    syncChangeOut(); 
-    recalcComponent(); 
+function deleteRow(btn){
+  btn.closest('tr').remove();
+  syncChangeOut();
+  recalcComponent();
 }
 
 // Filter Table
 function filterTable(menu,colIndex,value){
-    const trs = document.getElementById(menu+'-table').tBodies[0].rows;
-    for(let tr of trs){
-        let cell = tr.cells[colIndex].innerText.toLowerCase();
-        tr.style.display = cell.includes(value.toLowerCase())?'':'none';
-    }
+  const trs = document.getElementById(menu+'-table').tBodies[0].rows;
+  for(let tr of trs){
+    let cell = tr.cells[colIndex].innerText.toLowerCase();
+    tr.style.display = cell.includes(value.toLowerCase())?'':'none';
+  }
 }
 
-// Sync Change Out Menu 2 -> Menu 1
+// Sync Change Out -> Component
 function syncChangeOut(){
-    const coTable = document.getElementById('changeout-table').tBodies[0].rows;
-    const compTable = document.getElementById('component-table').tBodies[0].rows;
-    let maxChange = {}, remarksMap={};
-    for(let r of coTable){
-        let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
-        maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
-        remarksMap[key] = r.cells[3].innerText;
+  const coTable = document.getElementById('changeout-table').tBodies[0].rows;
+  const compTable = document.getElementById('component-table').tBodies[0].rows;
+  let maxChange = {}, remarksMap={};
+  for(let r of coTable){
+    let key = r.cells[0].innerText+'|'+r.cells[1].innerText;
+    maxChange[key] = Math.max(maxChange[key]||0, parseFloat(r.cells[2].innerText)||0);
+    remarksMap[key] = r.cells[3].innerText;
+  }
+  for(let r of compTable){
+    let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
+    if(maxChange[key]){
+      r.cells[5].innerText = maxChange[key];
+      r.cells[10].innerText = remarksMap[key];
     }
-    for(let r of compTable){
-        let key = r.cells[0].innerText+'|'+r.cells[2].innerText;
-        if(maxChange[key]){
-            r.cells[5].innerText = maxChange[key];
-            r.cells[10].innerText = remarksMap[key];
-        }
-    }
-    recalcComponent();
+  }
+  recalcComponent();
 }
 
-// Recalculate Component Table
+// Recalc Component
 function recalcComponent(){
-    const compTable = document.getElementById('component-table').tBodies[0].rows;
-    for(let r of compTable){
-        let freq = parseFloat(r.cells[3].innerText)||0;
-        let changeOut = parseFloat(r.cells[5].innerText)||0;
-        let currentSMU = parseFloat(r.cells[6].innerText)||0;
-        r.cells[7].innerText = changeOut + freq;
-        let life = currentSMU - changeOut;
-        r.cells[8].innerText = life;
-        r.cells[8].className = 'num';
+  const compTable = document.getElementById('component-table').tBodies[0].rows;
+  for(let r of compTable){
+    let freq = parseFloat(r.cells[3].innerText)||0;
+    let changeOut = parseFloat(r.cells[5].innerText)||0;
+    let currentSMU = parseFloat(r.cells[6].innerText)||0;
+    r.cells[7].innerText = changeOut + freq;
+    let life = currentSMU - changeOut;
+    r.cells[8].innerText = life;
+    r.cells[8].className = 'num';
 
-        let lifePerc = freq ? Math.round((life/freq)*100) : 0;
-        r.cells[9].innerText = lifePerc + '%';
-        r.cells[9].className = 'life-perc';
+    let lifePerc = freq ? Math.round((life/freq)*100) : 0;
+    r.cells[9].innerText = lifePerc + '%';
+    r.cells[9].className = 'life-perc';
 
-        if(lifePerc > 100) r.cells[9].className='life-perc red';
-        else if(lifePerc >= 75) r.cells[9].className='life-perc green';
-        else if(lifePerc >=50) r.cells[9].className='life-perc yellow';
-        else r.cells[9].className='life-perc yellow';
-    }
+    if(lifePerc > 100) r.cells[9].className='life-perc red';
+    else if(lifePerc >= 75) r.cells[9].className='life-perc green';
+    else if(lifePerc >=50) r.cells[9].className='life-perc yellow';
+    else r.cells[9].className='life-perc yellow';
+  }
 }
 
-// Menu 3 Paste SMU
+// Paste SMU (Menu 3)
 function pasteSMU(){
-    const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
-    const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
-    for(let line of lines){
-        let parts = line.trim().split(/\s+/);
-        if(parts.length>=2){
-            let row = tbody.insertRow();
-            row.insertCell(0).innerText=parts[0];
-            row.insertCell(1).innerText=parts[1];
-        }
+  const lines = document.getElementById('smu-paste').value.trim().split(/\r?\n/);
+  const tbody = document.getElementById('smu-table').tBodies[0]; tbody.innerHTML='';
+  for(let line of lines){
+    let parts = line.trim().split(/\s+/);
+    if(parts.length>=2){
+      let row = tbody.insertRow();
+      row.insertCell(0).innerText=parts[0];
+      row.insertCell(1).innerText=parts[1];
     }
+  }
 }
 
-// Update SMU
+// Update SMU -> sync ke Menu 1
 function updateSMU(){
-    const rows = document.getElementById('smu-table').tBodies[0].rows;
-    const compTable = document.getElementById('component-table').tBodies[0].rows;
-    const progressBar = document.getElementById('progress-bar');
-    let total=rows.length, count=0;
-    function step(){
-        if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
-        let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
-        for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
-        count++;
-        let perc=Math.round(count/total*100);
-        progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
-        setTimeout(step,10);
-    }
-    step();
+  const rows = document.getElementById('smu-table').tBodies[0].rows;
+  const compTable = document.getElementById('component-table').tBodies[0].rows;
+  const progressBar = document.getElementById('progress-bar');
+  let total=rows.length, count=0;
+  function step(){
+    if(count>=total){ progressBar.style.width='100%'; progressBar.innerText='100%'; recalcComponent(); return; }
+    let equip=rows[count].cells[0].innerText, smu=parseFloat(rows[count].cells[1].innerText)||0;
+    for(let r of compTable) if(r.cells[0].innerText==equip) r.cells[6].innerText=smu;
+    count++;
+    let perc=Math.round(count/total*100);
+    progressBar.style.width=perc+'%'; progressBar.innerText=perc+'%';
+    setTimeout(step,10);
+  }
+  step();
 }
 
-// Save JSON
+/* =========================
+   SAVE JSON (3 array fix)
+   ========================= */
 function saveJSON() {
-    const componentData = [], changeoutData = [];
+  const componentData = [], changeoutData = [], smuData = [];
 
-    Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
-        const obj = {};
-        Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
-            const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
-            let value = td.innerText;
-            if (value === "NaN" || value === "" || value === undefined) value = "0";
-            obj[key] = value;
-        });
-        componentData.push(obj);
+  // component: ambil 11 kolom pertama (sampai Remarks)
+  Array.from(document.getElementById('component-table').tBodies[0].rows).forEach(tr => {
+    const obj = {};
+    Array.from(tr.cells).slice(0, 11).forEach((td, i) => {
+      const key = document.getElementById('component-table').tHead.rows[0].cells[i].innerText;
+      let value = td.innerText;
+      if (value === "NaN" || value === "" || value === undefined) value = "0";
+      obj[key] = value;
     });
+    componentData.push(obj);
+  });
 
-    Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
-        const obj = {};
-        Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
-            const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
-            let value = td.innerText;
-            if (value === "NaN" || value === "" || value === undefined) value = "0";
-            obj[key] = value;
-        });
-        changeoutData.push(obj);
+  // changeout: 4 kolom pertama
+  Array.from(document.getElementById('changeout-table').tBodies[0].rows).forEach(tr => {
+    const obj = {};
+    Array.from(tr.cells).slice(0, 4).forEach((td, i) => {
+      const key = document.getElementById('changeout-table').tHead.rows[0].cells[i].innerText;
+      let value = td.innerText;
+      if (value === "NaN" || value === "" || value === undefined) value = "0";
+      obj[key] = value;
     });
+    changeoutData.push(obj);
+  });
 
-    const blob = new Blob([JSON.stringify({ component: componentData, changeout: changeoutData }, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ndarboe_data.json';
-    a.click();
+  // currentsmu: dari menu 3 (2 kolom)
+  Array.from(document.getElementById('smu-table').tBodies[0].rows).forEach(tr => {
+    smuData.push({
+      "Equipment": tr.cells[0].innerText || "",
+      "Current SMU": tr.cells[1].innerText || "0"
+    });
+  });
+
+  const payload = { component: componentData, changeout: changeoutData, currentsmu: smuData };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ndarboe_data.json';
+  a.click();
 }
 
-// Load JSON dari file upload
+/* =========================
+   LOAD JSON (robust)
+   - array tunggal -> component
+   - object {component, changeout, currentsmu}
+   ========================= */
 function loadJSON() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
 
-    input.onchange = e => {
-        const file = e.target.files[0];
-        if (!file) return;
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-       
-const reader = new FileReader();
-reader.onload = (ev) => {
-    try {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
         const parsed = JSON.parse(ev.target.result);
         console.log("Hasil parse JSON:", parsed);
 
-        // Ambil data array dari JSON
-        const data = Array.isArray(parsed)
-            ? parsed
-            : (parsed.component && Array.isArray(parsed.component))
-                ? parsed.component
-                : null;
+        // helper renderers
+        const renderComponent = (arr=[]) => {
+          const tbody = document.getElementById('component-table').tBodies[0];
+          let html = '';
+          arr.forEach(obj => {
+            html += '<tr>'
+              + '<td>'+(obj["Equipment"]||'')+'</td>'
+              + '<td>'+(obj["Model"]||'')+'</td>'
+              + '<td>'+(obj["Component"]||'')+'</td>'
+              + '<td class="num">'+(obj["Freq"]||'')+'</td>'
+              + '<td class="num">'+(obj["Cost"]||'')+'</td>'
+              + '<td class="num">'+(obj["Change Out"]||'')+'</td>'
+              + '<td class="num">'+(obj["Current SMU"]||'')+'</td>'
+              + '<td class="num">'+(obj["Next Change"]||'')+'</td>'
+              + '<td class="num">'+(obj["Life"]||'')+'</td>'
+              + '<td class="life-perc">'+(obj["Life %"]||'0%')+'</td>'
+              + '<td>'+(obj["Remarks"]||'')+'</td>'
+              + '<td>'
+                + '<button class="edit-btn" onclick="editRow(this)">Edit</button>'
+                + '<button class="save-btn" onclick="saveRow(this)">Save</button>'
+                + '<button class="delete-btn" onclick="deleteRow(this)">Delete</button>'
+              + '</td>'
+            + '</tr>';
+          });
+          tbody.innerHTML = html;
+        };
 
-        if (!data) {
-            alert("Format JSON tidak sesuai. Harus berupa array atau object dengan key 'component' yang berisi array.");
-            return;
+        const renderChangeout = (arr=[]) => {
+          const tbody = document.getElementById('changeout-table').tBodies[0];
+          let html = '';
+          arr.forEach(obj => {
+            html += '<tr>'
+              + '<td>'+(obj["Equipment"]||'')+'</td>'
+              + '<td>'+(obj["Component"]||'')+'</td>'
+              + '<td>'+(obj["Change Out"]||'')+'</td>'
+              + '<td>'+(obj["Remarks"]||'')+'</td>'
+              + '<td>'
+                + '<button class="edit-btn" onclick="editRow(this)">Edit</button>'
+                + '<button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>'
+                + '<button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>'
+              + '</td>'
+            + '</tr>';
+          });
+          tbody.innerHTML = html;
+        };
+
+        const renderSMU = (arr=[]) => {
+          const tbody = document.getElementById('smu-table').tBodies[0];
+          let html = '';
+          arr.forEach(obj => {
+            html += '<tr>'
+              + '<td>'+(obj["Equipment"]||'')+'</td>'
+              + '<td>'+(obj["Current SMU"]||'')+'</td>'
+            + '</tr>';
+          });
+          tbody.innerHTML = html;
+        };
+
+        if (Array.isArray(parsed)) {
+          // root array → taruh ke component
+          renderComponent(parsed);
+          // kosongkan changeout & smu
+          renderChangeout([]);
+          renderSMU([]);
+        } else {
+          renderComponent(Array.isArray(parsed.component) ? parsed.component : []);
+          renderChangeout(Array.isArray(parsed.changeout) ? parsed.changeout : []);
+          renderSMU(Array.isArray(parsed.currentsmu) ? parsed.currentsmu : []);
         }
 
-        // Lanjutkan proses dengan data
-        console.log("Data siap diproses:", data);
-        // ... lanjutkan logic kamu di sini
-
-    } catch (err) {
+        recalcComponent();
+        syncChangeOut();
+        alert("✅ Data JSON berhasil dimuat!");
+      } catch (err) {
         alert("File JSON tidak valid: " + err.message);
-    }
-};
-
-
-            const compTable = document.getElementById('component-table').tBodies[0];
-            compTable.innerHTML = ''; // reset
-
-            // bikin string HTML langsung
-            let html = '';
-            data.forEach(obj => {
-                html += `<tr>
-                    <td>${obj["Equipment"] || ''}</td>
-                    <td>${obj["Model"] || ''}</td>
-                    <td>${obj["Component"] || ''}</td>
-                    <td class="num">${obj["Freq"] || ''}</td>
-                    <td class="num">${obj["Cost"] || ''}</td>
-                    <td class="num">${obj["Change Out"] || ''}</td>
-                    <td class="num">${obj["Current SMU"] || ''}</td>
-                    <td class="num">${obj["Next Change"] || ''}</td>
-                    <td class="num">${obj["Life"] || ''}</td>
-                    <td class="life-perc">${obj["Life %"] || '0%'}</td>
-                    <td>${obj["Remarks"] || ''}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editRow(this)">Edit</button>
-                        <button class="save-btn" onclick="saveRow(this)">Save</button>
-                        <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
-                    </td>
-                </tr>`;
-            });
-
-            // masukkan sekali ke DOM
-            compTable.innerHTML = html;
-
-            recalcComponent();
-        };
-        reader.readAsText(file);
+        console.error(err);
+      }
     };
-    input.click();
+    reader.readAsText(file);
+  };
+
+  input.click();
 }
+
+/* =========================
+   LOAD EXCEL (2 sheet: component, changeout)
+   currentsmu dikosongkan
+   ========================= */
+function loadExcel() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xlsx,.xls';
+
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = new Uint8Array(evt.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+
+        // Ambil sheet "component" & "changeout" (case-insensitive fallback)
+        const findSheet = (names, target) => {
+          const low = names.map(n => n.toLowerCase());
+          const idx = low.indexOf(target.toLowerCase());
+          return idx >= 0 ? names[idx] : null;
+        };
+
+        const sheetNames = wb.SheetNames;
+        const compSheetName = findSheet(sheetNames, 'component');
+        const coSheetName = findSheet(sheetNames, 'changeout');
+
+        const component = compSheetName ? XLSX.utils.sheet_to_json(wb.Sheets[compSheetName]) : [];
+        const changeout = coSheetName ? XLSX.utils.sheet_to_json(wb.Sheets[coSheetName]) : [];
+
+        // Render ke tabel
+        const renderComponent = (arr=[]) => {
+          const tbody = document.getElementById('component-table').tBodies[0];
+          let html = '';
+          arr.forEach(obj => {
+            html += '<tr>'
+              + '<td>'+(obj["Equipment"]||obj["equipment"]||'')+'</td>'
+              + '<td>'+(obj["Model"]||obj["model"]||'')+'</td>'
+              + '<td>'+(obj["Component"]||obj["component"]||'')+'</td>'
+              + '<td class="num">'+(obj["Freq"]||obj["freq"]||'')+'</td>'
+              + '<td class="num">'+(obj["Cost"]||obj["cost"]||'')+'</td>'
+              + '<td class="num">'+(obj["Change Out"]||obj["change out"]||obj["ChangeOut"]||'')+'</td>'
+              + '<td class="num">'+(obj["Current SMU"]||obj["current smu"]||obj["CurrentSMU"]||'')+'</td>'
+              + '<td class="num">'+(obj["Next Change"]||obj["next change"]||obj["NextChange"]||'')+'</td>'
+              + '<td class="num">'+(obj["Life"]||obj["life"]||'')+'</td>'
+              + '<td class="life-perc">'+(obj["Life %"]||obj["life %"]||obj["Life%"]||'0%')+'</td>'
+              + '<td>'+(obj["Remarks"]||obj["remarks"]||'')+'</td>'
+              + '<td>'
+                + '<button class="edit-btn" onclick="editRow(this)">Edit</button>'
+                + '<button class="save-btn" onclick="saveRow(this)">Save</button>'
+                + '<button class="delete-btn" onclick="deleteRow(this)">Delete</button>'
+              + '</td>'
+            + '</tr>';
+          });
+          tbody.innerHTML = html;
+        };
+
+        const renderChangeout = (arr=[]) => {
+          const tbody = document.getElementById('changeout-table').tBodies[0];
+          let html = '';
+          arr.forEach(obj => {
+            html += '<tr>'
+              + '<td>'+(obj["Equipment"]||obj["equipment"]||'')+'</td>'
+              + '<td>'+(obj["Component"]||obj["component"]||'')+'</td>'
+              + '<td>'+(obj["Change Out"]||obj["change out"]||obj["ChangeOut"]||obj["SMU"]||'')+'</td>'
+              + '<td>'+(obj["Remarks"]||obj["remarks"]||obj["Note"]||'')+'</td>'
+              + '<td>'
+                + '<button class="edit-btn" onclick="editRow(this)">Edit</button>'
+                + '<button class="save-btn" onclick="saveRow(this);syncChangeOut();">Save</button>'
+                + '<button class="delete-btn" onclick="deleteRow(this);syncChangeOut();">Delete</button>'
+              + '</td>'
+            + '</tr>';
+          });
+          tbody.innerHTML = html;
+        };
+
+        renderComponent(component);
+        renderChangeout(changeout);
+
+        // currentsmu dikosongkan saat load Excel
+        document.getElementById('smu-table').tBodies[0].innerHTML = '';
+
+        recalcComponent();
+        syncChangeOut();
+        alert('✅ Excel berhasil dimuat (component & changeout).');
+      } catch(err) {
+        console.error(err);
+        alert('❌ Gagal membaca Excel: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  input.click();
+}
+
+<!-- semua tabel, menu dsb -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.2/dist/xlsx.full.min.js"></script>
+
+<script>
+async function loadExcelFromGitHub() {
+  try {
+    const response = await fetch("data/Comp_Code.xlsx");
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+    // Ambil sheet pertama
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    // Convert ke JSON
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+    console.log("Hasil Excel dari GitHub:", jsonData);
+
+    // TODO: masukkan ke tabel menu 1 atau menu 2 sesuai struktur
+    renderComponentTable(jsonData);
+  } catch (err) {
+    console.error("Gagal load Excel:", err);
+  }
+}
+
+// otomatis load setelah halaman siap
+window.onload = loadExcelFromGitHub;
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>

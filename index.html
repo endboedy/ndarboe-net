@@ -423,8 +423,6 @@ function loadJSON() {
           renderComponent(Array.isArray(parsed.component) ? parsed.component : []);
           renderChangeout(Array.isArray(parsed.changeout) ? parsed.changeout : []);
           renderSMU(Array.isArray(parsed.currentsmu) ? parsed.currentsmu : []);
-        }
-
         recalcComponent();
         syncChangeOut();
         alert("✅ Data JSON berhasil dimuat!");
